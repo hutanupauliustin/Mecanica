@@ -7,25 +7,25 @@
 
 
 class Matrice {
-public:
+    public:
     int coloane;
     int linii;
     float *valori;
-
+    
     //Constructor
-
+    
     Matrice(){
         this->linii = 0;
         this->coloane = 0;
         this->valori = NULL;
     }
-
+    
     Matrice(int n,int m){
         this->linii = n;
         this->coloane = m;
         this->valori = new float[n*m]();
     }
-
+    
     Matrice(char type,int n,int m){
         
         switch(type){
@@ -53,180 +53,220 @@ public:
                 this->coloane = m;
                 this->valori = new float[n*m];
                 for( int i = 0; i < n; i++)
-                    for( int i = 0; j < m; j++)
-                            (*this->at(i,j))= 0;
-                break;
+                    for( int j = 0; j < m; j++)
+                        (*this->at(i,j))= 0;
+            break;
         }
-
+        
     }
 
-   
+    Matrice( Matrice &other){
+
+        this->linii = other.linii;
+        this->coloane = other.coloane;
+
+        if(other.valori != NULL){
+            this->valori = new float[this->linii * this->coloane];
+            for(int i = 0; i < this->linii * this->coloane; i++)
+                this->valori[i] = other.valori[i];
+        } else {
+            this->valori = NULL;
+        }
+    }
+    
+    ~Matrice(){
+        delete[] this->valori;
+        this->valori = NULL;
+    }
+
+    //Metode
+
     float *at(int i, int j){                        //returneaza pointer la adresa de memorie unde se afla 
         return this->valori+i*this->coloane + j;    //coloana j si linia i din tabelul de valori
     }
-
+    
     Matrice transpose(){
-
+        
         Matrice T(this->coloane,this->linii);
-
+        
         for(int i = 0 ; i < this->linii; i++)
-            for(int j = 0 ; j < this->coloane; j++){
-                *T.at(j,i)) = *(this->at(i,j));
-            }
-
+        for(int j = 0 ; j < this->coloane; j++){
+            *T.at(j,i) = *(this->at(i,j));
+        }
+        
         return T;
     }
     
     Matrice inverse(){                   //metoda lui Gauss folosind operatii pe linii si coloane
-
+        
         if(this->linii != this->coloane){
             errno = 1;
             Matrice O;
             return O;
         }
-
-        Matrice B(I,this->linii,this->coloane);
+        
+        int n = this->linii;
+        Matrice B('I',n,n);
         Matrice A = *this;
-
-        for(int i = 0; i < this->linii; i++)
-
-            float x = (*A.at(i,i)) / (*A.at());
-            for(int j = i; j < this->linii; j++){  // sub diagonalei principale ca sa optinem o matrice inferior triunghiulara, lucram cu operatii pe linii
-                (*B.at(i,j)) = (*B.at(i,j)) - (*(A.at(i,j)))/(*(A.at(i,i))) * (*B.at(i,i));
-                (*A.at(i,j)) = (*A.at(i,j)) - (*(A.at(i,j)))/(*(A.at(i,i))) * (*A.at(i,i));
+        
+        for(int k = 0; k < n; k++){
+            float pivot  = *(A.at(k,k));
+            for (int j = 0; j < n; j++) {
+                *(A.at(k, j)) /= pivot;
+                *(B.at(k, j)) /= pivot;
             }
 
-        B = B.transpose();
+            for(int i = 0; i < n; i++){
+                if( i != k){
+                    float x = *(A.at(i,k));
+                    for(int j = 0; j < n; j++){
+                        *(A.at(i,j)) -= x * (*(A.at(k,j)));
+                        *(B.at(i,j)) -= x * (*(B.at(k,j)));
+                    }
+                }
+            }
+       }
 
-        for(int i = 0; i < this->linii; i++)
+       return B;
+    
+    }
+    
+    void printMatrice(){
+        for(int i = 0; i < this->linii; i++){
+            for(int j = 0; j < this->coloane; j++)
+                fprintf(stdout,"%8.4f ",(*this->at(i,j)));
+            fprintf(stdout,"\n");
+        }
+    }
 
-            for(int j = i; j < this->linii; j++){  
-                (*B.at(i,j)) = (*B.at(i,j)) - (*(A.at(i,j)))/(*(A.at(i,i))) * (*B.at(i,i));
-                (*A.at(i,j)) = (*A.at(i,j)) - (*(A.at(i,j)))/(*(A.at(i,i))) * (*A.at(i,i));
-            }      
+    //Operatori
+
+        Matrice& operator= (Matrice &B){
+
+            if(this == &B)
+                return *this;
+
+            this->linii = B.linii;
+            this->coloane = B.coloane;
+
+            delete[] this->valori;
+
+            if(B.valori != NULL){
+                this->valori = new float[this->linii * this->coloane];
+                for(int i = 0; i < this->linii * this->coloane; i++)
+                    this->valori[i] = B.valori[i];
+            } else {
+                this->valori = NULL;
+            }
+
+            return *this;
+        }
+        
+        Matrice operator+ (Matrice B) {
             
-        for(int i = 0; i < this->linii; i++)
-            for(int j = i; j < this->linii; j++){  
-                (*B.at(i,j)) = (*B.at(i,j)) / (*(A->at(i,i)));
-
-    }
-
-    Matrice operator+ (Matrice B) {
-        
-        if((this->linii != B.linii) || (this->coloane != B.coloane)){
-            errno = 1;
-            Matrice O;
-            return O;
-        }
-
-        int n = this->linii;
-        int m = this->coloane;
-
-        Matrice S(n,m);
-
-        for(int i = 0; i < n; i++)
-            for(int j = 0; j < m; j++){
-              *(S.at(i,j)) = *(this->at(i,j)) + *(B.at(i,j)); 
+            if((this->linii != B.linii) || (this->coloane != B.coloane)){
+                errno = 1;
+                Matrice O;
+                return O;
             }
-
-        return S;
-        
-    }
-
-    Matrice operator* (Matrice B) {
-
-        if( this->coloane != B->linii ){
-            errno = 1;
-            Matrice O;
-            return O;
+            
+            int n = this->linii;
+            int m = this->coloane;
+            
+            Matrice S(n,m);
+            
+            for(int i = 0; i < n; i++)
+            for(int j = 0; j < m; j++){
+                *(S.at(i,j)) = *(this->at(i,j)) + *(B.at(i,j)); 
+            }
+            
+            return S;
+            
         }
 
-        int n = this->linii;
-        int m = B->coloane;
-        int p = this->coloane;
-
-        Matrice P(n,m);
-
-        for(int i =  0 ; i < n; i++)
+        Matrice operator* (Matrice B) {
+            
+            if( this->coloane != B.linii ){
+                errno = 1;
+                Matrice O;
+                return O;
+            }
+            
+            int n = this->linii;
+            int m = B.coloane;
+            int p = this->coloane;
+            
+            Matrice P(n,m);
+            
+            for(int i =  0 ; i < n; i++)
             for(int j = 0; j < m; j++){
                 float s = 0;
                 for(int k = 0; k < p; k++)
-                    s += (*(this->at(i,k)))*(*(B.at(k,j)));
+                s += (*(this->at(i,k)))*(*(B.at(k,j)));
                 *(P.at(i,j)) = s;
+                
+            }
+            
+            return P;
             
         }
 
-        return P;
-        
-    }
+        Matrice operator* (float x){
 
-    Matrice operator^ (char *pow) {
+            Matrice R;
+            R = *this;
 
-        if(*pow == 'T' || *pow == 't'){
-            return this->transpose();
-        }
+            for( int i = 0; i < this->linii; i++)
+                for(int j = 0; j < this->coloane; j++)
+                    *(R.at(i,j)) = (*this->at(i,j)) * x;
 
-        if(pow[0] == '.' ){
-            return this->derivative();
+            return R;
         }
         
-        char inverseflag;
+        Matrice operator^ (char *pow) {
+            
+            if(*pow == 'T' || *pow == 't'){
+                return this->transpose();
+            }else{
+            
 
-        if(pow[0] == '-')
+            char inverseFlag;
+            
+            if(pow[0] == '-')
             inverseFlag = 1;
-        else
+            else
             inverseFlag = 0;
+            
+            Matrice R('I',this->linii,this->coloane);
+            
+            int power = atoi(pow + (inverseFlag == 1 ? 1 : 0));
+            
+            for(int i = 0; i < power; i++){
+                R = R * (*this);
+            }
+            
+            if(inverseFlag){
+                R = R.inverse();
+            }
 
-        Matrice R('I',this->linii,this->coloane);
-
-        int power = atoi(pow + (inverseFlag == 1 ? 1 : 0));
-
-        for(int i = 0; i < power; i++){
-            R = R * (*this);
+            return R;
+            }
         }
 
-        if(inverseFlag){
-            R = R.inverse();
+        float& operator()(int i, int j){
+            return *this->at(i,j);
         }
-    }
+};
 
-
-
-}
-/*
-matrice* produsMatrice(matrice *A, matrice *B){
-
-    if( A->coloane != B->linii ){
-        errno = 1;
-        return NULL;
-    }
-
-    int n = A->linii;
-    int m = B->coloane;
-    int p = A->coloane;
-
-    matrice* P;
-    P = creareMatrice(n,m);
-
-    for(int i =  0 ; i < n; i++)
-        for(int j = 0; j < m; j++){
-            float s = 0;
-            for(int k = 0; k < p; k++)
-                s += (at(A,i,k))*(at(B,k,j));
-            P->valori[pos(P,i,j)] = s;
-        }
-
-    return P;
+Matrice operator*(float x, Matrice M){
+    return M*x;
 }
 
-matrice * transpunere(matrice* A){
-    matrice *T;
-    T =  creareMatrice(A->coloane,A->linii);
-    for(int i = 0; i < A->linii; i++)
-        for( int j = 0; j < A->coloane; j++){
-            T->valori(pos(T,j,i)) = at(A,i,j);
-        }
+int main(){
 
-    return T;
+    float q[2];
+    Matrice x(4,1);  // x[1] = q1 , x[2] = q2, x[3] = q1' , x[4] = q2' 
+
+
+    
 }
-*/
