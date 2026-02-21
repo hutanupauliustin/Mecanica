@@ -287,6 +287,30 @@ Matrice operator*(const float x, const Matrice &M){
     return M*x;
 }
 
+class solid_bara{
+    public:
+
+    float Masa;
+    float MomentInertie;
+    float lc;   //distanta de la legatura la centrul de masa
+
+    float Lagrangian 
+
+    solid_bara(){
+        Masa = 0;
+        MomentInertie = 0;
+        lc = 0;
+    }
+
+    solid_bara(Masa,MomentInertie,lc){
+        Masa = Masa;
+        MomentInertie = MomentInertie;
+        lc = lc;
+    }
+
+
+};
+
 Matrice f(const Matrice &x, float t){
     int n = x.linii / 2;
 
@@ -338,45 +362,10 @@ Matrice RK4(const Matrice &x, float dt, float t){
 }
 
 int main() {
-    // 1. Inițializăm GLFW
-    glfwInit();
     
-    // 2. Configurăm GLFW pentru OpenGL 3.3 Core Profile
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    Matrice x(3,1);
+    solid_bara v[3];
 
-    // 3. Creăm fereastra
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Simulator Mecanica 2D", NULL, NULL);
-    if (window == NULL) {
-        std::cout << "Eroare: Nu s-a putut crea fereastra GLFW" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // 4. Inițializăm GLAD (încarcă pointerii către funcțiile OpenGL oferite de driverul tău video)
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cout << "Eroare: Nu s-a putut inițializa GLAD" << std::endl;
-        return -1;
-    }
-
-    // 5. Bucla principală de randare (Game Loop)
-    while (!glfwWindowShouldClose(window)) {
-        // Input
-        processInput(window);
-
-        // Randare (aici vom desena solidele mai târziu)
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // Setăm culoarea de fundal (un albastru-verzui închis)
-        glClear(GL_COLOR_BUFFER_BIT);         // Curățăm ecranul cu acea culoare
-
-        // Swap buffers și poll events
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-
-    // 6. Curățăm resursele la închidere
-    glfwTerminate();
     return 0;
 }
