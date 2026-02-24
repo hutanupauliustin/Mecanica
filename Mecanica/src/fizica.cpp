@@ -1,29 +1,26 @@
 #include "fizica.h"
 
-matrice RK4(const matrice &x, float dt, float t){
+matrice RK4(sistem &S,const matrice &x, float dt, float t){
 
-    int n = x.linii / 2;
+    int dim  = x.linii;
 
-    matrice k1(2*n,1), k2(2*n,1), k3(2*n,1), k4(2*n,1), x_nou(2*n,1);
+    matrice k1(dim,1), k2(dim,1), k3(dim,1), k4(dim,1), x_nou(dim,1);
 
-    k1 = f(x, t) * dt; 
-    k2 = f(x + k1 * 0.5f, t + 0.5f*dt) * dt;
-    k3 = f(x + k2 * 0.5f, t + 0.5f*dt) * dt;
-    k4 = f(x + k3, t + dt) * dt;
+    k1 = derivata(S,x,t) * dt; 
+    k2 = derivata(S,x + k1 * 0.5f, t + 0.5f*dt) * dt;
+    k3 = derivata(S,x + k2 * 0.5f, t + 0.5f*dt) * dt;
+    k4 = derivata(S,x + k3, t + dt) * dt;
 
     x_nou = x + (k1 + k2 * 2.0f + k3 * 2.0f + k4) * (1.0f / 6.0f);
 
     return x_nou;
 }
 
-matrice f(const matrice &x, float t) {
-   
-    return matrice();
-}
-
 void seteazaForte(sistem &S, float t){
     for(int i = 0; i < S.n; i++){
-        
+        S.v[i].fx = 0;
+        S.v[i].fy = 0;
+
         S.v[i].greutateProprie();
 
         for(int j = 0; j < S.n; j++){   //fortele coulombiene
@@ -39,4 +36,27 @@ void seteazaForte(sistem &S, float t){
             S.v[i].fy += modul * r(1,0);
         }
     }
+}
+
+ matrice derivata(sistem &S,const matrice &stare_curenta, float t){
+        seteazaForte(S,t);
+
+        S.stare = stare_curenta;
+        S.seteazaStare();
+
+        seteazaForte(S,t);
+
+        matrice dq(4*S.n,1);
+
+        for(int i = 0; i < S.n; i++){
+            dq(2*i, 0) = S.v[i].vx;
+            dq(2*i + 1, 0) = S.v[i].vy;
+
+            float m = (S.v[i].masa > 0.0f) ? S.v[i].masa : 1.0f;
+
+            dq(2*(i+S.n), 0) = S.v[i].fx / m;
+            dq(2*(i+S.n)+ 1, 0) = S.v[i].fy / m;
+        }
+
+        return dq;
 }

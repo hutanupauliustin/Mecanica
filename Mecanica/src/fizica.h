@@ -281,5 +281,6 @@ class sistem {
 };
 
 matrice f(const matrice &x, float t);
-matrice RK4(const matrice &x, float dt, float t);
-void seteazaForte( sistem &S, float t);
+void seteazaForte(sistem &S, float t);
+matrice derivate(sistem &S, const matrice &stare_curenta, float t);
+matrice RK4(sistem &S, const matrice &x, float dt, float t);
