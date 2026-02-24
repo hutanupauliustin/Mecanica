@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <stdio.h>
+#include <cmath>
 
 class matrice {
     public:
@@ -176,6 +177,12 @@ class matrice {
         }
     }
 
+    void operator-(matrice &M){
+        for(int i = 1; i < M.linii; i++)
+            for(int j = 1; j < M.coloane; j++)
+                M(i,j) = (-1)* M(i,j);
+    }
+
     float& operator()(int i, int j){
         return *this->at(i,j);
     }
@@ -196,9 +203,83 @@ class particula {
     float y;
     float vx;
     float vy;
-
+    float fx;
+    float fy;
     float masa;
-    
+    float sarcina;
+
+    particula(){
+        x=0.0f;
+        y=0.0f;
+        vx=0.0f;
+        vy=0.0f;
+        fx=0.0f;
+        fy=0.0f;
+        masa=0.0f;
+        sarcina=0.0f;
+    }
+
+    particula(float abscisa,float ordonata, float viteza_x, float viteza_y, float masa_particula, float sarcina_particula){
+        x = abscisa;
+        y = ordonata;
+        vx = viteza_x;
+        vy = viteza_y;
+        masa = masa_particula;
+        sarcina = sarcina_particula;
+    }
+
+    void greutateProprie(){
+        fy += masa * (-9.81f);
+    }
+
+
 };
+
+class sistem {
+    public:
+    int n;
+    particula *v;
+    matrice stare;
+
+    sistem(int nr_particule){
+    n = nr_particule;
+    v =  new particula[n];
+    stare = matrice(4*n,1);
+    }
+
+    ~sistem(){
+        delete[] v;
+    }
+
+    float distanta(particula p1, particula p2){
+        return sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
+    }
+
+    matrice vectorPozitie(particula p1, particula p2){
+        matrice r(2,1);
+        r(0,0) = p2.x - p1.x;
+        r(1,0) = p2.y - p1.y;
+    }
+    
+    void incarcaStare(){
+        for(int i = 0; i < n; i++){
+            stare(i*2,0)       = v[i].x;
+            stare(i*2+1,0)     = v[i].y;
+            stare(i*2 + n,0)   = v[i].vx;
+            stare(i*2+1 + n,0) = v[i].vy;
+        }
+    }
+
+    void seteazaStare(){
+        for(int i = 0; i < n; i++){
+           v[i].x = stare(i*2,0);    
+           v[i].y = stare(i*2+1,0);
+           v[i].vx = stare(i*2 + n,0);
+           v[i].vy = stare(i*2+1 + n,0);
+        } 
+    }
+};
+
 matrice f(const matrice &x, float t);
 matrice RK4(const matrice &x, float dt, float t);
+void seteazaForte( sistem &S, float t);

@@ -18,5 +18,25 @@ matrice RK4(const matrice &x, float dt, float t){
 
 matrice f(const matrice &x, float t) {
    
-    return 0;
+    return matrice();
+}
+
+void seteazaForte(sistem &S, float t){
+    for(int i = 0; i < S.n; i++){
+        
+        S.v[i].greutateProprie();
+
+        for(int j = 0; j < S.n; j++){   //fortele coulombiene
+            if(i == j)
+                continue;
+            float d = S.distanta(S.v[i],S.v[j]);
+            if(d < 0.001f) 
+                d = 0.001f;
+            float modul = (8.99e9 * S.v[i].sarcina * S.v[j].sarcina ) / (d*d*d);
+            matrice r(2,1);
+            r = S.vectorPozitie(S.v[i],S.v[j]);
+            S.v[i].fx += modul * r(0,0);
+            S.v[i].fy += modul * r(1,0);
+        }
+    }
 }
