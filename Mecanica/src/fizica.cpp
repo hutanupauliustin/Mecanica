@@ -1,27 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <errno.h>
-#include <iostream>
+#pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
-
-// Funcție care se apelează automat când redimensionezi fereastra
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
-}
-
-// Funcție pentru a procesa input-ul de la tastatură
-void processInput(GLFWwindow *window) {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
-
-
-
-class Matrice {
+class matrice {
     public:
     int coloane;
     int linii;
@@ -29,19 +8,19 @@ class Matrice {
     
     //Constructor
     
-    Matrice(){
+    matrice(){
         this->linii = 0;
         this->coloane = 0;
         this->valori = NULL;
     }
     
-    Matrice(int n,int m){
+    matrice(int n,int m){
         this->linii = n;
         this->coloane = m;
         this->valori = new float[n*m]();
     }
     
-    Matrice(char type,int n,int m){
+    matrice(char type,int n,int m){
         
         switch(type){
             case 'I':
@@ -81,7 +60,7 @@ class Matrice {
         
     }
 
-    Matrice(const Matrice &other){
+    matrice(const matrice &other){
 
         this->linii = other.linii;
         this->coloane = other.coloane;
@@ -95,7 +74,7 @@ class Matrice {
         }
     }
     
-    ~Matrice(){
+    ~matrice(){
         delete[] this->valori;
         this->valori = NULL;
     }
@@ -106,9 +85,9 @@ class Matrice {
         return this->valori+i*this->coloane + j;    //coloana j si linia i din tabelul de valori
     }
     
-    Matrice transpose() const{
+    matrice transpose() const{
         
-        Matrice T(this->coloane,this->linii);
+        matrice T(this->coloane,this->linii);
         
         for(int i = 0 ; i < this->linii; i++)
         for(int j = 0 ; j < this->coloane; j++){
@@ -118,17 +97,17 @@ class Matrice {
         return T;
     }
     
-    Matrice inverse() const{                   //metoda lui Gauss folosind operatii pe linii si coloane
+    matrice inverse() const{                   //metoda lui Gauss folosind operatii pe linii si coloane
         
         if(this->linii != this->coloane){
             errno = 1;
-            Matrice O;
+            matrice O;
             return O;
         }
         
         int n = this->linii;
-        Matrice B('I',n,n);
-        Matrice A = *this;
+        matrice B('I',n,n);
+        matrice A = *this;
         
         for(int k = 0; k < n; k++){
             float pivot  = *(A.at(k,k));
@@ -152,7 +131,7 @@ class Matrice {
     
     }
     
-    void printMatrice(){
+    void printmatrice(){
         for(int i = 0; i < this->linii; i++){
             for(int j = 0; j < this->coloane; j++)
                 fprintf(stdout,"%8.4f ",(*this->at(i,j)));
@@ -162,7 +141,7 @@ class Matrice {
 
     //Operatori
 
-        Matrice& operator= (const Matrice &B){
+        matrice& operator= (const matrice &B){
 
             if(this == &B)
                 return *this;
@@ -183,18 +162,18 @@ class Matrice {
             return *this;
         }
         
-        Matrice operator+ (const Matrice &B) const{
+        matrice operator+ (const matrice &B) const{
             
             if((this->linii != B.linii) || (this->coloane != B.coloane)){
                 errno = 1;
-                Matrice O;
+                matrice O;
                 return O;
             }
             
             int n = this->linii;
             int m = this->coloane;
             
-            Matrice S(n,m);
+            matrice S(n,m);
             
             for(int i = 0; i < n; i++)
             for(int j = 0; j < m; j++){
@@ -205,11 +184,11 @@ class Matrice {
             
         }
 
-        Matrice operator* (const Matrice &B) const{
+        matrice operator* (const matrice &B) const{
             
             if( this->coloane != B.linii ){
                 errno = 1;
-                Matrice O;
+                matrice O;
                 return O;
             }
             
@@ -217,7 +196,7 @@ class Matrice {
             int m = B.coloane;
             int p = this->coloane;
             
-            Matrice P(n,m);
+            matrice P(n,m);
             
             for(int i =  0 ; i < n; i++)
             for(int j = 0; j < m; j++){
@@ -232,9 +211,9 @@ class Matrice {
             
         }
 
-        Matrice operator* (const float x) const{
+        matrice operator* (const float x) const{
 
-            Matrice R;
+            matrice R;
             R = *this;
 
             for( int i = 0; i < this->linii; i++)
@@ -244,7 +223,7 @@ class Matrice {
             return R;
         }
         
-        Matrice operator^ (char *pow) {
+        matrice operator^ (char *pow) {
             
             if(*pow == 'T' || *pow == 't'){
                 return this->transpose();
@@ -258,7 +237,7 @@ class Matrice {
             else
             inverseFlag = 0;
             
-            Matrice R('I',this->linii,this->coloane);
+            matrice R('I',this->linii,this->coloane);
             
             int power = atoi(pow + (inverseFlag == 1 ? 1 : 0));
             
@@ -283,73 +262,15 @@ class Matrice {
         }
 };
 
-Matrice operator*(const float x, const Matrice &M){
+matrice operator*(const float x, const matrice &M){
     return M*x;
 }
 
-class solid_bara{
-    public:
-
-    float Masa;
-    float MomentInertie;
-    float lc;   //distanta de la legatura la centrul de masa
-
-    float Lagrangian 
-
-    solid_bara(){
-        Masa = 0;
-        MomentInertie = 0;
-        lc = 0;
-    }
-
-    solid_bara(Masa,MomentInertie,lc){
-        Masa = Masa;
-        MomentInertie = MomentInertie;
-        lc = lc;
-    }
-
-
-};
-
-Matrice f(const Matrice &x, float t){
-    int n = x.linii / 2;
-
-    Matrice q(n,1) , q_punct(n,1);
-    
-    for(int i = 0; i < n; i++){
-        q(i,0) = x(i,0);
-        q_punct(i,0) = x(i+n,0);
-    }
-
-    Matrice M('I',n,n);
-
-    Matrice C(n,n);
-
-    Matrice G(n,1);
-
-    Matrice Tau(n,1);
-
-    Matrice M_inversa = M.inverse();
-
-    Matrice q_ppunct(n,1);
-    
-    q_ppunct = M_inversa * (Tau + (C*q_punct*(-1.0f)) + (G*(-1.0f)));
-
-    Matrice f_rezultat(2*n,1);
-
-    for(int i = 0; i < n; i++){
-        f_rezultat(i,0) = q_punct(i,0);
-        f_rezultat(i+n,0) = q_ppunct(i,0);
-    }
-
-    return f_rezultat;
-}
-
-Matrice RK4(const Matrice &x, float dt, float t){
+matrice RK4(const matrice &x, float dt, float t){
 
     int n = x.linii / 2;
 
-    Matrice k1(2*n,1),k2(2*n,1),k3(2*n,1),k4(2*n,1), x_nou(2*n,1);
+    matrice k1(2*n,1),k2(2*n,1),k3(2*n,1),k4(2*n,1), x_nou(2*n,1);
 
     k1 = dt * f(x,t);
     k2 = dt * f(x + 0.5f*k1,t + 0.5f*dt);
@@ -363,8 +284,7 @@ Matrice RK4(const Matrice &x, float dt, float t){
 
 int main() {
     
-    Matrice x(3,1);
-    solid_bara v[3];
+    matrice x(3,1);
 
 
     return 0;
