@@ -60,3 +60,4 @@ void seteazaForte(sistem &S, float t){
 
         return dq;
 }
+
