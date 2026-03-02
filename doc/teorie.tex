@@ -1,0 +1,303 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath, amssymb, geometry, graphicx}
+\usepackage[utf8]{inputenc}
+\geometry{a4paper, margin=2cm}
+
+\begin{document}
+
+\section*{1. Cinematica sistemului de corpuri}
+
+Considerăm un sistem de $n$ corpuri, fiecare fiind compus dintr-un număr arbitrar $N$ de puncte aflate în mișcare plan-paralelă.
+
+Fiecare corp $l$ are un sistem de coordonate propriu $x_l C_l y_l$, aflat în centrul său de masă.Sistemul este considerat la un unghi $\varphi_l$ ce corespunde mișcării corpului. Versorii sistemului de coordonate local, $\bar{i}_l$ și $\bar{j}_l$, sunt neconstanți în raport cu sistemul fix.
+
+Vectorul de poziție al unui punct $j$ de pe corpul $l$ în raport cu centrul de masă este:
+\begin{equation}
+    \bar{r}_{jl} = d_{xjl}\bar{i}_l + d_{yjl}\bar{j}_l
+\end{equation}
+
+Exprimăm versorii locali în funcție de cei ficși ($\bar{i}$, $\bar{j}$):
+\begin{equation}
+    \begin{aligned}
+        \bar{i}_l &= \cos\varphi_l\bar{i} + \sin\varphi_l\bar{j} \\
+        \bar{j}_l &= -\sin\varphi_l\bar{i} + \cos\varphi_l\bar{j}
+    \end{aligned}
+\end{equation}
+
+Înlocuind, obținem:
+\begin{equation}
+    \bar{r}_{jl} = (d_{xjl}\cos\varphi_l - d_{yjl}\sin\varphi_l)\bar{i} + (d_{xjl}\sin\varphi_l + d_{yjl}\cos\varphi_l)\bar{j}
+\end{equation}
+
+Vectorul de poziție absolut al punctului $j$ este suma dintre vectorul de poziție al centrului de masă și vectorul relativ:
+\begin{equation}
+    \bar{r}_j = \bar{r}_l + \bar{r}_{jl} = 
+    \begin{bmatrix}
+        x_l + d_{xjl}\cos\varphi_l - d_{yjl}\sin\varphi_l \\
+        y_l + d_{xjl}\sin\varphi_l + d_{yjl}\cos\varphi_l
+    \end{bmatrix}
+\end{equation}
+
+Derivând în raport cu timpul, obținem viteza punctului $j$:
+\begin{equation}
+    \bar{v}_j = \dot{\bar{r}}_j = 
+    \begin{bmatrix}
+        \dot{x}_l + \dot{\varphi}_l(-d_{xjl}\sin\varphi_l - d_{yjl}\cos\varphi_l) \\
+        \dot{y}_l + \dot{\varphi}_l(d_{xjl}\cos\varphi_l - d_{yjl}\sin\varphi_l)
+    \end{bmatrix}
+    = 
+    \begin{bmatrix}
+        v_{jx} \\
+        v_{jy}
+    \end{bmatrix}
+\end{equation}
+
+Calculăm pătratul modulului vitezei:
+\begin{equation}
+    \begin{aligned}
+        v_j^2 &= \langle\bar{v}_j, \bar{v}_j\rangle = v_{jx}^2 + v_{jy}^2 \\
+        &= \dot{x}_l^2 + \dot{y}_l^2 + \dot{\varphi}_l^2(d_{xjl}^2\sin^2\varphi_l + d_{xjl}^2\cos^2\varphi_l + d_{yjl}^2\cos^2\varphi_l + d_{yjl}^2\sin^2\varphi_l) \\
+        &\quad + 2\dot{\varphi}_l[\dot{x}_l(-d_{xjl}\sin\varphi_l - d_{yjl}\cos\varphi_l) + \dot{y}_l(d_{xjl}\cos\varphi_l - d_{yjl}\sin\varphi_l)]
+    \end{aligned}
+\end{equation}
+
+Deoarece $\sin^2\varphi_l + \cos^2\varphi_l = 1$, expresia se simplifică:
+\begin{equation}
+    v_j^2 = \dot{x}_l^2 + \dot{y}_l^2 + \dot{\varphi}_l^2(d_{xjl}^2 + d_{yjl}^2) + 2\dot{\varphi}_l[-\dot{x}_l(d_{xjl}\sin\varphi_l + d_{yjl}\cos\varphi_l) + \dot{y}_l(d_{xjl}\cos\varphi_l - d_{yjl}\sin\varphi_l)]
+\end{equation}
+
+\section*{2. Energia cinetică a sistemului}
+
+Energia cinetică a corpului $l$ este suma energiilor cinetice ale punctelor sale:
+\begin{equation}
+    \begin{aligned}
+        E_l &= \sum_{j=1}^{N} E_j = \frac{1}{2}\sum_{j=1}^{N} m_j v_j^2 \\
+        &= \frac{1}{2} \left[ \dot{x}_l^2\sum_{j=1}^{N} m_j + \dot{y}_l^2\sum_{j=1}^{N} m_j + \dot{\varphi}_l^2\sum_{j=1}^{N} m_j(d_{xjl}^2 + d_{yjl}^2) \right] \\
+        &\quad + \dot{\varphi}_l \left[ -\dot{x}_l\sin\varphi_l - \dot{y}_l\cos\varphi_l \right] \sum_{j=1}^{N} m_j d_{xjl} \\
+        &\quad + \dot{\varphi}_l \left[ \dot{x}_l\cos\varphi_l - \dot{y}_l\sin\varphi_l \right] \sum_{j=1}^{N} m_j d_{yjl}
+    \end{aligned}
+\end{equation}
+
+Știind că originea sistemului local se află în centrul de masă al corpului, momentele statice sunt nule ($S_x = S_y = 0$):
+\begin{equation}
+    \sum_{j=1}^{N} m_j = M_l, \quad \sum_{j=1}^{N} m_j d_{xjl} = S_{yl} = 0, \quad \sum_{j=1}^{N} m_j d_{yjl} = S_{xl} = 0
+\end{equation}
+iar momentul de inerție față de axa $z$ este $J_{zl} = \sum_{j=1}^{N} m_j(d_{xjl}^2 + d_{yjl}^2)$.
+
+Astfel, termenii care conțin $d_{xjl}$ și $d_{yjl}$ la puterea întâi se anulează, deci energia cinetică a corpului $l$ capătă forma decuplată:
+\begin{equation}
+    E_l = \frac{1}{2} M_l \dot{x}_l^2 + \frac{1}{2} M_l \dot{y}_l^2 + \frac{1}{2} J_{zl} \dot{\varphi}_l^2
+\end{equation}
+
+Pentru întregul sistem, energia este suma energiilor corpurilor componente:
+\begin{equation}
+    E = \sum_{l=1}^{n} E_l = \frac{1}{2}\sum_{l=1}^{n} (M_l\dot{x}_l^2 + M_l\dot{y}_l^2 + J_{zl}\dot{\varphi}_l^2)
+\end{equation}
+
+Considerăm vectorul coordonatelor generalizate pentru un sistem cu $n$ corpuri, având o singură matrice coloană:
+$q = [x_1, y_1, \varphi_1, x_2, y_2, \varphi_2, \dots, x_n, y_n, \varphi_n]^T$. 
+
+Energia cinetică se poate scrie ca o formă pătratică:
+\begin{equation}
+    E = \frac{1}{2}\dot{q}^T A \dot{q}
+\end{equation}
+unde $A$ este matricea maselor, o matrice diagonală de forma:
+\begin{equation}
+    A = \begin{bmatrix}
+        M_1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+        0 & M_1 & 0 & \dots & 0 & 0 & 0 \\
+        0 & 0 & J_{z1} & \dots & 0 & 0 & 0 \\
+        \vdots & \vdots & \vdots & \ddots & \vdots & \vdots & \vdots \\
+        0 & 0 & 0 & \dots & M_n & 0 & 0 \\
+        0 & 0 & 0 & \dots & 0 & M_n & 0 \\
+        0 & 0 & 0 & \dots & 0 & 0 & J_{zn}
+    \end{bmatrix}
+\end{equation}
+
+\section*{3. Ecuațiile lui Lagrange pentru sisteme cu legături}
+
+Fie ecuațiile lui Lagrange în cazul sistemelor cu variabile dependente, introducând un sistem de constrângeri (legături cinematice olonome):
+\begin{equation}
+    \begin{cases}
+        f_1(q_1, \dots, q_{3n}, t) = 0 \\
+        \vdots \\
+        f_p(q_1, \dots, q_{3n}, t) = 0
+    \end{cases}
+\end{equation}
+
+Notăm $F(q,t) = \big( f_1(q,t), f_2(q,t), \dots, f_p(q,t) \big)^T$. 
+Putem rescrie legăturile sub forma compactă $F(q,t) = \mathbf{0}$.
+
+Ecuațiile lui Lagrange de speța întâi iau forma:
+\begin{equation}
+    \frac{d}{dt}\left(\frac{\partial E}{\partial \dot{q}_k}\right) - \frac{\partial E}{\partial q_k} = Q_k + \sum_{j=1}^{p} \lambda_j \frac{\partial f_j}{\partial q_k}
+\end{equation}
+
+Calculăm Jacobianul funcțiilor de legătură $F$:
+\begin{equation}
+    J_F = \begin{bmatrix}
+        \frac{\partial f_1}{\partial q_1} & \frac{\partial f_1}{\partial q_2} & \dots & \frac{\partial f_1}{\partial q_{3n}} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        \frac{\partial f_p}{\partial q_1} & \frac{\partial f_p}{\partial q_2} & \dots & \frac{\partial f_p}{\partial q_{3n}}
+    \end{bmatrix}
+\end{equation}
+
+Fie vectorul coloană al multiplicatorilor lui Lagrange $\Lambda = [\lambda_1, \dots, \lambda_p]^T$. Observăm că atunci când calculăm produsul $J_F^T \Lambda$ obținem exact termenii forțelor de legătură din ecuațiile lui Lagrange:
+\begin{equation}
+    J_F^T \Lambda = 
+    \begin{bmatrix}
+        \frac{\partial f_1}{\partial q_1} & \dots & \frac{\partial f_p}{\partial q_1} \\
+        \vdots & \ddots & \vdots \\
+        \frac{\partial f_1}{\partial q_{3n}} & \dots & \frac{\partial f_p}{\partial q_{3n}}
+    \end{bmatrix}
+    \begin{bmatrix}
+        \lambda_1 \\ \vdots \\ \lambda_p
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \sum_{j=1}^p \lambda_j \frac{\partial f_j}{\partial q_1} \\
+        \vdots \\
+        \sum_{j=1}^p \lambda_j \frac{\partial f_j}{\partial q_{3n}}
+    \end{bmatrix}
+\end{equation}
+
+Când scriem ecuațiile lui Lagrange desfășurat, forma matriceală devine:
+\begin{equation}
+    \frac{d}{dt}\left(\frac{\partial E}{\partial \dot{q}}\right) - \frac{\partial E}{\partial q} = Q + J_F^T \Lambda
+\end{equation}
+
+\textbf{Calculul derivatelor energiei:}
+
+Calculăm derivata parțială a energiei în raport cu componenta $\dot{q}_k$:
+\begin{equation}
+    \frac{\partial E}{\partial \dot{q}_k} = \frac{\partial}{\partial \dot{q}_k} \left( \frac{1}{2} \dot{q}^T A \dot{q} \right) = \frac{1}{2} \left[ \frac{\partial \dot{q}^T}{\partial \dot{q}_k} A \dot{q} + \dot{q}^T \frac{\partial A}{\partial \dot{q}_k} \dot{q} + \dot{q}^T A \frac{\partial \dot{q}}{\partial \dot{q}_k} \right]
+\end{equation}
+
+Deoarece matricea $A$ este constantă, derivata ei este zero. Derivata vectorului $\dot{q}$ în raport cu elementul $\dot{q}_k$ este un vector coloană $e_k$ care are $1$ pe poziția $k$ și $0$ în rest:
+\begin{equation}
+    \frac{\partial E}{\partial \dot{q}_k} = \frac{1}{2} \left[ \begin{bmatrix} 0 & \dots & 1 & \dots & 0 \end{bmatrix} A \dot{q} + 0 + \dot{q}^T A \begin{bmatrix} 0 \\ \vdots \\ 1 \\ \vdots \\ 0 \end{bmatrix} \right] = \frac{1}{2} [ e_k^T A \dot{q} + \dot{q}^T A e_k ]
+\end{equation}
+
+Dacă notăm $e_k^T A \dot{q}$ cu $B$, atunci $\dot{q}^T A e_k = B^T$. Deoarece dimensiunile matricelor $e_k^T$, $A$ și $\dot{q}$ sunt $1 \times 3n$, $3n \times 3n$ și respectiv $3n \times 1$, rezultă că $B$ este o matrice $1 \times 1$, deci $B$ este un scalar. Pentru un scalar, $B = B^T$.
+\begin{equation}
+    \frac{\partial E}{\partial \dot{q}_k} = \frac{1}{2} (B + B^T) = B = e_k^T A \dot{q}
+\end{equation}
+
+Cum matricea $A$ este diagonală, produsul extrage pur și simplu elementul de pe diagonala principală corespunzător poziției $k$:
+\begin{equation}
+    \frac{\partial E}{\partial \dot{q}_k} = a_{k,k} \dot{q}_k
+\end{equation}
+
+Derivând această expresie în raport cu timpul, obținem:
+\begin{equation}
+    \frac{d}{dt} \left( \frac{\partial E}{\partial \dot{q}_k} \right) = a_{k,k} \ddot{q}_k
+\end{equation}
+
+Rezultă asamblând pentru întregul vector coloană:
+\begin{equation}
+    \frac{d}{dt}\left(\frac{\partial E}{\partial \dot{q}}\right) = \frac{d}{dt}
+    \begin{bmatrix}
+        \frac{\partial E}{\partial \dot{q}_1} \\ \vdots \\ \frac{\partial E}{\partial \dot{q}_{3n}}
+    \end{bmatrix}
+    = A\ddot{q}
+\end{equation}
+
+Calculăm apoi derivata energiei în raport cu coordonata $q_k$:
+\begin{equation}
+    \frac{\partial E}{\partial q_k} = \frac{1}{2} \left[ \frac{\partial \dot{q}^T}{\partial q_k} A \dot{q} + \dot{q}^T \frac{\partial A}{\partial q_k} \dot{q} + \dot{q}^T A \frac{\partial \dot{q}}{\partial q_k} \right] = 0 + 0 + 0 = 0
+\end{equation}
+Acest lucru se întâmplă deoarece vitezele $\dot{q}$ și matricea constantă $A$ nu depind de $q_k$.
+
+Notăm vectorul forțelor generalizate cu $Q = \begin{bmatrix} Q_1 \\ \vdots \\ Q_K \end{bmatrix}$. 
+
+Înlocuind toate acestea în ecuațiile lui Lagrange de speța întâi, ajungem la forma finală:
+\begin{equation}
+    A\ddot{q} = Q + J_F^T \Lambda
+\end{equation}
+
+
+la care atașăm sistemul de constrângeri $F(q,t) = 0$.
+
+\section*{4. Introducerea constrângerilor}
+
+    Legăturile le vom realiza între puncte specifice aflate pe corpuri diferite. Pentru a formula ecuațiile de constrângere, trebuie să exprimăm coordonatele acestor puncte din sistemele locale în sistemul de referință global.
+
+Fie un punct $P$ aflat pe un corp arbitrar $l$. Dacă notăm coordonatele locale ale punctului $P$ față de centrul de masă al corpului cu $l_{xl}$ și $l_{yl}$, coordonatele sale globale vor fi date de transformarea:
+\begin{equation}
+    \begin{aligned}
+        x_P &= x_l + l_{xl}\cos\varphi_l - l_{yl}\sin\varphi_l \\
+        y_P &= y_l + l_{xl}\sin\varphi_l + l_{yl}\cos\varphi_l
+    \end{aligned}
+\end{equation}
+unde $(x_l, y_l, \varphi_l)$ definesc poziția centrului de masă și orientarea corpului $l$ în planul global.
+
+Când două corpuri, $A$ și $B$, sunt legate, trebuie sa adaugam componente noi functiei F. Astfel se va schimba si Jacobianul $J_F$.
+\begin{equation}
+    F = \big( f_1(q), \dots, f_p(q), f_{p+1}(q), \dots \big)^T
+\end{equation}
+
+\subsection*{4.1 Articulația}
+Introducerea unei articulații între corpurile $A$ și $B$ forțează punctele lor de legătură să coincidă ($x_{PA} = x_{PB}$ și $y_{PA} = y_{PB}$). Aceasta adaugă două constrângeri la sistem și doi multiplicatori Lagrange:
+\begin{equation}
+    \begin{aligned}
+        f_{p+1} &= x_A + l_{xA}\cos\varphi_A - l_{yA}\sin\varphi_A - (x_B + l_{xB}\cos\varphi_B - l_{yB}\sin\varphi_B) = 0 \\
+        f_{p+2} &= y_A + l_{xA}\sin\varphi_A + l_{yA}\cos\varphi_A - (y_B + l_{xB}\sin\varphi_B + l_{yB}\cos\varphi_B) = 0
+    \end{aligned}
+\end{equation}
+
+Calculăm derivatele parțiale ale funcțiilor $f_{p+1}$ și $f_{p+2}$ pentru a le adăuga în Jacobian:
+\begin{equation}
+    \begin{aligned}
+        \frac{\partial f_{p+1}}{\partial x_A} &= 1, \quad \frac{\partial f_{p+1}}{\partial x_B} = -1 \\
+        \frac{\partial f_{p+1}}{\partial \varphi_A} &= -l_{xA}\sin\varphi_A - l_{yA}\cos\varphi_A \\
+        \frac{\partial f_{p+1}}{\partial \varphi_B} &= l_{xB}\sin\varphi_B + l_{yB}\cos\varphi_B
+    \end{aligned}
+\end{equation}
+\begin{equation}
+    \begin{aligned}
+        \frac{\partial f_{p+2}}{\partial y_A} &= 1, \quad \frac{\partial f_{p+2}}{\partial y_B} = -1 \\
+        \frac{\partial f_{p+2}}{\partial \varphi_A} &= l_{xA}\cos\varphi_A - l_{yA}\sin\varphi_A \\
+        \frac{\partial f_{p+2}}{\partial \varphi_B} &= -l_{xB}\cos\varphi_B + l_{yB}\sin\varphi_B
+    \end{aligned}
+\end{equation}
+Toate celelalte derivate parțiale în raport cu coordonatele corpurilor care nu sunt implicate în articulație vor fi $0$.
+
+La nivel matriceal, introducerea articulației adaugă următorii vectori coloană la matricea $J_F^T$:
+\begin{equation}
+    \begin{bmatrix}
+        0 \\ \vdots \\ 1 \\ 0 \\ -l_{xA}\sin\varphi_A - l_{yA}\cos\varphi_A \\ \vdots \\ -1 \\ 0 \\ l_{xB}\sin\varphi_B + l_{yB}\cos\varphi_B \\ \vdots \\ 0
+    \end{bmatrix}
+    \quad \text{și} \quad
+    \begin{bmatrix}
+        0 \\ \vdots \\ 0 \\ 1 \\ l_{xA}\cos\varphi_A - l_{yA}\sin\varphi_A \\ \vdots \\ 0 \\ -1 \\ -l_{xB}\cos\varphi_B + l_{yB}\sin\varphi_B \\ \vdots \\ 0
+    \end{bmatrix}
+\end{equation}
+
+\subsection*{4.2 Încastrarea}
+Adăugarea unei încastrări presupune prezența constrângerilor de la articulație ($f_{p+1}$, $f_{p+2}$), la care se adaugă o componentă suplimentară ce blochează rotația relativă a celor două corpuri:
+\begin{equation}
+    f_{p+3} = \varphi_A - \varphi_B - \varphi_0 = 0
+\end{equation}
+unde $\varphi_0$ este unghiul relativ inițial la momentul încastrării.
+
+Derivatele parțiale ale noii funcții $f_{p+3}$ vor fi simplu:
+\begin{equation}
+    \frac{\partial f_{p+3}}{\partial \varphi_A} = 1, \quad \frac{\partial f_{p+3}}{\partial \varphi_B} = -1
+\end{equation}
+
+Matriceal, pe lângă cele două coloane adăugate de articulație, încastrarea mai adaugă un vector coloană în matricea $J_F^T$:
+\begin{equation}
+    \begin{bmatrix}
+        0 \\ \vdots \\ 1 \\ 0 \\ -l_{xA}\sin\varphi_A - l_{yA}\cos\varphi_A \\ \vdots \\ -1 \\ 0 \\ l_{xB}\sin\varphi_B + l_{yB}\cos\varphi_B \\ \vdots \\ 0
+    \end{bmatrix}
+    \quad \text{,} \quad
+    \begin{bmatrix}
+        0 \\ \vdots \\ 0 \\ 1 \\ l_{xA}\cos\varphi_A - l_{yA}\sin\varphi_A \\ \vdots \\ 0 \\ -1 \\ -l_{xB}\cos\varphi_B + l_{yB}\sin\varphi_B \\ \vdots \\ 0
+    \end{bmatrix}
+    \quad \text{și} \quad
+    \begin{bmatrix}
+        0 \\ \vdots \\ 0 \\ 0 \\ 1 \\ \vdots \\ 0 \\ 0 \\ -1 \\ \vdots \\ 0
+    \end{bmatrix}
+\end{equation}
+
+\end{document}

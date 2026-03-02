@@ -4,250 +4,7 @@
 #include <stdio.h>
 #include <cmath>
 #include <limits>
-
-class matrice
-{
-public:
-    int coloane;
-    int linii;
-    float *valori;
-
-    // Constructor
-    matrice()
-    {
-        this->linii = 0;
-        this->coloane = 0;
-        this->valori = NULL;
-    }
-
-    matrice(int n, int m)
-    {
-        this->linii = n;
-        this->coloane = m;
-        this->valori = new float[n * m]();
-    }
-
-    matrice(char type, int n, int m)
-    {
-        switch (type)
-        {
-        case 'I':
-        case 'i':
-        case '1':
-            if (n != m)
-            {
-                errno = 1;
-                this->linii = 0;
-                this->coloane = 0;
-                this->valori = NULL;
-            }
-            else
-            {
-                this->linii = n;
-                this->coloane = m;
-                this->valori = new float[n * m];
-                for (int i = 0; i < n; i++)
-                    for (int j = 0; j < m; j++)
-                        (*this->at(i, j)) = ((i == j) ? 1 : 0);
-            }
-            break;
-        case 'O':
-        case 'o':
-        case '0':
-            this->linii = n;
-            this->coloane = m;
-            this->valori = new float[n * m];
-            for (int i = 0; i < n; i++)
-                for (int j = 0; j < m; j++)
-                    (*this->at(i, j)) = 0;
-            break;
-        default:
-            errno = 1;
-            this->linii = 0;
-            this->coloane = 0;
-            this->valori = NULL;
-        }
-    }
-
-    matrice(const matrice &other)
-    {
-        this->linii = other.linii;
-        this->coloane = other.coloane;
-        if (other.valori != NULL)
-        {
-            this->valori = new float[this->linii * this->coloane];
-            for (int i = 0; i < this->linii * this->coloane; i++)
-                this->valori[i] = other.valori[i];
-        }
-        else
-        {
-            this->valori = NULL;
-        }
-    }
-
-    ~matrice()
-    {
-        delete[] this->valori;
-        this->valori = NULL;
-    }
-
-    // Metode
-    float *at(int i, int j) const
-    {
-        return this->valori + i * this->coloane + j;
-    }
-
-    matrice transpose() const
-    {
-        matrice T(this->coloane, this->linii);
-        for (int i = 0; i < this->linii; i++)
-            for (int j = 0; j < this->coloane; j++)
-            {
-                *T.at(j, i) = *(this->at(i, j));
-            }
-        return T;
-    }
-
-    matrice inverse() const
-    { // deoarece singura matrice pe care trebuie inversata este A, care este diagonala, vom inversa elementele de pe diagonala
-
-        int n = this->linii;
-        matrice B(n, n);
-
-        for (int i = 0; i < n; i++)
-        {
-            B(i, i) = (*this)(i, i) == std::numeric_limits<float>::max() ? 0 : (*this)(i, i);
-        }
-
-        return B;
-    }
-
-    void printmatrice()
-    {
-        for (int i = 0; i < this->linii; i++)
-        {
-            for (int j = 0; j < this->coloane; j++)
-                fprintf(stdout, "%8.4f ", (*this->at(i, j)));
-            fprintf(stdout, "\n");
-        }
-    }
-
-    // Operatori
-    matrice &operator=(const matrice &B)
-    {
-        if (this == &B)
-            return *this;
-        this->linii = B.linii;
-        this->coloane = B.coloane;
-        delete[] this->valori;
-        if (B.valori != NULL)
-        {
-            this->valori = new float[this->linii * this->coloane];
-            for (int i = 0; i < this->linii * this->coloane; i++)
-                this->valori[i] = B.valori[i];
-        }
-        else
-        {
-            this->valori = NULL;
-        }
-        return *this;
-    }
-
-    matrice operator+(const matrice &B) const
-    {
-        if ((this->linii != B.linii) || (this->coloane != B.coloane))
-        {
-            errno = 1;
-            matrice O;
-            return O;
-        }
-        int n = this->linii;
-        int m = this->coloane;
-        matrice S(n, m);
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < m; j++)
-            {
-                *(S.at(i, j)) = *(this->at(i, j)) + *(B.at(i, j));
-            }
-        return S;
-    }
-
-    matrice operator*(const matrice &B) const
-    {
-        if (this->coloane != B.linii)
-        {
-            errno = 1;
-            matrice O;
-            return O;
-        }
-        int n = this->linii;
-        int m = B.coloane;
-        int p = this->coloane;
-        matrice P(n, m);
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < m; j++)
-            {
-                float s = 0;
-                for (int k = 0; k < p; k++)
-                    s += (*(this->at(i, k))) * (*(B.at(k, j)));
-                *(P.at(i, j)) = s;
-            }
-        return P;
-    }
-
-    matrice operator*(const float x) const
-    {
-        matrice R;
-        R = *this;
-        for (int i = 0; i < this->linii; i++)
-            for (int j = 0; j < this->coloane; j++)
-                *(R.at(i, j)) = (*this->at(i, j)) * x;
-        return R;
-    }
-
-    matrice operator^(char *pow)
-    {
-        if (*pow == 'T' || *pow == 't')
-        {
-            return this->transpose();
-        }
-        else
-        {
-            char inverseFlag = (pow[0] == '-') ? 1 : 0;
-            matrice R('I', this->linii, this->coloane);
-            int power = atoi(pow + (inverseFlag == 1 ? 1 : 0));
-            for (int i = 0; i < power; i++)
-            {
-                R = R * (*this);
-            }
-            if (inverseFlag)
-                R = R.inverse();
-            return R;
-        }
-    }
-
-    void operator-(matrice &M)
-    {
-        for (int i = 1; i < M.linii; i++)
-            for (int j = 1; j < M.coloane; j++)
-                M(i, j) = (-1) * M(i, j);
-    }
-
-    float &operator()(int i, int j)
-    {
-        return *this->at(i, j);
-    }
-
-    const float &operator()(int i, int j) const
-    {
-        return *this->at(i, j);
-    }
-};
-
-inline matrice operator*(const float x, const matrice &M)
-{
-    return M * x;
-}
+#include "matrice.h"
 
 class rigid
 {
@@ -286,7 +43,7 @@ public:
         p = 0;
 
         corpuri = new rigid[n];
-        legaturi = new legatura *[p];
+        legaturi = new legatura *[nr_legaturi];
         stare = matrice(6 * n, 1);
     }
 
@@ -311,8 +68,7 @@ public:
         }
     }
 
-    void incarcaStare()
-    {
+    void incarcaStare(){
         for (int i = 0; i < n; i++)
         {
             stare(i * 3, 0) = corpuri[i].x;
@@ -324,8 +80,7 @@ public:
         }
     }
 
-    void seteazaStare()
-    {
+    void seteazaStare(){
         for (int i = 0; i < n; i++)
         {
             corpuri[i].x = stare(i * 3, 0);
@@ -357,20 +112,20 @@ public:
 
         int rand_constrangere = 0;
 
-        for (int i = 0; i < nr_legaturi; i++)
+        for (int i = 0; i < legaturi_adaugate; i++)
         {
 
-            int indexA, indexB;
+            int indexA = 0, indexB = 0;
 
-            for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
             {
-                if (&(corpuri[i]) == legaturi[i].corpA)
-                    indexA = i;
-                if (&(corpuri[i]) == legaturi[i].corpB)
-                    indexB = i;
+                if (&(corpuri[j]) == legaturi[i]->corpA)
+                    indexA = 3 * j;
+                if (&(corpuri[j]) == legaturi[i]->corpB)
+                    indexB = 3 * j;
             }
 
-            legaturi[i]->calculeazaJacobian(&J_F, rand_constrangere, indexA, indexB);
+            legaturi[i]->calculeazaJacobian(J_F, rand_constrangere, indexA, indexB);
             rand_constrangere += legaturi[i]->getNumarEcuatii();
         }
     }
@@ -553,5 +308,5 @@ public:
 
 matrice f(const matrice &x, float t);
 void seteazaForte(sistem &S, float t);
-matrice derivate(sistem &S, const matrice &stare_curenta, float t);
+matrice derivata(sistem &S, const matrice &stare_curenta, float t);
 matrice RK4(sistem &S, const matrice &x, float dt, float t);
