@@ -1,5 +1,5 @@
 #include "fizica.h"
-
+/*
 // rezolva sisteme olonoame scleronome, cu legaturi bilaterale
 
 matrice RK4(sistem &S,const matrice &x, float dt, float t){
