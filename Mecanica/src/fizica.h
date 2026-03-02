@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <cmath>
+#include <limits>
 
 class matrice {
     public:
@@ -77,28 +78,15 @@ class matrice {
         return T;
     }
     
-    matrice inverse() const{                  
-        if(this->linii != this->coloane){
-            errno = 1; matrice O; return O;
-        }
+    matrice inverse() const{            //deoarece singura matrice pe care trebuie inversata este A, care este diagonala, vom inversa elementele de pe diagonala        
+
         int n = this->linii;
-        matrice B('I',n,n);
-        matrice A = *this;
-        for(int k = 0; k < n; k++){
-            float pivot  = *(A.at(k,k));
-            for (int j = 0; j < n; j++) {
-                *(A.at(k, j)) /= pivot; *(B.at(k, j)) /= pivot;
-            }
-            for(int i = 0; i < n; i++){
-                if( i != k){
-                    float x = *(A.at(i,k));
-                    for(int j = 0; j < n; j++){
-                        *(A.at(i,j)) -= x * (*(A.at(k,j)));
-                        *(B.at(i,j)) -= x * (*(B.at(k,j)));
-                    }
-                }
-            }
-       }
+        matrice B(n,n);
+
+        for(int i = 0; i < n; i++){
+            B(i,i) = (*this)(i,i) == std::numeric_limits<float>::max() ? 0 : (*this)(i,i);
+        }
+        
        return B;
     }
     
@@ -196,87 +184,190 @@ inline matrice operator*(const float x, const matrice &M){
     return M*x;
 }
 
-class particula {
+class rigid{
     public:
+        float x,y,phi;
+        float v_x,v_y,omega;     //coordonatele centrului de greautea, si unghiul facut de sistemul de referinta propriu fata de cel universal
+        float M, J;
+        float f_x,f_y,moment;
+};
 
-    float x;
-    float y;
-    float vx;
-    float vy;
-    float fx;
-    float fy;
-    float masa;
-    float sarcina;
-
-    particula(){
-        x=0.0f;
-        y=0.0f;
-        vx=0.0f;
-        vy=0.0f;
-        fx=0.0f;
-        fy=0.0f;
-        masa=0.0f;
-        sarcina=0.0f;
-    }
-
-    particula(float abscisa,float ordonata, float viteza_x, float viteza_y, float masa_particula, float sarcina_particula){
-        x = abscisa;
-        y = ordonata;
-        vx = viteza_x;
-        vy = viteza_y;
-        masa = masa_particula;
-        sarcina = sarcina_particula;
-    }
-
-    void greutateProprie(){
-        fy += masa * (-9.81f);
-    }
-
-
+enum{
+    ARTICULATIE,
+    INCASTRARE
 };
 
 class sistem {
     public:
-    int n;
-    particula *v;
+    int n,p;
+    rigid *corpuri;
+    legatura *legaturi;
     matrice stare;
 
-    sistem(int nr_particule){
-    n = nr_particule;
-    v =  new particula[n];
-    stare = matrice(4*n,1);
+    matrice Q, J_F, A, Lambda;                  // Q - vectorul fortelor externe
+                                                // J_f - Jacobianul legaturilor
+    sistem(int nr_corpuri, int nr_legaturi){    // A - matricea de inertie
+    n = nr_corpuri;                             // Lambda - vectorul multiplicatorilor lui Lagrange
+    p = nr_legaturi;
+    corpuri =  new rigid[n];
+    legaturi = new legatura[p];
+    stare = matrice(6*n,1);
     }
 
     ~sistem(){
-        delete[] v;
-    }
-
-    float distanta(particula p1, particula p2){
-        return sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
-    }
-
-    matrice vectorPozitie(particula p1, particula p2){
-        matrice r(2,1);
-        r(0,0) = p2.x - p1.x;
-        r(1,0) = p2.y - p1.y;
+        delete[] corpuri;
     }
     
     void incarcaStare(){
         for(int i = 0; i < n; i++){
-            stare(i*2,0)       = v[i].x;
-            stare(i*2+1,0)     = v[i].y;
-            stare(i*2 + n,0)   = v[i].vx;
-            stare(i*2+1 + n,0) = v[i].vy;
+            stare(i*3,0)       = corpuri[i].x;
+            stare(i*3+1,0)     = corpuri[i].y;
+            stare(i*3+2,0)     = corpuri[i].phi;
+            stare(i*3 + n,0)   = corpuri[i].v_x;
+            stare(i*3+1 + n,0) = corpuri[i].v_y;
+            stare(i*3+1 + n,0) = corpuri[i].omega;
+            
         }
     }
 
     void seteazaStare(){
         for(int i = 0; i < n; i++){
-           v[i].x = stare(i*2,0);    
-           v[i].y = stare(i*2+1,0);
-           v[i].vx = stare(i*2 + n,0);
-           v[i].vy = stare(i*2+1 + n,0);
+           corpuri[i].x = stare(i*3,0);    
+           corpuri[i].y = stare(i*3+1,0);
+           corpuri[i].phi = stare(i*3+2,0);
+           corpuri[i].v_x = stare(i*3 + n,0);
+           corpuri[i].v_y = stare(i*3+1 + n,0);
+           corpuri[i].omega = stare(i*3+2 + n,0);
         } 
+    }
+
+    void seteazaJacobian(){
+        for( int i = 0; i <n ; i++){
+            corpuri[i].
+        }
+    }
+
+
+};
+
+class legatura {
+    protected:
+        rigid* corpA;
+        rigid* corpB;
+
+    public:
+
+        legatura(){
+            corpA = NULL;
+            corpB = NULL;
+        }
+
+        legatura(rigid* a, rigid *b) : corpA(a),corpB(b) {}
+
+        virtual ~legatura() = default;   // ii spune destructorului sa stearga si spatiul utilizat de celelalte clase
+
+        virtual int getNumarEcuatii() const = 0;
+        virtual void calculeazaJacobian(matrice& J_F, int rand_start, int indexA, int indexB) = 0;
+};
+
+class articulatie : public legatura{
+    private: 
+    float l_xA, l_yA;
+    float l_xB, l_yB;
+
+    public:
+    articulatie(rigid* a, rigid* b, float lxa, float lya, float lxb, float lyb) 
+        : legatura(a, b), l_xA(lxa), l_yA(lya), l_xB(lxb), l_yB(lyb) {}
+
+    int getNumarEcuatii() const override {
+        return 2;
+    }
+
+    void calculeazaJacobian(matrice& J_F, int rand_start, int indexA, int indexB) override {
+        float phiA = corpA->phi;
+        float phiB = corpB->phi;
+
+        float sinA = sin(phiA);
+        float cosA = cos(phiA);
+        float sinB = sin(phiB);
+        float cosB = cos(phiB);
+        
+        // randul lui f_p+1 -- constrangerea pe OX
+
+        J_F(rand_start,indexA + 0) = 1.0f; // indexA + 0 este x_A
+        J_F(rand_start,indexA + 1) = 0.0f; // indexA + 0 este y_A 
+        J_F(rand_start,indexA + 2) = -l_xA * sinA - l_yA * cosA; // indexA + 0 este phi_A     
+        
+        J_F(rand_start,indexB + 0) = -1.0f; 
+        J_F(rand_start,indexB + 1) = 0.0f; 
+        J_F(rand_start,indexB + 2) = l_xB * sinB + l_yB * cosB; 
+
+        // randul lui f_p+2 -- constrangerea pe OY
+
+        J_F(rand_start + 1,indexA + 0) = 0.0f; // indexA + 0 este x_A
+        J_F(rand_start + 1,indexA + 1) = 1.0f; // indexA + 0 este y_A 
+        J_F(rand_start + 1,indexA + 2) = l_xA * cosA - l_yA * sinA; // indexA + 0 este phi_A     
+        
+        J_F(rand_start + 1,indexB + 0) = 0.0f; 
+        J_F(rand_start + 1,indexB + 1) = -1.0f; 
+        J_F(rand_start + 1,indexB + 2) = -l_xB * cosB + l_yB * sinB; 
+
+    }
+};
+
+class incastrare : public legatura{
+    private: 
+    float l_xA, l_yA;
+    float l_xB, l_yB;
+    float phi_0;
+
+    public:
+    incastrare(rigid* a, rigid* b, float lxa, float lya, float lxb, float lyb, float unghiInitial) 
+        : legatura(a, b), l_xA(lxa), l_yA(lya), l_xB(lxb), l_yB(lyb), phi_0(unghiInitial) {}
+
+    int getNumarEcuatii() const override {
+        return 3;
+    }
+
+    void calculeazaJacobian(matrice& J_F, int rand_start, int indexA, int indexB) override {
+        float phiA = corpA->phi;
+        float phiB = corpB->phi;
+
+        float sinA = sin(phiA);
+        float cosA = cos(phiA);
+        float sinB = sin(phiB);
+        float cosB = cos(phiB);
+        
+        // randul lui f_p+1 -- constrangerea pe OX
+
+        J_F(rand_start,indexA + 0) = 1.0f; // indexA + 0 este x_A
+        J_F(rand_start,indexA + 1) = 0.0f; // indexA + 0 este y_A 
+        J_F(rand_start,indexA + 2) = -l_xA * sinA - l_yA * cosA; // indexA + 0 este phi_A     
+        
+        J_F(rand_start,indexB + 0) = -1.0f; 
+        J_F(rand_start,indexB + 1) = 0.0f; 
+        J_F(rand_start,indexB + 2) = l_xB * sinB + l_yB * cosB; 
+
+        // randul lui f_p+2 -- constrangerea pe OY
+
+        J_F(rand_start + 1,indexA + 0) = 0.0f; // indexA + 0 este x_A
+        J_F(rand_start + 1,indexA + 1) = 1.0f; // indexA + 0 este y_A 
+        J_F(rand_start + 1,indexA + 2) = l_xA * cosA - l_yA * sinA; // indexA + 0 este phi_A     
+        
+        J_F(rand_start + 1,indexB + 0) = 0.0f; 
+        J_F(rand_start + 1,indexB + 1) = -1.0f; 
+        J_F(rand_start + 1,indexB + 2) = -l_xB * cosB + l_yB * sinB; 
+
+        // randul lui f_p+3 -- constrangerea fata de Phi
+
+        J_F(rand_start + 1,indexA + 0) = 0.0f; // indexA + 0 este x_A
+        J_F(rand_start + 1,indexA + 1) = 0.0f; // indexA + 0 este y_A 
+        J_F(rand_start + 1,indexA + 2) = -1.0f; // indexA + 0 este phi_A     
+        
+        J_F(rand_start + 1,indexB + 0) = 0.0f; 
+        J_F(rand_start + 1,indexB + 1) = 0.0f; 
+        J_F(rand_start + 1,indexB + 2) = 1.0f; 
+
     }
 };
 
