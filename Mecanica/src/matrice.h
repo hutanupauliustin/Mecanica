@@ -111,15 +111,24 @@ public:
 
     matrice inverse() const
     { // deoarece singura matrice pe care trebuie inversata este A, care este diagonala, vom inversa elementele de pe diagonala
-
+        if (linii != coloane) {
+            errno = 1; 
+            return matrice();
+        }
         int n = this->linii;
         matrice B(n, n);
 
         for (int i = 0; i < n; i++)
         {
-            B(i, i) = (*this)(i, i) == std::numeric_limits<float>::max() ? 0 : (*this)(i, i);
+            float val = (*this)(i, i);
+            // Inversam elementele de pe diagonala. Daca un element e 0 (masa 0), mobilitatea e infinita.
+            // Pentru un corp static (masa infinita), mobilitatea (1/M) este 0.
+            if (std::abs(val) < 1e-9f) { // Evitam impartirea la zero
+                B(i, i) = 0.0f; // Pentru masa/inertie zero sau infinita, mobilitatea este 0.
+            } else {
+                B(i, i) = 1.0f / val;
+            }
         }
-
         return B;
     }
 
@@ -206,7 +215,7 @@ public:
         return R;
     }
 
-    matrice operator^(char *pow)
+    matrice operator^(const char *pow)
     {
         if (*pow == 'T' || *pow == 't')
         {
@@ -229,8 +238,8 @@ public:
 
     void operator-(matrice &M)
     {
-        for (int i = 1; i < M.linii; i++)
-            for (int j = 1; j < M.coloane; j++)
+        for (int i = 0; i < M.linii; i++)
+            for (int j = 0; j < M.coloane; j++)
                 M(i, j) = (-1) * M(i, j);
     }
 

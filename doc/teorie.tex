@@ -218,6 +218,40 @@ Notăm vectorul forțelor generalizate cu $Q = \begin{bmatrix} Q_1 \\ \vdots \\ 
 
 la care atașăm sistemul de constrângeri $F(q,t) = 0$.
 
+\subsection*{Rezolvarea sistemului de ecuații}
+
+Sistemul format din ecuațiile de mișcare și ecuațiile de constrângere este:
+\begin{equation}
+    \begin{cases}
+        F(q) = 0 \\
+        A\ddot{q} = Q + J_F^T \Lambda
+    \end{cases}
+\end{equation}
+Acest sistem nu este suficient pentru a calcula direct componentele lui $q$ și multiplicatorii $\Lambda$, deoarece din prima ecuație putem obține coordonatele $q$, dar în a doua ecuație avem nevoie de accelerațiile $\ddot{q}$.
+
+Pentru a rezolva această problemă, derivăm prima ecuație (condiția de legătură) de două ori în raport cu timpul:
+\begin{equation}
+    \frac{d}{dt}\left[ \frac{d}{dt}F(q) \right] = 0 \implies \frac{d}{dt}(J_F \dot{q}) = 0
+\end{equation}
+Aplicând regula produsului, ajungem la ecuația constrângerilor la nivel de accelerații:
+\begin{equation}
+    J_F \ddot{q} + \dot{J}_F \dot{q} = 0
+\end{equation}
+
+Din ecuația de mișcare exprimăm accelerațiile $\ddot{q}$:
+\begin{equation}
+    A\ddot{q} = Q + J_F^T \Lambda \implies \ddot{q} = A^{-1}Q + A^{-1}J_F^T \Lambda
+\end{equation}
+
+Înlocuim expresia lui $\ddot{q}$ în ecuația derivată a constrângerilor:
+\begin{equation}
+    J_F (A^{-1}Q + A^{-1}J_F^T \Lambda) + \dot{J}_F \dot{q} = 0
+\end{equation}
+Desfăcând parantezele și separând termenul care îl conține pe $\Lambda$, obținem forma finală a sistemului liniar din care se pot calcula multiplicatorii lui Lagrange:
+\begin{equation}
+    (J_F A^{-1} J_F^T)\Lambda = -\dot{J}_F \dot{q} - J_F A^{-1} Q
+\end{equation}
+
 \section*{4. Introducerea constrângerilor}
 
     Legăturile le vom realiza între puncte specifice aflate pe corpuri diferite. Pentru a formula ecuațiile de constrângere, trebuie să exprimăm coordonatele acestor puncte din sistemele locale în sistemul de referință global.
@@ -273,6 +307,32 @@ La nivel matriceal, introducerea articulației adaugă următorii vectori coloan
     \end{bmatrix}
 \end{equation}
 
+\subsection*{Calculul matricelor pentru Articulație}
+
+Pentru o articulație, am definit deja ecuațiile de legătură $f_{p+1}$ și $f_{p+2}$:
+\begin{equation}
+    \begin{aligned}
+        f_{p+1} &= x_A + l_{xA}\cos\varphi_A - l_{yA}\sin\varphi_A - (x_B + l_{xB}\cos\varphi_B - l_{yB}\sin\varphi_B) = 0 \\
+        f_{p+2} &= y_A + l_{xA}\sin\varphi_A + l_{yA}\cos\varphi_A - (y_B + l_{xB}\sin\varphi_B + l_{yB}\cos\varphi_B) = 0
+    \end{aligned}
+\end{equation}
+
+Prin derivarea matricelor în raport cu timpul, articulația introduce în matricea $\dot{J}_F$ următoarele două linii (corespunzătoare coordonatelor corpurilor $A$ și $B$):
+\begin{equation}
+    \begin{bmatrix}
+        0 & 0 & -l_{xA}\dot{\varphi}_A\cos\varphi_A + l_{yA}\dot{\varphi}_A\sin\varphi_A & \dots & 0 & 0 & l_{xB}\dot{\varphi}_B\cos\varphi_B - l_{yB}\dot{\varphi}_B\sin\varphi_B \\
+        0 & 0 & -l_{xA}\dot{\varphi}_A\sin\varphi_A - l_{yA}\dot{\varphi}_A\cos\varphi_A & \dots & 0 & 0 & l_{xB}\dot{\varphi}_B\sin\varphi_B + l_{yB}\dot{\varphi}_B\cos\varphi_B
+    \end{bmatrix}
+\end{equation}
+
+Acești termeni intervin în calculul vectorului $\dot{J}_F \dot{q}$. Înmulțind liniile de mai sus cu vectorul coloană al vitezelor $\dot{q} = [\dots, \dot{x}_A, \dot{y}_A, \dot{\varphi}_A, \dots, \dot{x}_B, \dot{y}_B, \dot{\varphi}_B, \dots]^T$, obținem componentele adăugate de articulație la vectorul $\dot{J}_F \dot{q}$:
+\begin{equation}
+    \begin{bmatrix}
+        -l_{xA}\dot{\varphi}_A^2\cos\varphi_A + l_{yA}\dot{\varphi}_A^2\sin\varphi_A + l_{xB}\dot{\varphi}_B^2\cos\varphi_B - l_{yB}\dot{\varphi}_B^2\sin\varphi_B \\
+        -l_{xA}\dot{\varphi}_A^2\sin\varphi_A - l_{yA}\dot{\varphi}_A^2\cos\varphi_A + l_{xB}\dot{\varphi}_B^2\sin\varphi_B + l_{yB}\dot{\varphi}_B^2\cos\varphi_B
+    \end{bmatrix}
+\end{equation}
+
 \subsection*{4.2 Încastrarea}
 Adăugarea unei încastrări presupune prezența constrângerilor de la articulație ($f_{p+1}$, $f_{p+2}$), la care se adaugă o componentă suplimentară ce blochează rotația relativă a celor două corpuri:
 \begin{equation}
@@ -297,6 +357,35 @@ Matriceal, pe lângă cele două coloane adăugate de articulație, încastrarea
     \quad \text{și} \quad
     \begin{bmatrix}
         0 \\ \vdots \\ 0 \\ 0 \\ 1 \\ \vdots \\ 0 \\ 0 \\ -1 \\ \vdots \\ 0
+    \end{bmatrix}
+\end{equation}
+
+\subsection*{Calculul vectorului $\dot{J}_F \dot{q}$ pentru Încastrare}
+
+Pentru o încastrare, sistemul de ecuații de legătură conține ecuațiile articulației ($f_{p+1}$ și $f_{p+2}$) la care se adaugă o ecuație suplimentară pentru blocarea rotației relative:
+\begin{equation}
+    f_{p+3} = \varphi_A - \varphi_B - \varphi_0 = 0
+\end{equation}
+
+Liniile corespunzătoare funcțiilor $f_{p+1}$ și $f_{p+2}$ în matricea $\dot{J}_F$ și, implicit, în vectorul $\dot{J}_F \dot{q}$, rămân absolut identice cu cele calculate anterior pentru articulație. 
+
+Pentru funcția $f_{p+3}$, derivatele parțiale care intră în Jacobian sunt constante:
+\begin{equation}
+    \frac{\partial f_{p+3}}{\partial \varphi_A} = 1, \quad \frac{\partial f_{p+3}}{\partial \varphi_B} = -1
+\end{equation}
+Deoarece aceste derivate sunt valori constante (nu depind nici de timp, nici de coordonate), derivata lor în raport cu timpul pentru a forma matricea $\dot{J}_F$ este nulă. Astfel, linia adăugată de $f_{p+3}$ în matricea $\dot{J}_F$ este formată exclusiv din zerouri:
+\begin{equation}
+    \begin{bmatrix}
+        0 & 0 & 0 & \dots & 0 & 0 & 0
+    \end{bmatrix}
+\end{equation}
+
+Prin urmare, atunci când calculăm produsul $\dot{J}_F \dot{q}$, componenta corespunzătoare ecuației $f_{p+3}$ va fi $0$. Forma finală a componentelor introduse de o încastrare în vectorul $\dot{J}_F \dot{q}$ este un vector coloană de dimensiune $3 \times 1$:
+\begin{equation}
+    \begin{bmatrix}
+        -l_{xA}\dot{\varphi}_A^2\cos\varphi_A + l_{yA}\dot{\varphi}_A^2\sin\varphi_A + l_{xB}\dot{\varphi}_B^2\cos\varphi_B - l_{yB}\dot{\varphi}_B^2\sin\varphi_B \\
+        -l_{xA}\dot{\varphi}_A^2\sin\varphi_A - l_{yA}\dot{\varphi}_A^2\cos\varphi_A + l_{xB}\dot{\varphi}_B^2\sin\varphi_B + l_{yB}\dot{\varphi}_B^2\cos\varphi_B \\
+        0
     \end{bmatrix}
 \end{equation}
 

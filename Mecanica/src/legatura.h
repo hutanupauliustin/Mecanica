@@ -1,0 +1,174 @@
+#pragma once
+#include "rigid.h"
+#include "matrice.h"
+#include <cmath>
+
+class legatura
+{
+public:
+    int contorCorpA;
+    int contorCorpB;
+
+    legatura()
+    {
+        contorCorpA = 0;
+        contorCorpB = 0;
+    }
+
+    legatura(int a, int b) : contorCorpA(a), contorCorpB(b) {}
+
+    virtual ~legatura() = default; // "virtual" ii spune destructorului sa stearga si spatiul utilizat de celelalte clase
+
+    virtual int getNumarEcuatii() const = 0;
+    virtual void calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) = 0;
+    virtual void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) = 0;
+};
+
+class articulatie : public legatura
+{
+private:
+    float l_xA, l_yA;
+    float l_xB, l_yB;
+
+public:
+    articulatie(int a, int b, float lxa, float lya, float lxb, float lyb)
+        : legatura(a, b), l_xA(lxa), l_yA(lya), l_xB(lxb), l_yB(lyb) {}
+
+    int getNumarEcuatii() const override
+    {
+        return 2;
+    }
+
+    void calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) override
+    { // adauga randurile la jacobian adaugate de legatura apelata
+        // Presupunem ca contorCorpA este indexul corpului (0, 1, 2...). 
+        // In vectorul de stare, pozitia este la index * 3.
+        int idxA = contorCorpA * 3;
+        int idxB = contorCorpB * 3;
+        float phiA = stare(idxA + 2, 0);
+        float phiB = stare(idxB + 2, 0);
+
+        float sinA = sin(phiA);
+        float cosA = cos(phiA);
+        float sinB = sin(phiB);
+        float cosB = cos(phiB);
+
+        // randul lui f_p+1 -- constrangerea pe OX
+
+        J_F(rand_start, idxA + 0) = 1.0f;                       // x_A
+        J_F(rand_start, idxA + 1) = 0.0f;                       // y_A
+        J_F(rand_start, idxA + 2) = -l_xA * sinA - l_yA * cosA; // phi_A
+
+        J_F(rand_start, idxB + 0) = -1.0f;
+        J_F(rand_start, idxB + 1) = 0.0f;
+        J_F(rand_start, idxB + 2) = l_xB * sinB + l_yB * cosB;
+
+        // randul lui f_p+2 -- constrangerea pe OY
+
+        J_F(rand_start + 1, idxA + 0) = 0.0f;                      // x_A
+        J_F(rand_start + 1, idxA + 1) = 1.0f;                      // y_A
+        J_F(rand_start + 1, idxA + 2) = l_xA * cosA - l_yA * sinA; // phi_A
+
+        J_F(rand_start + 1, idxB + 0) = 0.0f;
+        J_F(rand_start + 1, idxB + 1) = -1.0f;
+        J_F(rand_start + 1, idxB + 2) = -l_xB * cosB + l_yB * sinB;
+    }
+
+    void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) override{
+        
+        int idxA = contorCorpA * 3;
+        int idxB = contorCorpB * 3;
+        // Offsetul pentru viteze este 3*n (cate 3 coordonate per corp)
+        int offsetViteze = 3 * n; 
+
+        float phiA = stare(idxA + 2, 0);
+        float phiB = stare(idxB + 2, 0);
+        
+        float phiPunctA = stare(idxA + 2 + offsetViteze, 0);
+        float phiPunctB = stare(idxB + 2 + offsetViteze, 0);
+
+        float sinA = sin(phiA);
+        float cosA = cos(phiA);
+        float sinB = sin(phiB);
+        float cosB = cos(phiB);
+
+        // Termenii -J_dot * q_dot
+        
+        // Componenta X
+        float termA_X = -l_xA * (phiPunctA * phiPunctA) * cosA + l_yA * (phiPunctA * phiPunctA) * sinA;
+        float termB_X = l_xB * (phiPunctB * phiPunctB) * cosB - l_yB * (phiPunctB * phiPunctB) * sinB;
+        
+        JdotQ(rand_start, 0) = -(termA_X + termB_X); 
+        
+        // Componenta Y
+        float termA_Y = -l_xA * (phiPunctA * phiPunctA) * sinA - l_yA * (phiPunctA * phiPunctA) * cosA;
+        float termB_Y = l_xB * (phiPunctB * phiPunctB) * sinB + l_yB * (phiPunctB * phiPunctB) * cosB;
+        
+        JdotQ(rand_start + 1, 0) = -(termA_Y + termB_Y);
+    }   
+};
+
+class incastrare : public legatura
+{
+private:
+    float l_xA, l_yA;
+    float l_xB, l_yB;
+    float phi_0;
+
+public:
+    incastrare(int a, int b, float lxa, float lya, float lxb, float lyb, float unghiInitial)
+        : legatura(a, b), l_xA(lxa), l_yA(lya), l_xB(lxb), l_yB(lyb), phi_0(unghiInitial) {}
+
+    int getNumarEcuatii() const override
+    {
+        return 3;
+    }
+
+    void calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) override
+    {
+        int indexA = contorCorpA * 3;
+        int indexB = contorCorpB * 3;
+        float phiA = stare(indexA + 2, 0);
+        float phiB = stare(indexB + 2, 0);
+
+        float sinA = sin(phiA);
+        float cosA = cos(phiA);
+        float sinB = sin(phiB);
+        float cosB = cos(phiB);
+
+        // randul lui f_p+1 -- constrangerea pe OX
+
+        J_F(rand_start, indexA + 0) = 1.0f;                       // indexA + 0 este x_A
+        J_F(rand_start, indexA + 1) = 0.0f;                       // indexA + 1 este y_A
+        J_F(rand_start, indexA + 2) = -l_xA * sinA - l_yA * cosA; // indexA + 2 este phi_A
+
+        J_F(rand_start, indexB + 0) = -1.0f;
+        J_F(rand_start, indexB + 1) = 0.0f;
+        J_F(rand_start, indexB + 2) = l_xB * sinB + l_yB * cosB;
+
+        // randul lui f_p+2 -- constrangerea pe OY
+
+        J_F(rand_start + 1, indexA + 0) = 0.0f;                      // indexA + 0 este x_A
+        J_F(rand_start + 1, indexA + 1) = 1.0f;                      // indexA + 1 este y_A
+        J_F(rand_start + 1, indexA + 2) = l_xA * cosA - l_yA * sinA; // indexA + 2 este phi_A
+
+        J_F(rand_start + 1, indexB + 0) = 0.0f;
+        J_F(rand_start + 1, indexB + 1) = -1.0f;
+        J_F(rand_start + 1, indexB + 2) = -l_xB * cosB + l_yB * sinB;
+
+        // randul lui f_p+3 -- constrangerea fata de Phi
+
+        J_F(rand_start + 2, indexA + 0) = 0.0f;  // indexA + 0 este x_A
+        J_F(rand_start + 2, indexA + 1) = 0.0f;  // indexA + 1 este y_A
+        J_F(rand_start + 2, indexA + 2) = -1.0f; // indexA + 2 este phi_A
+
+        J_F(rand_start + 2, indexB + 0) = 0.0f;
+        J_F(rand_start + 2, indexB + 1) = 0.0f;
+        J_F(rand_start + 2, indexB + 2) = 1.0f;
+    }
+
+    void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) override {
+        // Implementare similara cu articulatia pentru primele 2 randuri
+        // Randul 3 (unghiul) are derivata 0 daca e constant
+    }
+};
