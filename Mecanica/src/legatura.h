@@ -22,6 +22,8 @@ public:
     virtual int getNumarEcuatii() const = 0;
     virtual void calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) = 0;
     virtual void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) = 0;
+    virtual float getAbscisa(matrice &stare) = 0;
+    virtual float getOrdonata(matrice &stare) = 0;
 };
 
 class articulatie : public legatura
@@ -37,6 +39,28 @@ public:
     int getNumarEcuatii() const override
     {
         return 2;
+    }
+
+    float getAbscisa(matrice &stare) override{
+        
+        int idxA = contorCorpA * 3;
+        int idxB = contorCorpB * 3;
+        float xA = stare(idxA + 0, 0);
+        float yA = stare(idxA + 1, 0);
+        float phiA = stare(idxA + 2, 0);
+
+        return xA + this->l_xA * cos(phiA) - this->l_yA * sin(phiA);
+    }
+
+    float getOrdonata(matrice &stare) override{
+        
+        int idxA = contorCorpA * 3;
+        int idxB = contorCorpB * 3;
+        float xA = stare(idxA + 0, 0);
+        float yA = stare(idxA + 1, 0);
+        float phiA = stare(idxA + 2, 0);
+
+        return yA + this->l_xA * sin(phiA) + this->l_yA * cos(phiA);
     }
 
     void calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) override
@@ -122,6 +146,28 @@ public:
     int getNumarEcuatii() const override
     {
         return 3;
+    }
+
+    float getAbscisa(matrice &stare) override{
+        
+        int idxA = contorCorpA * 3;
+        int idxB = contorCorpB * 3;
+        float xA = stare(idxA + 0, 0);
+        float yA = stare(idxA + 1, 0);
+        float phiA = stare(idxA + 2, 0);
+
+        return xA + this->l_xA * cos(phiA) - this->l_yA * sin(phiA);
+    }
+
+    float getOrdonata(matrice &stare) override{
+        
+        int idxA = contorCorpA * 3;
+        int idxB = contorCorpB * 3;
+        float xA = stare(idxA + 0, 0);
+        float yA = stare(idxA + 1, 0);
+        float phiA = stare(idxA + 2, 0);
+
+        return yA + this->l_xA * sin(phiA) + this->l_yA * cos(phiA);
     }
 
     void calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) override

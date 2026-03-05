@@ -2,7 +2,12 @@ Clear-Host
 
 Write-Host "==> Începem compilarea..." -ForegroundColor Cyan
 
-g++ src/main.cpp src/glad.c -o simulator.exe -I includes -L lib -lglfw3 -lgdi32 -lopengl32
+# Gaseste automat toate fisierele .cpp si .c din directorul src
+$sourceFiles = Get-ChildItem -Path src -Recurse -Include *.cpp, *.c | ForEach-Object { $_.FullName }
+
+Write-Host "Compilam fisierele: $sourceFiles"
+
+g++ $sourceFiles -o simulator.exe -I includes -L lib -lglfw3 -lgdi32 -lopengl32
 
 if ($?) {
     Write-Host "==> Compilare reusita!" -ForegroundColor Green
