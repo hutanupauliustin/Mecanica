@@ -367,9 +367,8 @@ public:
         // Componenta pe unghi (E zero)
         JdotQ(rand_start + 2, 0) = 0.0f;
     }
-    
+
     static incastrare* Creaza(rigid& A, rigid& B, float globalX, float globalY) {
-        // 1. Calculam coordonatele locale (la fel ca la articulatie)
         float dxA = globalX - A.x;
         float dyA = globalY - A.y;
         float dxB = globalX - B.x;
