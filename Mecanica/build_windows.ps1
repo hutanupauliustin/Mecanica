@@ -1,6 +1,11 @@
+param (
+    # Daca nu scrii niciun nume in terminal, va folosi "simulator.exe" by default
+    [string]$NumeExe = "simulator.exe"
+)
+
 Clear-Host #facut de AI
 
-Write-Host "==> Începem compilarea..." -ForegroundColor Cyan
+Write-Host "==> Începem compilarea pentru $NumeExe..." -ForegroundColor Cyan
 
 # Gaseste automat toate fisierele .cpp si .c din directorul src
 $sourceFiles = Get-ChildItem -Path src -Recurse -Include *.cpp, *.c | ForEach-Object { $_.FullName }
@@ -8,13 +13,15 @@ $sourceFiles = Get-ChildItem -Path src -Recurse -Include *.cpp, *.c | ForEach-Ob
 
 Write-Host "Compilam fisierele: $sourceFiles"
 
-g++ $sourceFiles -o simulator.exe -I includes -L lib -lglfw3 -lgdi32 -lopengl32 -static -static-libgcc -static-libstdc++
+# Am pus $NumeExe in loc de simulator.exe
+g++ $sourceFiles -o $NumeExe -I includes -L lib -lglfw3 -lgdi32 -lopengl32 -static -static-libgcc -static-libstdc++
 
 
 if ($?) {
     Write-Host "==> Compilare reusita!" -ForegroundColor Green
-    .\simulator.exe
+    
+    # Am pus operatorul & (call) ca sa stie PowerShell sa ruleze variabila ca pe un program
+    & ".\$NumeExe"
 } else {
     Write-Host "==> A aparut o eroare!" -ForegroundColor Red
 }
-

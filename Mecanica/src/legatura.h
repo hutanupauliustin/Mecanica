@@ -182,6 +182,25 @@ public:
         
         JdotQ(rand_start + 1, 0) = termA_Y + termB_Y;
     }  
+
+    // --- FACTORY METHOD ---
+    // Permite definirea articulatiei folosind coordonate GLOBALE (mult mai usor de vizualizat)
+    static articulatie* Creaza(rigid& A, rigid& B, float globalX, float globalY) {
+        // Calculam vectorul de la centrul corpului la punctul de legatura (in coordonate globale)
+        float dxA = globalX - A.x;
+        float dyA = globalY - A.y;
+        
+        float dxB = globalX - B.x;
+        float dyB = globalY - B.y;
+
+        float l_xA = dxA * cos(A.phi) + dyA * sin(A.phi);
+        float l_yA = -dxA * sin(A.phi) + dyA * cos(A.phi);
+
+        float l_xB = dxB * cos(B.phi) + dyB * sin(B.phi);
+        float l_yB = -dxB * sin(B.phi) + dyB * cos(B.phi);
+
+        return new articulatie(A.index, B.index, l_xA, l_yA, l_xB, l_yB);
+    }
 };
 
 class incastrare : public legatura
@@ -314,15 +333,57 @@ public:
 
         J_F(rand_start + 2, indexA + 0) = 0.0f;  // indexA + 0 este x_A
         J_F(rand_start + 2, indexA + 1) = 0.0f;  // indexA + 1 este y_A
-        J_F(rand_start + 2, indexA + 2) = -1.0f; // indexA + 2 este phi_A
+        J_F(rand_start + 2, indexA + 2) = 1.0f; // indexA + 2 este phi_A
 
         J_F(rand_start + 2, indexB + 0) = 0.0f;
         J_F(rand_start + 2, indexB + 1) = 0.0f;
-        J_F(rand_start + 2, indexB + 2) = 1.0f;
+        J_F(rand_start + 2, indexB + 2) = -1.0f;
     }
 
-    void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) override {
-        // Implementare similara cu articulatia pentru primele 2 randuri
-        // Randul 3 (unghiul) are derivata 0 daca e constant
+   void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) override {
+        int idxA = contorCorpA * 3;
+        int idxB = contorCorpB * 3;
+        int offsetViteze = 3 * n; 
+
+        float phiA = stare(idxA + 2, 0);
+        float phiB = stare(idxB + 2, 0);
+        
+        float phiPunctA = stare(idxA + 2 + offsetViteze, 0);
+        float phiPunctB = stare(idxB + 2 + offsetViteze, 0);
+
+        float sinA = sin(phiA); float cosA = cos(phiA);
+        float sinB = sin(phiB); float cosB = cos(phiB);
+
+        // Componenta X (Identic ca la articulatie)
+        float termA_X = -l_xA * (phiPunctA * phiPunctA) * cosA + l_yA * (phiPunctA * phiPunctA) * sinA;
+        float termB_X = l_xB * (phiPunctB * phiPunctB) * cosB - l_yB * (phiPunctB * phiPunctB) * sinB;
+        JdotQ(rand_start, 0) = termA_X + termB_X; 
+        
+        // Componenta Y (Identic ca la articulatie)
+        float termA_Y = -l_xA * (phiPunctA * phiPunctA) * sinA - l_yA * (phiPunctA * phiPunctA) * cosA;
+        float termB_Y = l_xB * (phiPunctB * phiPunctB) * sinB + l_yB * (phiPunctB * phiPunctB) * cosB;
+        JdotQ(rand_start + 1, 0) = termA_Y + termB_Y;
+
+        // Componenta pe unghi (E zero)
+        JdotQ(rand_start + 2, 0) = 0.0f;
+    }
+    
+    static incastrare* Creaza(rigid& A, rigid& B, float globalX, float globalY) {
+        // 1. Calculam coordonatele locale (la fel ca la articulatie)
+        float dxA = globalX - A.x;
+        float dyA = globalY - A.y;
+        float dxB = globalX - B.x;
+        float dyB = globalY - B.y;
+
+        float l_xA = dxA * cos(A.phi) + dyA * sin(A.phi);
+        float l_yA = -dxA * sin(A.phi) + dyA * cos(A.phi);
+
+        float l_xB = dxB * cos(B.phi) + dyB * sin(B.phi);
+        float l_yB = -dxB * sin(B.phi) + dyB * cos(B.phi);
+
+        // 2. Calculam diferenta de unghi initiala
+        float phi0 = A.phi - B.phi;
+
+        return new incastrare(A.index, B.index, l_xA, l_yA, l_xB, l_yB, phi0);
     }
 };

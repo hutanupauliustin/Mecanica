@@ -16,7 +16,7 @@ public:
     int p;                                  // p este numarul de ecuatii adaugate de legaturi (2 pt articulatii, 3 pt incastrare, etc.)
     matrice stare;                          // am sa ma refer la ecuatiile adaugate f_1,f_2... cu numele de "constrangeri"
 
-    float k_s,k_d,g;                          //spring constant si dampening constant -- sunt encesare pentru a introduce o amortizare foarte slaba care sa anuleze erorile de tip floating-point-arithmetic
+    float k_s,k_d,g,k_a;                          //spring constant si dampening constant -- sunt encesare pentru a introduce o amortizare foarte slaba care sa anuleze erorile de tip floating-point-arithmetic
                                              // constanta gravitationala       
     public:                                   
     matrice Q, J_F, A, Lambda, JdotQ;       // Q - vectorul fortelor externe
@@ -34,6 +34,7 @@ public:
         k_d = 0.0f;
         k_s = 0.0f;
         g = 9.81f; // Initializare implicita
+        k_a = 0.0f;
 
         corpuri = new rigid[nr_corpuri];
         legaturi = new legatura *[nr_legaturi];
@@ -57,6 +58,10 @@ public:
     void setareConstante(float spring_constant, float dampening_constant){
         k_s = spring_constant;
         k_d = dampening_constant;
+    }
+
+    void setareConstantaFrecareAer(float constanta){
+        k_a = constanta;
     }
 
     void adaugaCorpuri(rigid &r){
@@ -202,7 +207,7 @@ void seteazaConstrangeri()
 
         for (int i = 0; i < nr_corpuri; i++)
         {
-            corpuri[i].aflaForteProprii(g); // Trimitem g-ul sistemului catre corp
+            corpuri[i].aflaForteProprii(g, k_a); // Trimitem g-ul sistemului catre corp
             Q(3 * i, 0) = corpuri[i].f_x;
             Q(3 * i + 1, 0) = corpuri[i].f_y;
             Q(3 * i + 2, 0) = corpuri[i].moment;

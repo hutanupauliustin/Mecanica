@@ -16,34 +16,116 @@ void processInput(GLFWwindow *window)
     
 }
 
-const char *vertexShaderSource = "#version 330 core\n"          //bucata de text, este cod pentru placa video 
+// --- 1. VERTEX SHADER: Primeste datele si le da mai departe la Geometry Shader ---
+const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec2 aPos;\n"
-    "uniform float scale;\n" // Variabila pentru scalare (Zoom)
+    "layout (location = 1) in float aPhi;\n"  // Unghiul de rotatie
+    "layout (location = 2) in vec2 aSize;\n"  // Dimensiuni (width, height)
+    "layout (location = 3) in float aType;\n" // Tipul formei: 0=Invizibil,1=Cerc, 2=Dreptunghi, 3=Triunghi
+    
+    "out VS_OUT {\n"
+    "    float phi;\n"
+    "    vec2 size;\n"
+    "    float type;\n"
+    "} vs_out;\n"
+    
     "void main()\n"
     "{\n"
-    "   gl_Position = vec4(aPos.x * scale, aPos.y * scale, 0.0, 1.0);\n"
+    "   gl_Position = vec4(aPos, 0.0, 1.0);\n"
+    "   vs_out.phi = aPhi;\n"
+    "   vs_out.size = aSize;\n"
+    "   vs_out.type = aType;\n"
     "}\0";
 
+// --- 2. GEOMETRY SHADER: Transforma punctele in forme geometrice ---  // scris de AI
+const char *geometryShaderSource = "#version 330 core\n"
+    "layout (points) in;\n"
+    "layout (triangle_strip, max_vertices = 4) out;\n"
+    
+    "in VS_OUT {\n"
+    "    float phi;\n"
+    "    vec2 size;\n"
+    "    float type;\n"
+    "} gs_in[];\n"
+    
+    "out vec2 TexCoord;\n" // Coordonate locale pentru desenarea cercului in Fragment Shader
+    "out float ShapeType;\n"
+    "uniform float scale;\n" // Zoom
+
+    "void main() {\n"
+    "    if(gs_in[0].type < 0.5) return;\n"
+    "    float phi = gs_in[0].phi;\n"
+    "    float c = cos(phi); float s = sin(phi);\n"
+    "    mat2 rot = mat2(c, s, -s, c);\n" // Matrice de rotatie 2D
+    "    vec2 center = gl_in[0].gl_Position.xy;\n"
+    "    vec2 halfSize = gs_in[0].size / 2.0;\n"
+    "    ShapeType = gs_in[0].type;\n"
+    
+        // Definim colturile unui patrat unitar centrat in origine\n
+    "    vec2 offsets[4];\n"
+    "    offsets[0] = vec2(-halfSize.x, -halfSize.y);\n"
+    "    offsets[1] = vec2( halfSize.x, -halfSize.y);\n"
+    "    offsets[2] = vec2(-halfSize.x,  halfSize.y);\n"
+    "    offsets[3] = vec2( halfSize.x,  halfSize.y);\n"
+    
+    "    // Coordonate UV pentru cerc (-1 la 1)\n"
+    "    vec2 uvs[4];\n"
+    "    uvs[0] = vec2(-1.0, -1.0); uvs[1] = vec2( 1.0, -1.0);\n"
+    "    uvs[2] = vec2(-1.0,  1.0); uvs[3] = vec2( 1.0,  1.0);\n"
+
+    "    // Daca e triunghi, modificam putin varfurile de sus\n"
+    "    if(ShapeType > 2.5) { \n"
+    "       offsets[2] = vec2(0.0, halfSize.y); \n" // Varful de sus centrat
+    "       offsets[3] = vec2(0.0, halfSize.y); \n" // Dublam varful pentru triangle_strip
+    "    }\n"
+
+    "    for(int i=0; i<4; i++) {\n"
+    "        vec2 pos = center + rot * offsets[i];\n" // Rotim si translatam
+    "        gl_Position = vec4(pos * scale, 0.0, 1.0);\n"
+    "        TexCoord = uvs[i];\n"
+    "        EmitVertex();\n"
+    "    }\n"
+    "    EndPrimitive();\n"
+    "}\0";
+
+// --- 3. FRAGMENT SHADER: Coloreaza si decupeaza cercul ---        //scris de AI
 const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
+    "in vec2 TexCoord;\n"
+    "in float ShapeType;\n"
     "uniform vec4 color;\n" // Variabila uniforma ("globala") pentru culoare
     "void main()\n"
-    "{\n"
+    "{\n"                           // Daca e cerc (Type 0), desenam doar pixelii din interiorul razei\n
+    "    if(ShapeType < 1.5 && dot(TexCoord, TexCoord) > 1.0) discard;\n"
     "    FragColor = color;\n" // Folosim variabila primita din cod
     "}\0";
 
 void updateVerticesData(sistem &S, float* vertices){
-    // 1. Adaugam coordonatele corpurilor (Centrele de Masa)
+    // Structura datelor per punct: [x, y, phi, width, height, type] (6 float-uri)  // type 0 - cerc | 1 - dreptunghi | 2 - trunghi 
+    int stride = 6;
+
+    // 1. Corpuri
     for(int i = 0; i < S.nr_corpuri; i++){
-        vertices[2*i] = S.corpuri[i].x;
-        vertices[2*i + 1] = S.corpuri[i].y;
+        int idx = i * stride;
+        vertices[idx + 0] = S.corpuri[i].x;
+        vertices[idx + 1] = S.corpuri[i].y;
+        vertices[idx + 2] = S.corpuri[i].phi;
+
+        vertices[idx + 3] = S.corpuri[i].w;
+        vertices[idx + 4] = S.corpuri[i].h;
+        vertices[idx + 5] = (float)S.corpuri[i].tip;
     }
 
-    // 2. Adaugam coordonatele legaturilor (continuam in vector dupa corpuri)
-    int offset = 2 * S.nr_corpuri;
+    // 2. Legaturi (Articulatii) - Desenam Cercuri
+    int offset = S.nr_corpuri * stride;
     for(int i = 0; i <  S.nr_legaturi;i++){
-        vertices[offset + 2*i] = S.legaturi[i]->getAbscisa(S.stare);
-        vertices[offset + 2*i + 1] = S.legaturi[i]->getOrdonata(S.stare);
+        int idx = offset + i * stride;
+        vertices[idx + 0] = S.legaturi[i]->getAbscisa(S.stare);
+        vertices[idx + 1] = S.legaturi[i]->getOrdonata(S.stare);
+        vertices[idx + 2] = 0.0f; // Phi (nu conteaza la cerc)
+        vertices[idx + 3] = 0.5f; // Width (Diametru)
+        vertices[idx + 4] = 0.5f; // Height
+        vertices[idx + 5] = 1.0f; // Type 1 = Cerc
     }
 }
 
@@ -88,6 +170,17 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram){
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
 
+    // Compilare Geometry Shader
+    unsigned int geometryShader;
+    geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+    glShaderSource(geometryShader, 1, &geometryShaderSource, NULL);
+    glCompileShader(geometryShader);
+    glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &success);
+    if(!success) {
+        glGetShaderInfoLog(geometryShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::GEOMETRY::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+
     unsigned int fragmentShader;
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);               // placa video ii da un ID shader-ului
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);    // trimite textul placii video, ca sa il compileze
@@ -96,6 +189,7 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram){
     shaderProgram = glCreateProgram();
 
     glAttachShader(shaderProgram, vertexShader);    
+    glAttachShader(shaderProgram, geometryShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);                                     //program este un obiect care are rolul de a lega shaderele intre ele 
 
@@ -106,6 +200,7 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram){
     }
 
     glDeleteShader(vertexShader);
+    glDeleteShader(geometryShader);
     glDeleteShader(fragmentShader); 
 
     return window;
@@ -118,8 +213,21 @@ void initBuffers(unsigned int &VAO, unsigned int &VBO) {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO); 
     
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);             
+    // Avem acum 6 float-uri per vertex: x, y, phi, w, h, type
+    int stride = 6 * sizeof(float);
+
+    // 1. Pozitie (vec2)
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glEnableVertexAttribArray(0);
+    // 2. Phi (float)
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    // 3. Size (vec2)
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+    // 4. Type (float)
+    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
+    glEnableVertexAttribArray(3);
     
     glBindVertexArray(0);
 }
@@ -132,12 +240,12 @@ void drawSystem(sistem &S, unsigned int VAO, unsigned int VBO, unsigned int shad
 
     // 2. Trimitem datele la GPU
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, totalPoints * 2 * sizeof(float), Buffer, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, totalPoints * 6 * sizeof(float), Buffer, GL_DYNAMIC_DRAW);
     
     // 3. Desenam
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    glPointSize(10.0f); // Desenam puncte mari sa se vada
+    glPointSize(1.0f); // Desenam puncte mari sa se vada
 
     // Setam factorul de scalare: 1 unitate OpenGL = 10 metri in simulare
     int scaleVertexLoc = glGetUniformLocation(shaderProgram, "scale");
@@ -147,7 +255,7 @@ void drawSystem(sistem &S, unsigned int VAO, unsigned int VBO, unsigned int shad
     int colorLoc = glGetUniformLocation(shaderProgram, "color");
 
     // 1. Desenam Corpurile (Portocaliu) - de la index 0, atatea cate corpuri sunt
-    glUniform4f(colorLoc, 1.0f, 0.5f, 0.2f, 1.0f);
+    glUniform4f(colorLoc, 1.0f, 0.5f, 0.5f, 1.0f);
     glDrawArrays(GL_POINTS, 0, S.nr_corpuri);
 
     // 2. Desenam Legaturile (Alb) - incepand de unde s-au terminat corpurile

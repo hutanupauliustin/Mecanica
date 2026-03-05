@@ -1,10 +1,11 @@
+#pragma once
 #include "sistem.h"
 #include "matrice.h"
 #include <algorithm> // Pentru std::swap            //AI
 
 //rezolva sisteme olonoame scleronome, cu legaturi bilaterale
 
-//functie facuta de AI
+//functie facuta predominant de AI
 void calculeazaMultiplicatori(sistem &S, float t){                   //rezolva sistemul (J * A^-1 * J^T) Lambda = - JpunctQpunct - J * A^-1 * Q - k_s*F - k_d*Fpunct 
                                                                      
     // 1. Construim componentele ecuatiei M * Lambda = B
@@ -15,6 +16,10 @@ void calculeazaMultiplicatori(sistem &S, float t){                   //rezolva s
 
     // Calculam M = J_F * A_inv * J_F^T (Dimensiunea va fi p x p)
     matrice M = S.J_F * A_inv * J_T;
+
+    for(int i = 0; i < S.p; i++) {              // adaugam o componenta infinitezimal de mica pe diagonala principala, pentru nu permite matricea sa devina singulara
+        M(i, i) += 1e-4f; 
+    }
 
     // Calculam termenul liber B = - J_F * A_inv * Q - JdotQ (Dimensiunea va fi p x 1)
     matrice J_Ainv_Q = S.J_F * A_inv * S.Q;
