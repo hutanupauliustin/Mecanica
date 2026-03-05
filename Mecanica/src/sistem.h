@@ -16,9 +16,14 @@ public:
     int p;                                  // p este numarul de ecuatii adaugate de legaturi (2 pt articulatii, 3 pt incastrare, etc.)
     matrice stare;                          // am sa ma refer la ecuatiile adaugate f_1,f_2... cu numele de "constrangeri"
 
+    float k_s,k_d,g;                          //spring constant si dampening constant -- sunt encesare pentru a introduce o amortizare foarte slaba care sa anuleze erorile de tip floating-point-arithmetic
+                                             // constanta gravitationala       
+    public:                                   
     matrice Q, J_F, A, Lambda, JdotQ;       // Q - vectorul fortelor externe
                                             // J_f - Jacobianul legaturilor
                                             //JdotQ - produsul dintre derivata jacobianului si derivata coordonatelor
+    matrice F, Fpunct;                      // sunt folosite pentru corectia erorii, impreuna cu constantele k_s si k_d
+    
     sistem(int nr_corpuri, int nr_legaturi)
     {                                       // A - matricea de inertie
         this->nr_corpuri = nr_corpuri;                     // Lambda - vectorul multiplicatorilor lui Lagrange
@@ -26,6 +31,9 @@ public:
         legaturi_adaugate = 0;
         corpuri_adaugate = 0;
         p = 0;
+        k_d = 0.0f;
+        k_s = 0.0f;
+        g = 9.81f; // Initializare implicita
 
         corpuri = new rigid[nr_corpuri];
         legaturi = new legatura *[nr_legaturi];
@@ -40,6 +48,15 @@ public:
             delete legaturi[i];
         }
         delete[] legaturi;
+    }
+
+    void setareConstantaGravitationala(float grav){
+        g = grav;
+    }
+
+    void setareConstante(float spring_constant, float dampening_constant){
+        k_s = spring_constant;
+        k_d = dampening_constant;
     }
 
     void adaugaCorpuri(rigid &r){
@@ -122,6 +139,43 @@ public:
         }
     }
 
+void seteazaConstrangeri()
+    {
+
+        if (F.linii != p || F.coloane != 1)
+        {
+            F = matrice('0', p, 1);
+        }
+        else
+        {
+            for (int i = 0; i < F.linii; i++)
+            {
+                F(i, 0) = 0.0f;
+            }
+
+        }
+
+        if (Fpunct.linii != p || Fpunct.coloane != 1)
+        {
+            Fpunct = matrice('0', p, 1);
+        }
+        else
+        {
+            for (int i = 0; i < Fpunct.linii; i++)
+                Fpunct(i, 0) = 0.0f;
+        }
+
+        int rand_constrangere = 0;
+
+        for (int i = 0; i < legaturi_adaugate; i++)
+        {
+
+            legaturi[i]->calculeazaConstrangere(F, rand_constrangere, stare);
+            legaturi[i]->calculeazaConstrangereDerivate(Fpunct, rand_constrangere, stare, nr_corpuri);
+            rand_constrangere += legaturi[i]->getNumarEcuatii();
+        }
+    }
+
     void seteazaMatriceInertie()
     {
         if (A.linii != 3 * nr_corpuri || A.coloane != 3 * nr_corpuri) {
@@ -148,7 +202,7 @@ public:
 
         for (int i = 0; i < nr_corpuri; i++)
         {
-            corpuri[i].aflaForteProprii();
+            corpuri[i].aflaForteProprii(g); // Trimitem g-ul sistemului catre corp
             Q(3 * i, 0) = corpuri[i].f_x;
             Q(3 * i + 1, 0) = corpuri[i].f_y;
             Q(3 * i + 2, 0) = corpuri[i].moment;

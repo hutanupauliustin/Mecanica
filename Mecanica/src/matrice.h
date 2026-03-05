@@ -95,6 +95,11 @@ public:
     // Metode
     float *at(int i, int j) const
     {
+        if (this->valori == NULL) {
+            std::cerr << "[EROARE MATRICE] Accesare matrice neinitializata (valori == NULL)!" << std::endl;
+            // Returnam un pointer dummy pentru a evita crash imediat, dar programul e deja compromis
+            static float dummy = 0.0f; return &dummy;
+        }
         return this->valori + i * this->coloane + j;
     }
 
@@ -168,6 +173,7 @@ public:
         if ((this->linii != B.linii) || (this->coloane != B.coloane))
         {
             errno = 1;
+            std::cerr << "[EROARE MATRICE] Adunare dimensiuni incompatibile: " << this->linii << "x" << this->coloane << " + " << B.linii << "x" << B.coloane << std::endl;
             matrice O;
             return O;
         }
@@ -187,6 +193,7 @@ public:
         if (this->coloane != B.linii)
         {
             errno = 1;
+            std::cerr << "[EROARE MATRICE] Inmultire dimensiuni incompatibile: " << this->linii << "x" << this->coloane << " * " << B.linii << "x" << B.coloane << std::endl;
             matrice O;
             return O;
         }

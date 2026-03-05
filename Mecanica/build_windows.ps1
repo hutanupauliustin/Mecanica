@@ -1,4 +1,4 @@
-Clear-Host
+Clear-Host #facut de AI
 
 Write-Host "==> Începem compilarea..." -ForegroundColor Cyan
 
@@ -15,3 +15,4 @@ if ($?) {
 } else {
     Write-Host "==> A aparut o eroare!" -ForegroundColor Red
 }
+

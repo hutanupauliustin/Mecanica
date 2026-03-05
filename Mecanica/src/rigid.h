@@ -8,24 +8,24 @@ public:
     float v_x, v_y, omega; // coordonatele centrului de greautea, si unghiul facut de sistemul de referinta propriu fata de cel universal
     float M, J;
     float f_x, f_y, moment;
-    int fix;
 
-    rigid() : x(0), y(0), phi(0), v_x(0), v_y(0), omega(0), M(1), J(1), f_x(0), f_y(0), moment(0), fix(0){}
+    rigid() : x(0), y(0), phi(0), v_x(0), v_y(0), omega(0), M(1), J(1), f_x(0), f_y(0), moment(0){}
 
-    rigid (float x_initial, float y_initial, float phi_initial, float masa, float momentInertie , int fix)
-        : x(x_initial), y(y_initial), phi(phi_initial), M(masa), J(momentInertie), fix(fix), v_x(0), v_y(0), omega(0), f_x(0), f_y(0), moment(0){}
+    rigid (float x_initial, float y_initial, float phi_initial, float masa, float momentInertie)
+        : x(x_initial), y(y_initial), phi(phi_initial), M(masa), J(momentInertie), v_x(0), v_y(0), omega(0), f_x(0), f_y(0), moment(0){}
 
-    void aflaForteProprii()
+    void aflaForteProprii(float g)
     {
-        if(fix == 0){
-            f_x = 0;
-            f_y = -(0.01f) * M;
-            moment = 0;
-        }
-        else{
+        // Daca masa este foarte mare (infinita), consideram corpul fix si nu ii aplicam greutate
+        // pentru a evita erori matematice (Infinity * ceva = NaN)
+        if(M > 1e10f) {
             f_x = 0;
             f_y = 0;
             moment =0;
+        } else {
+            f_x = 0;
+            f_y = -g * M; // Forta gravitationala
+            moment = 0;
         }
     }
 

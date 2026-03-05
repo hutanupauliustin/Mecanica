@@ -18,17 +18,18 @@ void processInput(GLFWwindow *window)
 
 const char *vertexShaderSource = "#version 330 core\n"          //bucata de text, este cod pentru placa video 
     "layout (location = 0) in vec2 aPos;\n"
+    "uniform float scale;\n" // Variabila pentru scalare (Zoom)
     "void main()\n"
     "{\n"
-    "   gl_Position = vec4(aPos.x / 5.0, aPos.y / 5.0, 0.0, 1.0);\n"
+    "   gl_Position = vec4(aPos.x * scale, aPos.y * scale, 0.0, 1.0);\n"
     "}\0";
 
 const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
-
+    "uniform vec4 color;\n" // Variabila uniforma ("globala") pentru culoare
     "void main()\n"
     "{\n"
-    "    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "    FragColor = color;\n" // Folosim variabila primita din cod
     "}\0";
 
 void updateVerticesData(sistem &S, float* vertices){
@@ -63,6 +64,7 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram){
     }
 
     glfwMakeContextCurrent(window);                                 //specifica placii video ca lucram cu fereastra creata
+    glfwSwapInterval(1); // Activeaza V-Sync (limiteaza la 60 FPS) pentru a nu rula simularea prea repede
     
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -136,5 +138,19 @@ void drawSystem(sistem &S, unsigned int VAO, unsigned int VBO, unsigned int shad
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
     glPointSize(10.0f); // Desenam puncte mari sa se vada
-    glDrawArrays(GL_POINTS, 0, totalPoints);
+
+    // Setam factorul de scalare: 1 unitate OpenGL = 10 metri in simulare
+    int scaleVertexLoc = glGetUniformLocation(shaderProgram, "scale");
+    glUniform1f(scaleVertexLoc, 1.0f / 10.0f); // Impartim la 10 pentru a incadra +/- 10m in ecran
+    
+    // Obtinem locatia variabilei 'color' din shader
+    int colorLoc = glGetUniformLocation(shaderProgram, "color");
+
+    // 1. Desenam Corpurile (Portocaliu) - de la index 0, atatea cate corpuri sunt
+    glUniform4f(colorLoc, 1.0f, 0.5f, 0.2f, 1.0f);
+    glDrawArrays(GL_POINTS, 0, S.nr_corpuri);
+
+    // 2. Desenam Legaturile (Alb) - incepand de unde s-au terminat corpurile
+    glUniform4f(colorLoc, 1.0f, 1.0f, 1.0f, 1.0f);
+    glDrawArrays(GL_POINTS, S.nr_corpuri, S.nr_legaturi);
 }

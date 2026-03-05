@@ -4,9 +4,9 @@
 
 //rezolva sisteme olonoame scleronome, cu legaturi bilaterale
 
-
-void calculeazaMultiplicatori(sistem &S, float t){                   //rezolva sistemul (J * A^-1 * J^T) Lambda = - JpunctQpunct - J * A^-1 * Q
-                                                                     //functie facuta de AI
+//functie facuta de AI
+void calculeazaMultiplicatori(sistem &S, float t){                   //rezolva sistemul (J * A^-1 * J^T) Lambda = - JpunctQpunct - J * A^-1 * Q - k_s*F - k_d*Fpunct 
+                                                                     
     // 1. Construim componentele ecuatiei M * Lambda = B
     
     // A_inv se calculeaza usor, A fiind diagonala
@@ -20,7 +20,7 @@ void calculeazaMultiplicatori(sistem &S, float t){                   //rezolva s
     matrice J_Ainv_Q = S.J_F * A_inv * S.Q;
     matrice B(S.p, 1);
     for(int i = 0; i < S.p; i++) {
-        B(i, 0) = -J_Ainv_Q(i, 0) - S.JdotQ(i, 0); // Presupun ca JdotQ e setat in clasa sistem
+        B(i, 0) = -J_Ainv_Q(i, 0) - S.JdotQ(i, 0) - S.k_s * S.F(i, 0) - S.k_d * S.Fpunct(i, 0); // Adaugam termenii de corectie Baumgarte
     }
 
     int p = S.p;
@@ -94,6 +94,7 @@ matrice derivata(sistem &S, const matrice &stare_curenta, float t)
     // 3. Recalculam marimile care depind de stare.
     S.seteazaForteExterne();      // Recalculeaza vectorul de forte externe Q.
     S.seteazaJacobian();          // Recalculeaza Jacobianul J_F si termenul Jdot * Qdot.
+    S.seteazaConstrangeri();      // Calculam erorile de constrangere F si Fpunct
     calculeazaMultiplicatori(S, t); // Calculeaza multiplicatorii Lagrange Lambda.
 
     // 4. Calculam acceleratiile folosind ecuatia de miscare.
