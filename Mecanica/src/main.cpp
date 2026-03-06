@@ -19,6 +19,11 @@ int main(){
     rigid bara2 = rigid::Bara(6.0f, 0.0f, 4.0f, 0.4f, 4.0f); 
     rigid bara3 = rigid::Bara(10.0f, 0.0f, 4.0f, 0.4f, 4.0f);
 
+    S.adaugaCorpuri(LUME);
+    S.adaugaCorpuri(bara1);
+    S.adaugaCorpuri(bara2);
+    S.adaugaCorpuri(bara3);
+
     // Definim legaturile folosind coordonate GLOBALE
 
     // Ex: Articulatie intre LUME(0) si bara1(1) la punctul (0,0)
@@ -27,10 +32,6 @@ int main(){
     legatura* art1   = articulatie::Creaza(bara1, bara2, 4.0f, 0.0f);
     legatura* art2   = articulatie::Creaza(bara2, bara3, 8.0f, 0.0f);
 
-    S.adaugaCorpuri(LUME);
-    S.adaugaCorpuri(bara1);
-    S.adaugaCorpuri(bara2);
-    S.adaugaCorpuri(bara3);
     S.adaugaLegaturi(fixare); 
     S.adaugaLegaturi(art1);
     S.adaugaLegaturi(art2);
@@ -51,14 +52,6 @@ int main(){
     rigid veriga5 = rigid::Bara(-3.5f, 0.0f, 1.0f, 0.2f, 2.0f);
     rigid veriga6 = rigid::Bara(-2.5f, 0.0f, 1.0f, 0.2f, 2.0f);
 
-    legatura* fixare1 = articulatie::Creaza(LUME,    veriga1, -8.0f, 0.0f);
-    legatura* art12   = articulatie::Creaza(veriga1, veriga2, -7.0f, 0.0f);
-    legatura* art23   = articulatie::Creaza(veriga2, veriga3, -6.0f, 0.0f);
-    legatura* art34   = articulatie::Creaza(veriga3, veriga4, -5.0f, 0.0f);
-    legatura* art45   = articulatie::Creaza(veriga4, veriga5, -4.0f, 0.0f);
-    legatura* art56   = articulatie::Creaza(veriga5, veriga6, -3.0f, 0.0f);
-    legatura* fixare2 = articulatie::Creaza(veriga6, LUME,    -2.0f, 0.0f);
-
     S.adaugaCorpuri(LUME);
     S.adaugaCorpuri(veriga1);
     S.adaugaCorpuri(veriga2);
@@ -66,6 +59,14 @@ int main(){
     S.adaugaCorpuri(veriga4);
     S.adaugaCorpuri(veriga5);
     S.adaugaCorpuri(veriga6);
+
+    legatura* fixare1 = articulatie::Creaza(LUME,    veriga1, -8.0f, 0.0f);
+    legatura* art12   = articulatie::Creaza(veriga1, veriga2, -7.0f, 0.0f);
+    legatura* art23   = articulatie::Creaza(veriga2, veriga3, -6.0f, 0.0f);
+    legatura* art34   = articulatie::Creaza(veriga3, veriga4, -5.0f, 0.0f);
+    legatura* art45   = articulatie::Creaza(veriga4, veriga5, -4.0f, 0.0f);
+    legatura* art56   = articulatie::Creaza(veriga5, veriga6, -3.0f, 0.0f);
+    legatura* fixare2 = articulatie::Creaza(veriga6, LUME,    -2.0f, 0.0f);
 
     S.adaugaLegaturi(fixare1); 
     S.adaugaLegaturi(art12);
@@ -76,28 +77,26 @@ int main(){
     S.adaugaLegaturi(fixare2);
     */
 
-    /*
+    
     sistem S;        //lant
 
     S.setareConstante(20.0f, 5.0f); 
     S.setareConstantaGravitationala(9.81f);
 
-    rigid LUME = rigid::Fix(0,0,0);
+    rigid LUME = rigid::Fix(0,0);
 
-    rigid veriga1 = rigid::Bara(-7.5f, 0.0f, 1.0f, 0.2f, 30.0f);
-    rigid veriga2 = rigid::Bara(-6.5f, 0.0f, 1.0f, 0.2f, 30.0f);
-    rigid veriga3 = rigid::Bara(-5.5f, 0.0f, 1.0f, 0.2f, 30.0f);
-    rigid veriga4 = rigid::Bara(-4.5f, 0.0f, 1.0f, 0.2f, 30.0f);
-    rigid veriga5 = rigid::Bara(-3.5f, 0.0f, 1.0f, 0.2f, 30.0f);
-    rigid veriga6 = rigid::Bara(-2.5f, 0.0f, 1.0f, 0.2f, 30.0f);
-
-    
-    legatura* art12   = articulatie::Creaza(veriga1, veriga2, -7.0f, 0.0f);
-    legatura* art23   = articulatie::Creaza(veriga2, veriga3, -6.0f, 0.0f);
-    legatura* art34   = articulatie::Creaza(veriga3, veriga4, -5.0f, 0.0f);
-    legatura* art45   = articulatie::Creaza(veriga4, veriga5, -4.0f, 0.0f);
-    legatura* art56   = articulatie::Creaza(veriga5, veriga6, -3.0f, 0.0f);
-    legatura* fixare = articulatie::Creaza(LUME,    veriga6, -2.0f, 0.0f);
+    rigid veriga1 = rigid::Bara(-7.5f, 0.0f, 1.0f, 0.2f, 100.0f);
+    rigid veriga2 = rigid::Bara(-6.5f, 0.0f, 1.0f, 0.2f, 100.0f);
+    rigid veriga3 = rigid::Bara(-5.5f, 0.0f, 1.0f, 0.2f, 100.0f);
+    rigid veriga4 = rigid::Bara(-4.5f, 0.0f, 1.0f, 0.2f, 100.0f);
+    rigid veriga5 = rigid::Bara(-3.5f, 0.0f, 1.0f, 0.2f, 100.0f);
+    rigid veriga6 = rigid::Bara(-2.5f, 0.0f, 1.0f, 0.2f, 100.0f);
+    rigid veriga7 = rigid::Bara(-1.5f, 0.0f, 1.0f, 0.2f, 100.0f);
+    rigid veriga8 = rigid::Bara(-0.5f, 0.0f, 1.0f, 0.2f, 100.0f);
+    rigid veriga9 = rigid::Bara( 0.5f, 0.0f, 1.0f, 0.2f, 100.0f); // Corectat pozitia (era 1.5)
+    rigid veriga10 = rigid::Bara( 1.5f, 0.0f, 1.0f, 0.2f, 100.0f);
+    rigid veriga11 = rigid::Bara( 2.5f, 0.0f, 1.0f, 0.2f, 100.0f);
+    rigid veriga12 = rigid::Bara( 3.5f, 0.0f, 1.0f, 0.2f, 100.0f);
 
     S.adaugaCorpuri(LUME);
     S.adaugaCorpuri(veriga1);
@@ -106,16 +105,43 @@ int main(){
     S.adaugaCorpuri(veriga4);
     S.adaugaCorpuri(veriga5);
     S.adaugaCorpuri(veriga6);
+    S.adaugaCorpuri(veriga7);
+    S.adaugaCorpuri(veriga8);
+    S.adaugaCorpuri(veriga9);
+    S.adaugaCorpuri(veriga10);
+    S.adaugaCorpuri(veriga11);
+    S.adaugaCorpuri(veriga12);
 
+    legatura* art12   = articulatie::Creaza(veriga1, veriga2, -7.0f, 0.0f);
+    legatura* art23   = articulatie::Creaza(veriga2, veriga3, -6.0f, 0.0f);
+    legatura* art34   = articulatie::Creaza(veriga3, veriga4, -5.0f, 0.0f);
+    legatura* art45   = articulatie::Creaza(veriga4, veriga5, -4.0f, 0.0f);
+    legatura* art56   = articulatie::Creaza(veriga5, veriga6, -3.0f, 0.0f);
+    legatura* art67   = articulatie::Creaza(veriga6, veriga7, -2.0f, 0.0f);
+    legatura* art78   = articulatie::Creaza(veriga7, veriga8, -1.0f, 0.0f);
+    legatura* art89   = articulatie::Creaza(veriga8, veriga9, 0.0f, 0.0f);
+    legatura* art910   = articulatie::Creaza(veriga9, veriga10, 1.0f, 0.0f);
+    legatura* art1011   = articulatie::Creaza(veriga10, veriga11, 2.0f, 0.0f);
+    legatura* art1112   = articulatie::Creaza(veriga11, veriga12, 3.0f, 0.0f);
+    legatura* fixare = articulatie::Creaza(LUME,    veriga12, 4.0f, 0.0f); 
     S.adaugaLegaturi(fixare); 
     S.adaugaLegaturi(art12);
     S.adaugaLegaturi(art23);
     S.adaugaLegaturi(art34);
     S.adaugaLegaturi(art45);
     S.adaugaLegaturi(art56);
-    */
-
+    S.adaugaLegaturi(art67);
+    S.adaugaLegaturi(art78);
+    S.adaugaLegaturi(art89);
+    S.adaugaLegaturi(art910);
+    S.adaugaLegaturi(art1011);
+    S.adaugaLegaturi(art1112);
     
+    // Initializam matricele sistemului (CRITIC pentru a evita erorile de matrice nedeclarata)
+    S.incarcaStare();
+    S.seteazaMatriceInertie();
+
+    /*
     sistem S; 
 
     S.setareConstante(20.0f, 5.0f); 
@@ -127,19 +153,19 @@ int main(){
     rigid bara2 = rigid::Bara(4.0f, -2.0f, 4.0f, 0.4f, 2.0f);
     bara2.phi = -90.0f * DEG_TO_RAD; 
 
-    legatura* tavan = articulatie::Creaza(LUME, bara1, 0.0f, 0.0f);
-    legatura* sudura = incastrare::Creaza(bara1, bara2, 4.0f, 0.0f);
-
     S.adaugaCorpuri(LUME);
     S.adaugaCorpuri(bara1);
     S.adaugaCorpuri(bara2);
+
+    legatura* tavan = articulatie::Creaza(LUME, bara1, 0.0f, 0.0f);
+    legatura* sudura = incastrare::Creaza(bara1, bara2, 4.0f, 0.0f);
 
     S.adaugaLegaturi(tavan);
     S.adaugaLegaturi(sudura);
 
     S.incarcaStare();
     S.seteazaMatriceInertie();
-
+    */
     // Initializare OpenGL
     std::cout << "==> Deschidere Fereastra OpenGL..." << std::endl;
     unsigned int shaderProgram;
@@ -152,7 +178,7 @@ int main(){
 
         // Buffer local pentru coordonate
         // 6 valori (x, y, phi, w, h, type) * (nr_corpuri + nr_legaturi)
-        float* vertexBuffer = new float[6 * (S.nr_corpuri + S.nr_legaturi)];
+        std::vector<float> vertexBuffer(6 * (S.nr_corpuri + S.nr_legaturi));
 
         // Variabile de timp
         float t = 0.0f;
@@ -166,18 +192,18 @@ int main(){
             processInput(window);
 
             // 2. Fizica (RK4)
-            // std::cout << "Pas fizica..." << std::endl; // Decomenteaza daca crapa aici
-            for(int i = 0; i < 10; i++) {
+            // std::cout << "Pas fizica..." << std::endl; 
+            for(int i = 0; i < 20; i++) {   //facem calculele de mai multe ori intre cadre, pentru ca nu avem nevoie de mai mult de 60 de cadre pe secunda
                 S.stare = RK4(S, dt, t);
-                S.seteazaStare(); // Actualizam obiectele rigid din matricea stare
                 t += dt;
             }
+
+            S.seteazaStare(); 
 
             // 3. Randare
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            std::vector<float> vertexBuffer(6 * (S.nr_corpuri + S.nr_legaturi));
             drawSystem(S, VAO, VBO, shaderProgram, vertexBuffer.data());
 
             glfwSwapBuffers(window);
@@ -187,7 +213,6 @@ int main(){
             if(frameCount % 100 == 0) std::cout << "Cadre randate: " << frameCount << " Timp simulat: " << t << std::endl;
         }
         
-        delete[] vertexBuffer;
         glfwTerminate();
     }
     return 0;
