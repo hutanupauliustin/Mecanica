@@ -9,6 +9,7 @@ public:
     int contorCorpA;
     int contorCorpB;
 
+
     legatura()
     {
         contorCorpA = 0;
@@ -26,6 +27,7 @@ public:
     virtual void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) = 0;
     virtual float getAbscisa(matrice &stare) = 0;
     virtual float getOrdonata(matrice &stare) = 0;
+    virtual void getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) = 0;
 };
 
 class articulatie : public legatura
@@ -64,6 +66,14 @@ public:
 
         return yA + this->l_xA * sin(phiA) + this->l_yA * cos(phiA);
     }
+
+    virtual void getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) override{
+        type = 1;
+        widht = 0.5f;
+        height = 0.5f;
+        phi = 0.0f;
+    }
+
 
     void calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare) override {
         int idxA = contorCorpA * 3;
@@ -241,7 +251,18 @@ public:
         return yA + this->l_xA * sin(phiA) + this->l_yA * cos(phiA);
     }
 
-       void calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare) override {
+        virtual void getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) override{
+        int idxA = contorCorpA * 3;
+        float phiA = stare(idxA + 2, 0);
+
+        type = 2;
+        widht = 0.5f;
+        height = 0.5f;
+        phi = phiA; 
+        }
+
+
+    void calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare) override {
         int idxA = contorCorpA * 3;
         int idxB = contorCorpB * 3;
         float xA = stare(idxA + 0, 0);

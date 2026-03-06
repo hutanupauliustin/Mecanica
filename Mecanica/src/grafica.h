@@ -116,16 +116,19 @@ void updateVerticesData(sistem &S, float* vertices){
         vertices[idx + 5] = (float)S.corpuri[i].tip;
     }
 
-    // 2. Legaturi (Articulatii) - Desenam Cercuri
+    // 2. Legaturi 
     int offset = S.nr_corpuri * stride;
     for(int i = 0; i <  S.nr_legaturi;i++){
         int idx = offset + i * stride;
         vertices[idx + 0] = S.legaturi[i]->getAbscisa(S.stare);
-        vertices[idx + 1] = S.legaturi[i]->getOrdonata(S.stare);
-        vertices[idx + 2] = 0.0f; // Phi (nu conteaza la cerc)
-        vertices[idx + 3] = 0.5f; // Width (Diametru)
-        vertices[idx + 4] = 0.5f; // Height
-        vertices[idx + 5] = 1.0f; // Type 1 = Cerc
+        vertices[idx + 1] = S.legaturi[i]->getOrdonata(S.stare); 
+        float widht, height, phi;
+        int type;
+        S.legaturi[i]->getGraphics(S.stare,type, widht, height, phi);  // le schimba prin referinta
+        vertices[idx + 2] = phi; // Phi
+        vertices[idx + 3] = widht; // Width (Diametru)
+        vertices[idx + 4] = height; // Height
+        vertices[idx + 5] = type; // Type 1 = Cerc
     }
 }
 
