@@ -14,7 +14,7 @@ $sourceFiles = Get-ChildItem -Path src -Recurse -Include *.cpp, *.c | ForEach-Ob
 Write-Host "Compilam fisierele: $sourceFiles"
 
 # Am pus $NumeExe in loc de simulator.exe
-g++ $sourceFiles -o $NumeExe -I includes -L lib -lglfw3 -lgdi32 -lopengl32 -static -static-libgcc -static-libstdc++
+g++ $sourceFiles -o $NumeExe -O3 -I includes -L lib -lglfw3 -lgdi32 -lopengl32 -static -static-libgcc -static-libstdc++
 
 
 if ($?) {

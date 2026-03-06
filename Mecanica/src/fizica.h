@@ -11,18 +11,17 @@ void calculeazaMultiplicatori(sistem &S, float t){                   //rezolva s
     // 1. Construim componentele ecuatiei M * Lambda = B
     
     // A_inv se calculeaza usor, A fiind diagonala
-    matrice A_inv = S.A.inverse(); 
     matrice J_T = S.J_F ^ "T";
 
     // Calculam M = J_F * A_inv * J_F^T (Dimensiunea va fi p x p)
-    matrice M = S.J_F * A_inv * J_T;
+    matrice M = S.J_F * S.A_inv * J_T;
 
     for(int i = 0; i < S.p; i++) {              // adaugam o componenta infinitezimal de mica pe diagonala principala, pentru nu permite matricea sa devina singulara
         M(i, i) += 1e-4f; 
     }
 
     // Calculam termenul liber B = - J_F * A_inv * Q - JdotQ (Dimensiunea va fi p x 1)
-    matrice J_Ainv_Q = S.J_F * A_inv * S.Q;
+    matrice J_Ainv_Q = S.J_F * S.A_inv * S.Q;
     matrice B(S.p, 1);
     for(int i = 0; i < S.p; i++) {
         B(i, 0) = -J_Ainv_Q(i, 0) - S.JdotQ(i, 0) - S.k_s * S.F(i, 0) - S.k_d * S.Fpunct(i, 0); // Adaugam termenii de corectie Baumgarte

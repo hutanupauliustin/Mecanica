@@ -19,7 +19,7 @@ public:
     float k_s,k_d,g,k_a;                          //spring constant si dampening constant -- sunt encesare pentru a introduce o amortizare foarte slaba care sa anuleze erorile de tip floating-point-arithmetic
                                              // constanta gravitationala       
     public:                                   
-    matrice Q, J_F, A, Lambda, JdotQ;       // Q - vectorul fortelor externe
+    matrice Q, J_F, A, A_inv, Lambda, JdotQ;       // Q - vectorul fortelor externe
                                             // J_f - Jacobianul legaturilor
                                             //JdotQ - produsul dintre derivata jacobianului si derivata coordonatelor
     matrice F, Fpunct;                      // sunt folosite pentru corectia erorii, impreuna cu constantele k_s si k_d
@@ -178,8 +178,9 @@ void seteazaConstrangeri()
             A = matrice('0', 3 * nr_corpuri, 3 * nr_corpuri);
         } else {
             for(int i =0; i < 3*nr_corpuri; i++)
-                for(int j = 0; j < 3*nr_corpuri; j++)
+                for(int j = 0; j < 3*nr_corpuri; j++){
                     A(i,j) = 0;
+                }
         }
 
         for (int i = 0; i < nr_corpuri; i++)
@@ -187,7 +188,9 @@ void seteazaConstrangeri()
             A(3 * i,     3 * i)     = corpuri[i].M; 
             A(3 * i + 1, 3 * i + 1) = corpuri[i].M; 
             A(3 * i + 2, 3 * i + 2) = corpuri[i].J; 
-        }    
+        }   
+        
+        A_inv = A.inverse();
     }
 
     void seteazaForteExterne()
