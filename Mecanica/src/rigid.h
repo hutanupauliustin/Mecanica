@@ -4,7 +4,7 @@
 class rigid
 {
 public:
-    int index; // Indexul corpului in vectorul sistemului
+    int index = 0; // Indexul corpului in vectorul sistemului
     float x, y, phi;
     float v_x, v_y, omega; // coordonatele centrului de greautea, si unghiul facut de sistemul de referinta propriu fata de cel universal
     float M, J;
@@ -12,10 +12,10 @@ public:
     float w, h; // Latime si Inaltime (pentru desenare)
     int tip;    // 0 = Invizibil, 1 = Cerc, 2 = Dreptunghi, 3 = Triunghi/Fix
 
-    rigid() : index(0), x(0), y(0), phi(0), v_x(0), v_y(0), omega(0), M(1), J(1), f_x(0), f_y(0), moment(0), w(1), h(1), tip(0) {}
+    rigid() :  x(0), y(0), phi(0), v_x(0), v_y(0), omega(0), M(1), J(1), f_x(0), f_y(0), moment(0), w(1), h(1), tip(0) {}
 
     rigid (float x_initial, float y_initial, float phi_initial, float masa, float momentInertie)
-        : index(0), x(x_initial), y(y_initial), phi(phi_initial), M(masa), J(momentInertie), v_x(0), v_y(0), omega(0), f_x(0), f_y(0), moment(0), w(1), h(1), tip(0) {}
+        :  x(x_initial), y(y_initial), phi(phi_initial), M(masa), J(momentInertie), v_x(0), v_y(0), omega(0), f_x(0), f_y(0), moment(0), w(1), h(1), tip(0) {}
 
     void aflaForteProprii(float g, float k_a)
     {
@@ -40,9 +40,9 @@ public:
         punct_y = y + d_x* sin(phi) + d_y * cos(phi);
     }
     // Creeaza o Bara (Dreptunghiulara)
-    static rigid Bara(int idx, float x, float y, float Lungime, float Grosime, float Masa) {
+    static rigid Bara( float x, float y, float Lungime, float Grosime, float Masa) {
         rigid r;
-        r.index = idx;
+        r.index = 0;
         r.x = x; r.y = y;
         r.w = Lungime; r.h = Grosime;
         r.M = Masa;
@@ -51,9 +51,9 @@ public:
         return r;
     }
 
-    static rigid Disc(int idx, float x, float y, float Raza, float Masa) {
+    static rigid Disc( float x, float y, float Raza, float Masa) {
         rigid r;
-        r.index = idx;
+        r.index = 0;
         r.x = x; r.y = y;
         r.w = Raza * 2.0f; // Width = Diametru
         r.h = Raza * 2.0f; // Height = Diametru
@@ -64,9 +64,9 @@ public:
     }
 
     // Creeaza un punct fix (Lumea)
-    static rigid Fix(int idx, float x, float y) {
+    static rigid Fix( float x, float y) {
         rigid r;
-        r.index = idx;
+        r.index = 0;
         r.x = x; r.y = y;
         r.M = 1e12f; // Masa infinita
         r.J = 1e12f;

@@ -212,13 +212,25 @@ public:
         return P;
     }
 
+    matrice operator-(const matrice &B) const
+    {
+        if (linii != B.linii || coloane != B.coloane) {
+            std::cerr << "[EROARE] Dimensiuni incompatibile la scadere.\n";
+            return matrice();
+        }
+        matrice S(linii, coloane);
+        for (int i = 0; i < linii * coloane; i++) {
+            S.valori[i] = valori[i] - B.valori[i];
+        }
+        return S;
+    }
+
     matrice operator*(const float x) const
     {
-        matrice R;
-        R = *this;
-        for (int i = 0; i < this->linii; i++)
-            for (int j = 0; j < this->coloane; j++)
-                *(R.at(i, j)) = (*this->at(i, j)) * x;
+        matrice R(linii, coloane);
+        for (int i = 0; i < linii * coloane; i++) {
+            R.valori[i] = valori[i] * x;
+        }
         return R;
     }
 

@@ -8,16 +8,16 @@ float INF = 1e12f;
 int main(){
     std::cout << "==> Initializare Sistem..." << std::endl;
     
-    /*sistem S(4,3);            // pendul triplu
+    /*sistem S;            // pendul triplu
 
     S.setareConstante(20.0f, 5.0f); 
     S.setareConstantaGravitationala(9.81f);
 
     // rigid::Bara(index, x, y, Lungime, Grosime, Masa)
-    rigid LUME = rigid::Fix(0, 0, 0);
-    rigid bara1 = rigid::Bara(1, 2.0f, 0.0f, 4.0f, 0.4f, 4.0f);
-    rigid bara2 = rigid::Bara(2, 6.0f, 0.0f, 4.0f, 0.4f, 4.0f); 
-    rigid bara3 = rigid::Bara(3, 10.0f, 0.0f, 4.0f, 0.4f, 4.0f);
+    rigid LUME = rigid::Fix(0, 0);
+    rigid bara1 = rigid::Bara(2.0f, 0.0f, 4.0f, 0.4f, 4.0f);
+    rigid bara2 = rigid::Bara(6.0f, 0.0f, 4.0f, 0.4f, 4.0f); 
+    rigid bara3 = rigid::Bara(10.0f, 0.0f, 4.0f, 0.4f, 4.0f);
 
     // Definim legaturile folosind coordonate GLOBALE
 
@@ -37,19 +37,19 @@ int main(){
     */
 
     /*
-    sistem S(7,7);            //pod 
+    sistem S;            //pod 
 
     S.setareConstante(20.0f, 5.0f); 
     S.setareConstantaGravitationala(9.81f);
 
     rigid LUME = rigid::Fix(0,0,0);
 
-    rigid veriga1 = rigid::Bara(1, -7.5f, 0.0f, 1.0f, 0.2f, 2.0f);
-    rigid veriga2 = rigid::Bara(2, -6.5f, 0.0f, 1.0f, 0.2f, 2.0f);
-    rigid veriga3 = rigid::Bara(3, -5.5f, 0.0f, 1.0f, 0.2f, 2.0f);
-    rigid veriga4 = rigid::Bara(4, -4.5f, 0.0f, 1.0f, 0.2f, 2.0f);
-    rigid veriga5 = rigid::Bara(5, -3.5f, 0.0f, 1.0f, 0.2f, 2.0f);
-    rigid veriga6 = rigid::Bara(6, -2.5f, 0.0f, 1.0f, 0.2f, 2.0f);
+    rigid veriga1 = rigid::Bara(-7.5f, 0.0f, 1.0f, 0.2f, 2.0f);
+    rigid veriga2 = rigid::Bara(-6.5f, 0.0f, 1.0f, 0.2f, 2.0f);
+    rigid veriga3 = rigid::Bara(-5.5f, 0.0f, 1.0f, 0.2f, 2.0f);
+    rigid veriga4 = rigid::Bara(-4.5f, 0.0f, 1.0f, 0.2f, 2.0f);
+    rigid veriga5 = rigid::Bara(-3.5f, 0.0f, 1.0f, 0.2f, 2.0f);
+    rigid veriga6 = rigid::Bara(-2.5f, 0.0f, 1.0f, 0.2f, 2.0f);
 
     legatura* fixare1 = articulatie::Creaza(LUME,    veriga1, -8.0f, 0.0f);
     legatura* art12   = articulatie::Creaza(veriga1, veriga2, -7.0f, 0.0f);
@@ -77,19 +77,19 @@ int main(){
     */
 
     /*
-    sistem S(7,6);        //lant
+    sistem S;        //lant
 
     S.setareConstante(20.0f, 5.0f); 
     S.setareConstantaGravitationala(9.81f);
 
     rigid LUME = rigid::Fix(0,0,0);
 
-    rigid veriga1 = rigid::Bara(1, -7.5f, 0.0f, 1.0f, 0.2f, 30.0f);
-    rigid veriga2 = rigid::Bara(2, -6.5f, 0.0f, 1.0f, 0.2f, 30.0f);
-    rigid veriga3 = rigid::Bara(3, -5.5f, 0.0f, 1.0f, 0.2f, 30.0f);
-    rigid veriga4 = rigid::Bara(4, -4.5f, 0.0f, 1.0f, 0.2f, 30.0f);
-    rigid veriga5 = rigid::Bara(5, -3.5f, 0.0f, 1.0f, 0.2f, 30.0f);
-    rigid veriga6 = rigid::Bara(6, -2.5f, 0.0f, 1.0f, 0.2f, 30.0f);
+    rigid veriga1 = rigid::Bara(-7.5f, 0.0f, 1.0f, 0.2f, 30.0f);
+    rigid veriga2 = rigid::Bara(-6.5f, 0.0f, 1.0f, 0.2f, 30.0f);
+    rigid veriga3 = rigid::Bara(-5.5f, 0.0f, 1.0f, 0.2f, 30.0f);
+    rigid veriga4 = rigid::Bara(-4.5f, 0.0f, 1.0f, 0.2f, 30.0f);
+    rigid veriga5 = rigid::Bara(-3.5f, 0.0f, 1.0f, 0.2f, 30.0f);
+    rigid veriga6 = rigid::Bara(-2.5f, 0.0f, 1.0f, 0.2f, 30.0f);
 
     
     legatura* art12   = articulatie::Creaza(veriga1, veriga2, -7.0f, 0.0f);
@@ -116,15 +116,15 @@ int main(){
     */
 
     
-    sistem S(3, 2); 
+    sistem S; 
 
     S.setareConstante(20.0f, 5.0f); 
     S.setareConstantaGravitationala(9.81f);
 
-    rigid LUME = rigid::Fix(0, 0, 0);
-    rigid bara1 = rigid::Bara(1, 2.0f, 0.0f, 4.0f, 0.4f, 2.0f);
+    rigid LUME = rigid::Fix(0, 0);
+    rigid bara1 = rigid::Bara(2.0f, 0.0f, 4.0f, 0.4f, 2.0f);
     bara1.phi = 0.0f;
-    rigid bara2 = rigid::Bara(2, 4.0f, -2.0f, 4.0f, 0.4f, 2.0f);
+    rigid bara2 = rigid::Bara(4.0f, -2.0f, 4.0f, 0.4f, 2.0f);
     bara2.phi = -90.0f * DEG_TO_RAD; 
 
     legatura* tavan = articulatie::Creaza(LUME, bara1, 0.0f, 0.0f);
@@ -177,7 +177,8 @@ int main(){
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            drawSystem(S, VAO, VBO, shaderProgram, vertexBuffer);
+            std::vector<float> vertexBuffer(6 * (S.nr_corpuri + S.nr_legaturi));
+            drawSystem(S, VAO, VBO, shaderProgram, vertexBuffer.data());
 
             glfwSwapBuffers(window);
             glfwPollEvents();

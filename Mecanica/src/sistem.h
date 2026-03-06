@@ -3,16 +3,16 @@
 #include "legatura.h"
 #include "rigid.h"
 #include <cmath>
+#include <vector>
 
 class sistem
 {
 public:
     int nr_corpuri;
     int nr_legaturi;
-    rigid *corpuri;
-    legatura **legaturi;                    // vector de pointeri
-    int legaturi_adaugate;
-    int corpuri_adaugate;
+    std::vector<rigid> corpuri;
+    std::vector<legatura*> legaturi;                   // vector de pointeri
+
     int p;                                  // p este numarul de ecuatii adaugate de legaturi (2 pt articulatii, 3 pt incastrare, etc.)
     matrice stare;                          // am sa ma refer la ecuatiile adaugate f_1,f_2... cu numele de "constrangeri"
 
@@ -24,31 +24,26 @@ public:
                                             //JdotQ - produsul dintre derivata jacobianului si derivata coordonatelor
     matrice F, Fpunct;                      // sunt folosite pentru corectia erorii, impreuna cu constantele k_s si k_d
     
-    sistem(int nr_corpuri, int nr_legaturi)
+    sistem()
     {                                       // A - matricea de inertie
-        this->nr_corpuri = nr_corpuri;                     // Lambda - vectorul multiplicatorilor lui Lagrange
-        this->nr_legaturi = nr_legaturi;
-        legaturi_adaugate = 0;
-        corpuri_adaugate = 0;
+        nr_corpuri = 0;
+        nr_legaturi = 0;
+                    // Lambda - vectorul multiplicatorilor lui Lagrange
         p = 0;
         k_d = 0.0f;
         k_s = 0.0f;
         g = 9.81f; // Initializare implicita
         k_a = 0.0f;
 
-        corpuri = new rigid[nr_corpuri];
-        legaturi = new legatura *[nr_legaturi];
         stare = matrice(6 * nr_corpuri, 1);
     }
 
     ~sistem()
     {
-        delete[] corpuri;
         for (int i = 0; i < nr_legaturi; i++)
         {
             delete legaturi[i];
         }
-        delete[] legaturi;
     }
 
     void setareConstantaGravitationala(float grav){
@@ -65,25 +60,21 @@ public:
     }
 
     void adaugaCorpuri(rigid &r){
-        if (corpuri_adaugate < nr_corpuri)
-        {
-            corpuri[corpuri_adaugate] = r;
-            corpuri_adaugate++;
-        }
+        r.index = corpuri.size();
+        corpuri.push_back(r);
+        nr_corpuri = corpuri.size();
     }
 
     void adaugaLegaturi(legatura *l)
     {
-        if (legaturi_adaugate < nr_legaturi)
-        {
-            legaturi[legaturi_adaugate] = l;
-            legaturi_adaugate++;
-
-            p += l->getNumarEcuatii();
-        }
+        legaturi.push_back(l);
+        nr_legaturi = legaturi.size();
+        p += l->getNumarEcuatii();
     }
 
     void incarcaStare(){
+        stare = matrice(6 * nr_corpuri, 1);
+        
         for (int i = 0; i < nr_corpuri; i++)
         {
             stare(i * 3, 0) = corpuri[i].x;
@@ -135,7 +126,7 @@ public:
 
         int rand_constrangere = 0;
 
-        for (int i = 0; i < legaturi_adaugate; i++)
+        for (int i = 0; i < legaturi.size(); i++)
         {
 
             legaturi[i]->calculeazaJacobian(J_F, rand_constrangere, stare);
@@ -172,7 +163,7 @@ void seteazaConstrangeri()
 
         int rand_constrangere = 0;
 
-        for (int i = 0; i < legaturi_adaugate; i++)
+        for (int i = 0; i < legaturi.size(); i++)
         {
 
             legaturi[i]->calculeazaConstrangere(F, rand_constrangere, stare);
