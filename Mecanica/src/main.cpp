@@ -217,7 +217,7 @@ int main(){
             if(frameCount % 100 == 0){
                  std::cout << "Cadre randate: " << frameCount << " Timp simulat: " << t << std::endl;
                  float energie = calculeazaEnergiaTotala(S, S.g);
-                std::cout << "Energie: " << energie <<" J " <<std::endl;
+                std::cout << "Energie: " << energie / 1000.0f <<" KJ " <<std::endl;
             }
         }
         

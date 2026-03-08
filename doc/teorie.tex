@@ -1,15 +1,29 @@
 \documentclass[12pt, a4paper]{article}
-\usepackage{amsmath, amssymb, geometry, graphicx}
+\usepackage{amsmath, amssymb, geometry, graphicx, hyperref}
 \usepackage[utf8]{inputenc}
 \geometry{a4paper, margin=2cm}
+\renewcommand{\refname}{Bibliography}
+
+\title{Motor Fizic 2D pentru Corpuri Legate } % \\ \large Modelarea Dinamicii și a Legăturilor Unilaterale}
+\author{Huțanu Paul-Iustin \\ \small Profesor îndrumator: Craifaleanu Andrei}
+\date{\today} 
 
 \begin{document}
 
-\section*{1. Cinematica sistemului de corpuri}
+\maketitle
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Introducere și obiectivele lucrarii}
+\section{ Dinamica Sitemelor cu Legături}
+
+\subsection{Cinematica sistemului de corpuri}
 
 Considerăm un sistem de $n$ corpuri, fiecare fiind compus dintr-un număr arbitrar $N$ de puncte aflate în mișcare plan-paralelă.
 
-Fiecare corp $l$ are un sistem de coordonate propriu $x_l C_l y_l$, aflat în centrul său de masă.Sistemul este considerat la un unghi $\varphi_l$ ce corespunde mișcării corpului. Versorii sistemului de coordonate local, $\bar{i}_l$ și $\bar{j}_l$, sunt neconstanți în raport cu sistemul fix.
+Fiecare corp $l$ are un sistem de coordonate propriu $x_l C_l y_l$, aflat în centrul său de masă. Sistemul este considerat la un unghi $\varphi_l$ ce corespunde mișcării corpului. Versorii sistemului de coordonate local, $\bar{i}_l$ și $\bar{j}_l$, sunt neconstanți în raport cu sistemul fix.
 
 Vectorul de poziție al unui punct $j$ de pe corpul $l$ în raport cu centrul de masă este:
 \begin{equation}
@@ -66,7 +80,7 @@ Deoarece $\sin^2\varphi_l + \cos^2\varphi_l = 1$, expresia se simplifică:
     v_j^2 = \dot{x}_l^2 + \dot{y}_l^2 + \dot{\varphi}_l^2(d_{xjl}^2 + d_{yjl}^2) + 2\dot{\varphi}_l[-\dot{x}_l(d_{xjl}\sin\varphi_l + d_{yjl}\cos\varphi_l) + \dot{y}_l(d_{xjl}\cos\varphi_l - d_{yjl}\sin\varphi_l)]
 \end{equation}
 
-\section*{2. Energia cinetică a sistemului}
+\subsection{Energia cinetică a sistemului}
 
 Energia cinetică a corpului $l$ este suma energiilor cinetice ale punctelor sale:
 \begin{equation}
@@ -84,7 +98,7 @@ Energia cinetică a corpului $l$ este suma energiilor cinetice ale punctelor sal
 \end{equation}
 iar momentul de inerție față de axa $z$ este $J_{zl} = \sum_{j=1}^{N} m_j(d_{xjl}^2 + d_{yjl}^2)$.
 
-Astfel, termenii care conțin $d_{xjl}$ și $d_{yjl}$ la puterea întâi se anulează, deci energia cinetică a corpului $l$ capătă forma :
+Astfel, termenii care conțin $d_{xjl}$ și $d_{yjl}$ la puterea întâi se anulează, deci energia cinetică a corpului $l$ capătă forma:
 \begin{equation}
     E_l = \frac{1}{2} M_l \dot{x}_l^2 + \frac{1}{2} M_l \dot{y}_l^2 + \frac{1}{2} J_{zl} \dot{\varphi}_l^2
 \end{equation}
@@ -114,7 +128,7 @@ unde $A$ este matricea maselor, o matrice diagonală de forma:
     \end{bmatrix}
 \end{equation}
 
-\section*{3. Ecuațiile lui Lagrange pentru sisteme cu legături}
+\subsection{Ecuațiile lui Lagrange pentru sisteme cu legături}
 
 Fie ecuațiile lui Lagrange în cazul sistemelor cu variabile dependente, introducând un sistem de constrângeri (legături cinematice olonome):
 \begin{equation}
@@ -166,7 +180,7 @@ Când scriem ecuațiile lui Lagrange desfășurat, forma matriceală devine:
     \frac{d}{dt}\left(\frac{\partial E}{\partial \dot{q}}\right) - \frac{\partial E}{\partial q} = Q + J_F^T \Lambda
 \end{equation}
 
-\textbf{Calculul derivatelor energiei:}
+\subsubsection{Calculul derivatelor energiei}
 
 Calculăm derivata parțială a energiei în raport cu componenta $\dot{q}_k$:
 \begin{equation}
@@ -215,10 +229,9 @@ Notăm vectorul forțelor generalizate cu $Q = \begin{bmatrix} Q_1 \\ \vdots \\ 
     A\ddot{q} = Q + J_F^T \Lambda
 \end{equation}
 
-
 la care atașăm sistemul de constrângeri $F(q,t) = 0$.
 
-\subsection*{Rezolvarea sistemului de ecuații}
+\subsubsection{Rezolvarea sistemului de ecuații}
 
 Sistemul format din ecuațiile de mișcare și ecuațiile de constrângere este:
 \begin{equation}
@@ -251,11 +264,11 @@ Desfăcând parantezele și separând termenul care îl conține pe $\Lambda$, o
 \begin{equation}
     (J_F A^{-1} J_F^T)\Lambda = -\dot{J}_F \dot{q} - J_F A^{-1} Q
 \end{equation}
-Observăm ca matricea $\dot{J}$ nu apare de sine stătătoare, și este înmulțită cu $\dot{q}$. Rezultatul înmulțirii este un vector. În cod, nu vom salva valoarea matricei $\dot{J}$, si vom salva direct produsul înmulțirii pentru a economisii memorie.
+Observăm ca matricea $\dot{J}$ nu apare de sine stătătoare, și este înmulțită cu $\dot{q}$. Rezultatul înmulțirii este un vector. În cod, nu vom salva valoarea matricei $\dot{J}$, și vom salva direct produsul înmulțirii pentru a economisi memorie.
 
-\section*{4. Introducerea constrângerilor}
+\subsection{Introducerea constrângerilor}
 
-    Legăturile le vom realiza între puncte specifice aflate pe corpuri diferite. Pentru a formula ecuațiile de constrângere, trebuie să exprimăm coordonatele acestor puncte din sistemele locale în sistemul de referință global.
+Legăturile le vom realiza între puncte specifice aflate pe corpuri diferite. Pentru a formula ecuațiile de constrângere, trebuie să exprimăm coordonatele acestor puncte din sistemele locale în sistemul de referință global.
 
 Fie un punct $P$ aflat pe un corp arbitrar $l$. Dacă notăm coordonatele locale ale punctului $P$ față de centrul de masă al corpului cu $l_{xl}$ și $l_{yl}$, coordonatele sale globale vor fi date de transformarea:
 \begin{equation}
@@ -266,12 +279,12 @@ Fie un punct $P$ aflat pe un corp arbitrar $l$. Dacă notăm coordonatele locale
 \end{equation}
 unde $(x_l, y_l, \varphi_l)$ definesc poziția centrului de masă și orientarea corpului $l$ în planul global.
 
-Când două corpuri, $A$ și $B$, sunt legate, trebuie sa adaugam componente noi functiei F. Astfel se va schimba si Jacobianul $J_F$.
+Când două corpuri, $A$ și $B$, sunt legate, trebuie să adăugăm componente noi funcției F. Astfel se va schimba și Jacobianul $J_F$.
 \begin{equation}
     F = \big( f_1(q), \dots, f_p(q), f_{p+1}(q), \dots \big)^T
 \end{equation}
 
-\subsection*{4.1 Articulația}
+\subsubsection{Articulația}
 Introducerea unei articulații între corpurile $A$ și $B$ forțează punctele lor de legătură să coincidă ($x_{PA} = x_{PB}$ și $y_{PA} = y_{PB}$). Aceasta adaugă două constrângeri la sistem și doi multiplicatori Lagrange:
 \begin{equation}
     \begin{aligned}
@@ -308,7 +321,7 @@ La nivel matriceal, introducerea articulației adaugă următorii vectori coloan
     \end{bmatrix}
 \end{equation}
 
-\subsection*{Calculul matricelor pentru Articulație}
+\paragraph{Calculul matricelor pentru Articulație}
 
 Pentru o articulație, am definit deja ecuațiile de legătură $f_{p+1}$ și $f_{p+2}$:
 \begin{equation}
@@ -334,7 +347,7 @@ Acești termeni intervin în calculul vectorului $\dot{J}_F \dot{q}$. Înmulțin
     \end{bmatrix}
 \end{equation}
 
-\subsection*{4.2 Încastrarea}
+\subsubsection{Încastrarea}
 Adăugarea unei încastrări presupune prezența constrângerilor de la articulație ($f_{p+1}$, $f_{p+2}$), la care se adaugă o componentă suplimentară ce blochează rotația relativă a celor două corpuri:
 \begin{equation}
     f_{p+3} = \varphi_A - \varphi_B - \varphi_0 = 0
@@ -361,7 +374,7 @@ Matriceal, pe lângă cele două coloane adăugate de articulație, încastrarea
     \end{bmatrix}
 \end{equation}
 
-\subsection*{Calculul vectorului $\dot{J}_F \dot{q}$ pentru Încastrare}
+\paragraph{Calculul vectorului $\dot{J}_F \dot{q}$ pentru Încastrare}
 
 Pentru o încastrare, sistemul de ecuații de legătură conține ecuațiile articulației ($f_{p+1}$ și $f_{p+2}$) la care se adaugă o ecuație suplimentară pentru blocarea rotației relative:
 \begin{equation}
@@ -389,5 +402,33 @@ Prin urmare, atunci când calculăm produsul $\dot{J}_F \dot{q}$, componenta cor
         0
     \end{bmatrix}
 \end{equation}
+
+\section{Decetia si Rezolvarea Coliziunilor}
+\subsection{Arhitectura sistemului de geometrie: Decuplarea componentei fizice de forma geometrica (Collider, Manifold).}
+\subsection{Faza de filtrare (Broad-Phase): Optimizarea performantei folosind cutii de incadrare aliniate la axe (AABB).}
+\subsection{Faza de detectie exacta (Narrow-Phase): Aplicarea Teoremei Axelor de Separare (SAT) pentru poligoane convexe rotite.}
+\subsection{Rezolvarea coliziunilor: Calculul impulsului si frecarea Coulomb.}
+
+\section{Implementare si Arhitectura Software}
+\subsection{Structura aplicatiei: C++, organizarea pe componente si OpenGL pentru randare grafica.}
+\subsection{Integrarea numerica: Alegerea si implementarea metodei Runge-Kutta de ordinul 4 (RK4) pentru stabilitate.}
+
+\section{Rezultate si Validarea Simularii}
+\subsection{Conservarea energiei: Analiza termodinamica a sistemului in miscare.}
+\subsection{Teste de stabilitate: Prezentarea simularilor (lant articulat, pendul multiplu, stiva de corpuri).}
+\subsection{Analiza performantei: Impactul filtrului AABB asupra timpului de calcul pe cadru.}
+
+\section{Concluzii si Dezvoltari Ulterioare}
+\subsection{Obiective atinse si limitari curente.}
+\subsection{ Directii viitoare de dezvoltare.}
+
+\section{Bibliografie}
+
+\begin{thebibliography}{ }
+\bibitem{text1} Real-Time Collision Detection -- Christer Ericson
+\bibitem{text2} Physically Based Modelling -- Andrew Witkin
+\bibitem{text3} Mecanica -- Andrei Craifaleanu
+\bibitem{text4} \url{ https://www.geeksforgeeks.org/maths/cholesky-factorization/ }
+\end{thebibliography}
 
 \end{document}

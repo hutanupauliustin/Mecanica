@@ -1,0 +1,35 @@
+Structura Proiectului (Cuprins) - Sesiunea de Comunicari Stiintifice
+
+1. Introducere
+1.1. Context si Motivatie: De ce am ales construirea unui motor fizic de la zero.
+1.2. Obiectivele lucrarii: Simularea 2D a corpurilor rigide articulate, detectia coliziunilor si stabilitatea numerica.
+
+2. Fundamente Teoretice: Dinamica Sistemelor cu Legaturi
+2.1. Cinematica sistemului de corpuri: Vectori de pozitie, viteze.
+2.2. Energia cinetica a sistemului.
+2.3. Ecuatiile lui Lagrange de speta intai: Multiplicatori Lagrange si calculul Jacobianului.
+2.4. Modelarea constrangerilor cinematice:
+    2.4.1. Articulatia (Hinge joint).
+    2.4.2. Incastrarea (Weld joint).
+2.5. Stabilizarea constrangerilor: Corectia erorilor de integrare.
+
+3. Detectia si Rezolvarea Coliziunilor
+3.1. Arhitectura sistemului de geometrie: Decuplarea componentei fizice de forma geometrica (Collider, Manifold).
+3.2. Faza de filtrare (Broad-Phase): Optimizarea performantei folosind cutii de incadrare aliniate la axe (AABB).
+3.3. Faza de detectie exacta (Narrow-Phase): Aplicarea Teoremei Axelor de Separare (SAT) pentru poligoane convexe rotite.
+3.4. Rezolvarea coliziunilor: Calculul impulsului si frecarea Coulomb.
+
+4. Implementare si Arhitectura Software
+4.1. Structura aplicatiei: C++, organizarea pe componente si OpenGL pentru randare grafica.
+4.2. Integrarea numerica: Alegerea si implementarea metodei Runge-Kutta de ordinul 4 (RK4) pentru stabilitate.
+
+5. Rezultate si Validarea Simularii
+5.1. Conservarea energiei: Analiza termodinamica a sistemului in miscare.
+5.2. Teste de stabilitate: Prezentarea simularilor (lant articulat, pendul multiplu, stiva de corpuri).
+5.3. Analiza performantei: Impactul filtrului AABB asupra timpului de calcul pe cadru.
+
+6. Concluzii si Dezvoltari Ulterioare
+6.1. Obiective atinse si limitari curente.
+6.2. Directii viitoare de dezvoltare.
+
+7. Bibliografie
