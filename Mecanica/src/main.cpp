@@ -198,6 +198,8 @@ int main(){
                 t += dt;
             }
 
+            
+
             S.seteazaStare(); 
 
             // 3. Randare
@@ -208,9 +210,15 @@ int main(){
 
             glfwSwapBuffers(window);
             glfwPollEvents();
+
+            float energie;
             
             frameCount++;
-            if(frameCount % 100 == 0) std::cout << "Cadre randate: " << frameCount << " Timp simulat: " << t << std::endl;
+            if(frameCount % 100 == 0){
+                 std::cout << "Cadre randate: " << frameCount << " Timp simulat: " << t << std::endl;
+                 float energie = calculeazaEnergiaTotala(S, S.g);
+                std::cout << "Energie: " << energie <<" J " <<std::endl;
+            }
         }
         
         glfwTerminate();

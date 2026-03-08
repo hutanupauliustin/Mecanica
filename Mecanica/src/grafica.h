@@ -101,7 +101,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "}\0";
 
 void updateVerticesData(sistem &S, float* vertices){
-    // Structura datelor per punct: [x, y, phi, width, height, type] (6 float-uri)  // type 0 - cerc | 1 - dreptunghi | 2 - trunghi 
+    // Structura datelor per punct: [x, y, phi, width, height, type] (6 float-uri)
     int stride = 6;
 
     // 1. Corpuri
@@ -111,9 +111,14 @@ void updateVerticesData(sistem &S, float* vertices){
         vertices[idx + 1] = S.corpuri[i].y;
         vertices[idx + 2] = S.corpuri[i].phi;
 
-        vertices[idx + 3] = S.corpuri[i].w;
-        vertices[idx + 4] = S.corpuri[i].h;
-        vertices[idx + 5] = (float)S.corpuri[i].tip;
+        if(S.corpuri[i].collider.tip == CERC){
+            vertices[idx + 3] = S.corpuri[i].collider.dimensiune1 * 2.0f; // Shaderul asteapta Diametru, dar noi stocam Raza
+            vertices[idx + 4] = S.corpuri[i].collider.dimensiune2 * 2.0f;
+        } else {
+            vertices[idx + 3] = S.corpuri[i].collider.dimensiune1;
+            vertices[idx + 4] = S.corpuri[i].collider.dimensiune2;
+        }
+        vertices[idx + 5] = (float)S.corpuri[i].collider.tip;
     }
 
     // 2. Legaturi 

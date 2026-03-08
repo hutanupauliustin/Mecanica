@@ -1,88 +1,62 @@
 #pragma once
 #include "sistem.h"
 #include "matrice.h"
-#include <algorithm> // Pentru std::swap            //AI
 
 //rezolva sisteme olonoame scleronome, cu legaturi bilaterale
 
-//functie facuta predominant de AI
 void calculeazaMultiplicatori(sistem &S, float t){                   //rezolva sistemul (J * A^-1 * J^T) Lambda = - JpunctQpunct - J * A^-1 * Q - k_s*F - k_d*Fpunct 
-                                                                     
-    // 1. Construim componentele ecuatiei M * Lambda = B
-    
-    // A_inv se calculeaza usor, A fiind diagonala
-    matrice J_T = S.J_F ^ "T";
+                         
+    S.Lambda = matrice(S.p, 1);
 
-    // Calculam M = J_F * A_inv * J_F^T (Dimensiunea va fi p x p)
-    matrice M = S.J_F * S.A_inv * J_T;
+    matrice M(S.p,S.p);
+    matrice L(S.p,S.p);
 
-    for(int i = 0; i < S.p; i++) {              // adaugam o componenta infinitezimal de mica pe diagonala principala, pentru nu permite matricea sa devina singulara
-        M(i, i) += 1e-4f; 
-    }
+    M =  S.J_F * S.A_inv * (S.J_F ^ "T");                   // matricea din partea stanga a sistemului
 
-    // Calculam termenul liber B = - J_F * A_inv * Q - JdotQ (Dimensiunea va fi p x 1)
-    matrice J_Ainv_Q = S.J_F * S.A_inv * S.Q;
-    matrice B(S.p, 1);
-    for(int i = 0; i < S.p; i++) {
-        B(i, 0) = -J_Ainv_Q(i, 0) - S.JdotQ(i, 0) - S.k_s * S.F(i, 0) - S.k_d * S.Fpunct(i, 0); // Adaugam termenii de corectie Baumgarte
-    }
+    for (int i = 0; i < S.p; i++)                           // adaugam o valoare nesemenificativa pe diagolana matricei, pentru a ne asigura ca este pozitiv definita, nu semidefinita
+        M(i,i) += 1e-7f;
 
-    int p = S.p;
-
-    // 2. Eliminarea Gaussiana cu pivotare partiala
-    for (int k = 0; k < p; k++) {
-        // Cautam valoarea maxima (pivotul) pe coloana curenta, de la linia k in jos
-        float maxVal = std::abs(M(k, k));
-        int maxRow = k;
-        for (int i = k + 1; i < p; i++) {
-            if (std::abs(M(i, k)) > maxVal) {
-                maxVal = std::abs(M(i, k));
-                maxRow = i;
+    for(int i = 0; i < S.p; i++){                           // calculam descompunerea Cholesky
+        for(int j = 0; j <= i; j++){ 
+            float suma = 0.0f;
+            for(int k = 0; k < j; k++){
+                suma += L(i, k) * L(j, k);
             }
-        }
 
-        // Daca pivotul gasit nu e pe linia curenta, interschimbam toata linia
-        if (maxRow != k) {
-            for (int j = k; j < p; j++) {
-                std::swap(M(k, j), M(maxRow, j));
-            }
-            std::swap(B(k, 0), B(maxRow, 0));
-        }
-
-        // Verificam singularitatea (daca pivotul e inca foarte aproape de zero)
-        if (std::abs(M(k, k)) < 1e-6f) {
-            continue; // Sarim peste pentru a nu imparti la zero
-        }
-
-        // Eliminam elementele de sub pivot pentru a forma un triunghi de zerouri
-        for (int i = k + 1; i < p; i++) {
-            float factor = M(i, k) / M(k, k);
-            B(i, 0) = B(i, 0) - factor * B(k, 0);
-            
-            for (int j = k; j < p; j++) {
-                M(i, j) = M(i, j) - factor * M(k, j);
+            if(i == j){
+                float val = M(i, i) - suma;
+                L(i, i) = (val > 0.0f) ? std::sqrt(val) : 1e-6f;        // daca valoarea este ngativa, vom pune o valoare infinitezimala, nu zero, pentru a evita impartirea la 0
+            } else {
+                L(i, j) = (M(i, j) - suma) / L(j, j); 
             }
         }
     }
 
-    // 3. Substitutia inapoi pentru a afla efectiv fortele Lambda
-    S.Lambda = matrice(p, 1);
-    for (int i = p - 1; i >= 0; i--) {
-        float suma = B(i, 0);
-        for (int j = i + 1; j < p; j++) {
-            suma -= M(i, j) * S.Lambda(j, 0);
-        }
-        
-        if (std::abs(M(i, i)) > 1e-6f) {
-            S.Lambda(i, 0) = suma / M(i, i);
-        } else {
-            S.Lambda(i, 0) = 0.0f; // Siguranta in caz de singularitate irecuperabila
-        }
-    }
+    matrice y(S.p,1);
+    matrice B(S.p,1);
 
+    B = - S.J_F * S.A_inv * S.Q - S.JdotQ - S.k_d * S.Fpunct - S.k_s * S.F;   //matricea din partea dreapta a sistemului
+
+    for(int i = 0; i < S.p; i++){                   //calculeaza prima parte a sistemului L * ( L_T * Lambda) =  B , notand L_T * Lambda cu y
+        float suma = 0.0f;
+        for(int j = 0; j < i; j++){
+            suma += L(i,j)* y(j,0);
+        }
+        y(i,0) = (B(i,0) - suma) / L(i,i);
+        }
+
+    for(int i = S.p - 1; i >= 0; i--){
+        float suma = 0.0f;
+        for(int j = i + 1 ; j < S.p; j++){
+            suma += L(j,i)* S.Lambda(j,0);          // L(j,i) este L^T(i,j)
+        } 
+        S.Lambda(i,0) = (y(i,0) - suma) / L(i,i);
+        }
 }
+    
 
-matrice derivata(sistem &S, const matrice &stare_curenta, float t)
+
+matrice derivata(sistem &S, const matrice &stare_curenta, float t)      //facuta de AI
 {
     // Pentru a calcula derivata starii (viteze si acceleratii) la un moment dat,
     // trebuie sa recalculam fortele si constrangerile pentru starea curenta (pozitii si viteze).
@@ -137,4 +111,45 @@ matrice RK4(sistem &S, float dt, float t) {
     stare_noua = S.stare + (k1 + k2 * 2.0f + k3 * 2.0f + k4) * (1.0f / 6.0f);
 
     return stare_noua;
+}
+
+char intersectareScaraLarga(sistem &S,int corpA, int corpB){        //verifica doar daca cutiile in care sunt bagate corpurile se intersecteaza
+                                                                    //doar daca cutiile corpurile se supran exista posibilitatea ca ele sa se intersecteze cu adevarat, caz in care facem o verificare mai exacta
+    float dist_x = std::abs(S.corpuri[corpA].x - S.corpuri[corpB].x);//costul computational de a face doua verificari in cazul in care se supranul, este mult justificat de timpul castigat prin calculul a multor verificari usoare de facut de acest tip
+    float dist_y = std::abs(S.corpuri[corpA].y - S.corpuri[corpB].y);//pentru ca este putin probabil ca dintr-un numar n de corpuri, sa se ciocneasca un numar semnificativ intre ele 
+
+    float suma_raze_x = S.corpuri[corpA].collider.bb.razaLatime + S.corpuri[corpB].collider.bb.razaLatime;
+    float suma_raze_y = S.corpuri[corpA].collider. bb.razaInaltime + S.corpuri[corpB].collider.bb.razaInaltime;
+
+    if(dist_x <= suma_raze_x && dist_y <= suma_raze_y){
+        return 1;
+    }
+
+    return 0;
+}
+
+char intersectareScaraMica(sistem &S,int corpA, int corpB){
+    return 0;
+}
+
+float calculeazaEnergiaTotala(sistem &S, float g) {
+    float energie = 0.0f;
+    
+    // Parcurgem toate corpurile (presupunand ca le ai intr-un vector S.corpuri)
+    for (int i = 0; i < S.corpuri.size(); i++) {
+        rigid& c = S.corpuri[i];
+        
+        // Ignoram peretii si corpurile statice (masa infinita)
+        if (c.M > 1e10f) continue; 
+
+        float viteza_la_patrat = (c.v_x * c.v_x) + (c.v_y * c.v_y);
+        
+        float e_cinetica = 0.5f * c.M * viteza_la_patrat;
+        float e_rotatie = 0.5f * c.J * (c.omega * c.omega);
+        float e_potentiala = c.M * g * (c.y + 10); // 'g' trebuie sa fie o valoare pozitiva aici (ex: 9.81)
+
+        energie += (e_cinetica + e_rotatie + e_potentiala);
+    }
+    
+    return energie;
 }
