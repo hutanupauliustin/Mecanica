@@ -1,6 +1,7 @@
 #pragma once
 #include "sistem.h"
 #include "matrice.h"
+#include "colliziune.h"
 
 //rezolva sisteme olonoame scleronome, cu legaturi bilaterale
 
@@ -113,24 +114,6 @@ matrice RK4(sistem &S, float dt, float t) {
     return stare_noua;
 }
 
-char intersectareScaraLarga(sistem &S,int corpA, int corpB){        //verifica doar daca cutiile in care sunt bagate corpurile se intersecteaza
-                                                                    //doar daca cutiile corpurile se supran exista posibilitatea ca ele sa se intersecteze cu adevarat, caz in care facem o verificare mai exacta
-    float dist_x = std::abs(S.corpuri[corpA].x - S.corpuri[corpB].x);//costul computational de a face doua verificari in cazul in care se supranul, este mult justificat de timpul castigat prin calculul a multor verificari usoare de facut de acest tip
-    float dist_y = std::abs(S.corpuri[corpA].y - S.corpuri[corpB].y);//pentru ca este putin probabil ca dintr-un numar n de corpuri, sa se ciocneasca un numar semnificativ intre ele 
-
-    float suma_raze_x = S.corpuri[corpA].collider.bb.razaLatime + S.corpuri[corpB].collider.bb.razaLatime;
-    float suma_raze_y = S.corpuri[corpA].collider. bb.razaInaltime + S.corpuri[corpB].collider.bb.razaInaltime;
-
-    if(dist_x <= suma_raze_x && dist_y <= suma_raze_y){
-        return 1;
-    }
-
-    return 0;
-}
-
-char intersectareScaraMica(sistem &S,int corpA, int corpB){
-    return 0;
-}
 
 float calculeazaEnergiaTotala(sistem &S, float g) {
     float energie = 0.0f;

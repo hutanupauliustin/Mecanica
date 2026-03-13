@@ -1,0 +1,12 @@
+1. Capitolul 4: Bounding Volumes (Aproximativ paginile 75 - 110)
+Aici afli cum se definesc corect formele în memorie. Citește doar secțiunile despre formele de care ai nevoie:
+    4.1 Spheres: (La tine vor fi Cercuri). Te interesează doar cum definești centrul și raza.
+    4.2 Axis-Aligned Bounding Boxes (AABBs): Cutiile simple, ne-rotite. Vezi cum stochează min și max.
+    4.3 Oriented Bounding Boxes (OBBs): Cutiile care se rotesc (dreptunghiurile tale din motor). Vezi cum stochează centrul, axele de rotație (extents) și jumătățile de lățime/înălțime.2. 
+Capitolul 5: Basic Primitive Tests (Cel mai important!)Acesta este "carnea" sistemului tău de detecție. Aici găsești codul C++ pe care îl poți adapta.
+5.1.1 Sphere-Sphere: Intersecția dintre două cercuri. E pur și simplu calculul distanței (teorema lui Pitagora).
+5.2.1 AABB-AABB: Este baza algoritmului tău de filtrare (Broad-phase). Afli instant dacă două cutii mari care înglobează obiectele tale se ating.
+5.2 Separating Axis Theorem (SAT): Trebuie neapărat să citești introducerea despre SAT. Aici îți explică logic de ce, dacă poți trage o linie între două forme, ele nu se intersectează.
+5.5 OBB-OBB Intersections: Aici e algoritmul SAT aplicat pe dreptunghiuri rotite. Cartea îți va da o funcție 3D care verifică 15 axe. Pentru 2D, trebuie să verifici doar 4 axe (câte două normale pentru fiecare dreptunghi). Ignoră produsele vectoriale (cross products) din secțiunea respectivă, în 2D e mult mai simplu.3. 
+Capitolul 7: Spatial Partitioning (Doar dacă ai probleme de performanță)Când vei avea zeci de obiecte care se mișcă simultan, să verifici fiecare formă cu fiecare formă ($O(n^2)$) va bloca sistemul.Uită-te peste 
+7.1 Uniform Grids (o grilă simplă peste ecran) sau 7.3 Bounding Volume Hierarchies (BVH). Aici înveți cum să verifici doar corpurile care sunt deja în aceeași "cameră", scutind procesorul de munca inutilă.

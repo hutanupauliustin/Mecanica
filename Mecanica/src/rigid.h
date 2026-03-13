@@ -16,9 +16,11 @@ struct boundingBox{
 struct geometrie{
     formaGeometrica tip;
     float dimensiune1; // Raza pentru CERC, Latime pentru DREPTUNGHI
-    float dimensiune2; // Inaltime pentru DREPTUNGHI, este egala cu dimensiun1 in cazul cercului
+    float dimensiune2; // Lungime pentru DREPTUNGHI, este egala cu dimensiun1 in cazul cercului
     boundingBox bb;
-    char obiectStatic = 0;
+    bool obiectStatic = 0;
+    int layer = 0;
+
 
 };
 

@@ -1,10 +1,11 @@
 \documentclass[12pt, a4paper]{article}
-\usepackage{amsmath, amssymb, geometry, graphicx, hyperref}
+\usepackage{amsmath, amssymb, geometry, graphicx}
 \usepackage[utf8]{inputenc}
+\usepackage[hidelinks]{hyperref}
 \geometry{a4paper, margin=2cm}
-\renewcommand{\refname}{Bibliography}
+\renewcommand{\refname}{}
 
-\title{Motor Fizic 2D pentru Corpuri Legate } % \\ \large Modelarea Dinamicii și a Legăturilor Unilaterale}
+\title{Motor Fizic pentru Corpuri Rigide în Plan } % \\ \large Modelarea Dinamicii și a Legăturilor Unilaterale}
 \author{Huțanu Paul-Iustin \\ \small Profesor îndrumator: Craifaleanu Andrei}
 \date{\today} 
 
@@ -402,16 +403,77 @@ Prin urmare, atunci când calculăm produsul $\dot{J}_F \dot{q}$, componenta cor
         0
     \end{bmatrix}
 \end{equation}
+\newpage
 
-\section{Decetia si Rezolvarea Coliziunilor}
-\subsection{Arhitectura sistemului de geometrie: Decuplarea componentei fizice de forma geometrica (Collider, Manifold).}
-\subsection{Faza de filtrare (Broad-Phase): Optimizarea performantei folosind cutii de incadrare aliniate la axe (AABB).}
-\subsection{Faza de detectie exacta (Narrow-Phase): Aplicarea Teoremei Axelor de Separare (SAT) pentru poligoane convexe rotite.}
+\section{Detecția și Rezolvarea Coliziunilor}
+
+\subsection{Rolul detecției}
+Pentru a putea rezolva legăturile unilaterale, trebuie să vedem lucrurile altfel. Deoarece ele se prezintă sub formă de inegalități, față de cele bilaterale care sunt egalități, nu le putem introduce direct în constrângeri (poziții, viteze, accelerații) cu scopul de a rezolva sistemul matricial.
+
+O idee simplă este de a le introduce ca linie în matrice, doar dacă este cazul. În cazul unui plan înclinat, forța normală la plan apare doar dacă corpurile se ating ($\vec{N} \ge \vec{0}$). Aceasta poate fi considerată ca o constrângere de geometrie. Totuși, acest lucru vine cu alte probleme de stabilitate.
+
+Soluția pe care o folosim este să implementăm constrângerile geometrice prin adăugarea de impulsuri. Indiferent de metodă, forța normală poate fi interpretată ca o condiție, în loc de o inegalitate: există forță doar dacă corpurile se ating. Din acest motiv, avem nevoie de un algoritm robust care verifică coliziunile între corpuri.
+
+\subsection{Faza de filtrare (intersecția pe scară largă)}
+Ideea de bază este că într-un sistem sunt mult mai multe corpuri care nu se intersectează, decât corpuri care se ating efectiv. Cel mai simplu mod de a detecta coliziunile este de a verifica toate corpurile două câte două, dar acest lucru atrage o complexitate computațională de $\mathcal{O}(n^2)$.
+
+Din cauza geometriilor, o detecție precisă între două corpuri trebuie să ia în considerare rotațiile lor și să verifice extremitățile formelor. Pentru a eficientiza simularea, separăm verificarea în două etape: o etapă foarte rapidă, dar care nu garantează rezultatul (Broad-Phase), și o etapă care verifică exact impactul, dar folosește o matematică mai complexă (Narrow-Phase / SAT).
+
+\subsection{Demonstrația matematică a fazei de filtrare}
+
+În jurul fiecărui corp considerăm o cutie de încadrare (Bounding Box), cu laturile mereu paralele cu axele sistemului de coordonate.
+
+Fie $P_A$, $P_B$ mulțimile punctelor care formează corpurile $A$, respectiv $B$. \\
+Fie $B_A$, $B_B$ mulțimile punctelor care formează cutiile de încadrare corespunzătoare.
+
+Prin definiție, orice corp este conținut integral în cutia sa de încadrare:
+\begin{equation}
+    P_A \subseteq B_A \quad \text{și} \quad P_B \subseteq B_B
+\end{equation}
+
+\paragraph{Cazul I: Cutiile nu se intersectează}
+Dacă testul rapid al cutiilor returnează mulțimea vidă:
+\begin{equation}
+    B_A \cap B_B = \emptyset \implies P_A \cap P_B = \emptyset
+\end{equation}
+\textbf{Concluzie:} Corpurile sigur nu se intersectează, deci putem opri verificarea pentru această pereche.
+
+\paragraph{Cazul II: Cutiile se intersectează}
+Dacă testul detectează o suprapunere:
+\begin{equation}
+    B_A \cap B_B \neq \emptyset
+\end{equation}
+Acest rezultat \textbf{nu} garantează faptul că $P_A \cap P_B \neq \emptyset$. Prin urmare, trebuie să mai facem o verificare. Demonstrația este următoarea:
+
+Fie $M_A$ și $M_B$ mulțimile punctelor de "aer" (spațiul gol) din interiorul cutiilor, definite ca diferența dintre cutie și corp:
+\begin{equation}
+    M_A = B_A \setminus P_A \implies B_A = M_A \cup P_A
+\end{equation}
+\begin{equation}
+    M_B = B_B \setminus P_B \implies B_B = M_B \cup P_B
+\end{equation}
+
+Dezvoltând intersecția celor două cutii, obținem:
+\begin{align}
+    B_A \cap B_B &= (M_A \cup P_A) \cap (M_B \cup P_B) \\
+    &= (M_A \cap M_B) \cup (M_A \cap P_B) \cup (P_A \cap M_B) \cup (P_A \cap P_B) \neq \emptyset
+\end{align}
+
+Privind această ecuație, este total posibilă situația în care:
+\begin{equation}
+    M_A \cap M_B \neq \emptyset \quad \text{și} \quad P_A \cap P_B = \emptyset
+\end{equation}
+Acest scenariu reprezintă situația fizică în care doar "aerul" din cele două cutii de încadrare se suprapune, în timp ce corpurile trec unul pe lângă celălalt fără să se atingă direct.
+
+\textbf{Concluzie:} Testul la scară largă nu este suficient pentru a verifica și confirma coliziunea efectivă. Din acest motiv, motorul fizic necesită implementarea unui algoritm de detecție detaliată care să verifice strict intersecția formelor reale. Deși, la prima vedere pare ca complicăm lucrurile și adăugam operații în plus, timpul pierdut prin necesitatea de a face două verificari pentru corpurile care sunt apropariate unele de altele, este cu mult mai puțin decât timpul pe care l-am fi pierdut dacă am fi facut verificari complexe între toate corpurile. 
+
+\subsection{Faza de detectie exacta (Narrow-Phase): Aplicarea Teoremei Axelor de Separare.}
 \subsection{Rezolvarea coliziunilor: Calculul impulsului si frecarea Coulomb.}
 
 \section{Implementare si Arhitectura Software}
 \subsection{Structura aplicatiei: C++, organizarea pe componente si OpenGL pentru randare grafica.}
-\subsection{Integrarea numerica: Alegerea si implementarea metodei Runge-Kutta de ordinul 4 (RK4) pentru stabilitate.}
+\subsection{Rezolvarea sistemului de constrângeri pe accelerații.}
+\subsection{Integrarea numerica.}
 
 \section{Rezultate si Validarea Simularii}
 \subsection{Conservarea energiei: Analiza termodinamica a sistemului in miscare.}
