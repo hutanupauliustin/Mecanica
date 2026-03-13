@@ -2,8 +2,11 @@
 \usepackage{amsmath, amssymb, geometry, graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage[hidelinks]{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{patterns, arrows.meta}
 \geometry{a4paper, margin=2cm}
 \renewcommand{\refname}{}
+\renewcommand{\contentsname}{Cuprins}
 
 \title{Motor Fizic pentru Corpuri Rigide în Plan } % \\ \large Modelarea Dinamicii și a Legăturilor Unilaterale}
 \author{Huțanu Paul-Iustin \\ \small Profesor îndrumator: Craifaleanu Andrei}
@@ -15,12 +18,79 @@
 \newpage
 
 \tableofcontents
+
 \newpage
 
 \section{Introducere și obiectivele lucrarii}
+
+    % Scopul lucrarii este de a face un program care sa permita simularea miscarii unor sisteme mecanice care se studieaza la cursul de Mecanica din semsetrul I. 
 \section{ Dinamica Sitemelor cu Legături}
 
 \subsection{Cinematica sistemului de corpuri}
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[scale=1.5, >=stealth]
+
+    % 1. Axele globale (Sistemul fix OXY)
+    \draw[->, thick] (0,0) -- (6.5,0) node[below] {$X$};
+    \draw[->, thick] (0,0) -- (0,5.5) node[left] {$Y$};
+    \node[below left] at (0,0) {$O$};
+
+    % 2. Corpul rigid 'l' 
+    \draw[thick, fill=blue!5] plot [smooth cycle, tension=0.8] coordinates {
+        (3.5, 0.9) 
+        (5.2, 1.5)  
+        (5.8, 3.0)  
+        (5.0, 4.5) 
+        (3.5, 4.8)  
+        (2.0, 4.2)  
+        (2.6, 2.8)  
+        (2.4, 1.4)  
+    };
+        
+    % Eticheta corpului
+    \node[blue!80!black, font=\large] at (5.2, 2.5) {$l$};
+
+    % 3. Centrul de masa (C_l)
+    \coordinate (Cl) at (3.5, 2.6);
+    \filldraw (Cl) circle (1.5pt) node[below right=2pt, inner sep=1pt] {$C_l$};
+
+    % 4. Punctul oarecare 'j' de pe corp (distantat mai mult pt claritate)
+    \coordinate (J) at (3.4, 4.0);
+    \filldraw (J) circle (1.5pt) node[above right=1pt] {$j$};
+
+    % 5. Sistemul de referinta local (atasat de C_l)
+    % Linia orizontala punctata pentru referinta unghiului
+    \draw[dashed, gray!80!black] (Cl) -- ++(2.2, 0);
+
+    % Axele locale x_l si y_l rotite cu 30 de grade
+    \draw[->,  very thick, blue!80!black] (Cl) -- ++(30:1.0) node[below right] {$\bar{i}_l$};
+    \draw[->,  very thick, blue!80!black] (Cl) -- ++(120:1.0) node[right] {$\bar{j}_l$};
+
+    \draw[->, dashed, blue!80!black] (Cl) -- ++(30:5.0) node[below right] {$x_l$};
+    \draw[->, dashed, blue!80!black] (Cl) -- ++(120:5.0) node[right] {$y_l$};
+
+    % Arcul pentru unghiul phi_l
+    \draw[->, thick] (Cl) ++(1.4, 0) arc (0:30:1.4) node[midway, right=2pt] {$\varphi_l$};
+
+    % 6. Vectorii de pozitie
+    % Vectorul r_l (O -> C_l)
+    \draw[->, very thick, red!80!black] (0,0) -- (Cl) 
+        node[midway,below right=6pt, inner sep=2pt] {$\bar{r}_l$};
+    
+    % Vectorul r_j (O -> j)
+    \draw[->, very thick, green!60!black] (0,0) -- (J) 
+        node[midway,below right=4pt, inner sep=2pt] {$\bar{r}_j$};
+    
+    % Vectorul relativ r_jl (C_l -> j)
+    \draw[->, very thick, purple] (Cl) -- (J) 
+        node[midway,below right=4pt , inner sep=2pt] {$\bar{r}_{jl}$};
+
+\end{tikzpicture}
+\caption{Poziția unui punct $j$ aflat pe un corp rigid $l$ în mișcare plan-paralelă, raportat la sistemul global $OXY$ și sistemul local $C_l x_l y_l$.}
+\label{fig:cinematica_corp}
+\end{figure}
 
 Considerăm un sistem de $n$ corpuri, fiecare fiind compus dintr-un număr arbitrar $N$ de puncte aflate în mișcare plan-paralelă.
 
@@ -69,11 +139,13 @@ Derivând în raport cu timpul, obținem viteza punctului $j$:
 
 Calculăm pătratul modulului vitezei:
 \begin{equation}
-    \begin{aligned}
-        v_j^2 &= \langle\bar{v}_j, \bar{v}_j\rangle = v_{jx}^2 + v_{jy}^2 \\
-        &= \dot{x}_l^2 + \dot{y}_l^2 + \dot{\varphi}_l^2(d_{xjl}^2\sin^2\varphi_l + d_{xjl}^2\cos^2\varphi_l + d_{yjl}^2\cos^2\varphi_l + d_{yjl}^2\sin^2\varphi_l) \\
-        &\quad + 2\dot{\varphi}_l[\dot{x}_l(-d_{xjl}\sin\varphi_l - d_{yjl}\cos\varphi_l) + \dot{y}_l(d_{xjl}\cos\varphi_l - d_{yjl}\sin\varphi_l)]
-    \end{aligned}
+    \begin{gathered}
+        v_j^2 = \langle\bar{v}_j, \bar{v}_j\rangle = v_{jx}^2 + v_{jy}^2 \\
+        \begin{aligned}
+            v_j^2 &= \dot{x}_l^2 + \dot{y}_l^2 + \dot{\varphi}_l^2(d_{xjl}^2\sin^2\varphi_l + d_{xjl}^2\cos^2\varphi_l + d_{yjl}^2\cos^2\varphi_l + d_{yjl}^2\sin^2\varphi_l) \\
+            &\quad + 2\dot{\varphi}_l[\dot{x}_l(-d_{xjl}\sin\varphi_l - d_{yjl}\cos\varphi_l) + \dot{y}_l(d_{xjl}\cos\varphi_l - d_{yjl}\sin\varphi_l)]
+        \end{aligned}
+    \end{gathered}
 \end{equation}
 
 Deoarece $\sin^2\varphi_l + \cos^2\varphi_l = 1$, expresia se simplifică:
@@ -85,12 +157,11 @@ Deoarece $\sin^2\varphi_l + \cos^2\varphi_l = 1$, expresia se simplifică:
 
 Energia cinetică a corpului $l$ este suma energiilor cinetice ale punctelor sale:
 \begin{equation}
-    \begin{aligned}
-        E_l &= \sum_{j=1}^{N} E_j = \frac{1}{2}\sum_{j=1}^{N} m_j v_j^2 \\
-        &= \frac{1}{2} \left[ \dot{x}_l^2\sum_{j=1}^{N} m_j + \dot{y}_l^2\sum_{j=1}^{N} m_j + \dot{\varphi}_l^2\sum_{j=1}^{N} m_j(d_{xjl}^2 + d_{yjl}^2) \right] \\
-        &\quad + \dot{\varphi}_l \left[ -\dot{x}_l\sin\varphi_l - \dot{y}_l\cos\varphi_l \right] \sum_{j=1}^{N} m_j d_{xjl} \\
-        &\quad + \dot{\varphi}_l \left[ \dot{x}_l\cos\varphi_l - \dot{y}_l\sin\varphi_l \right] \sum_{j=1}^{N} m_j d_{yjl}
-    \end{aligned}
+    \begin{gathered}
+        E_l = \sum_{j=1}^{N} E_j = \frac{1}{2}\sum_{j=1}^{N} m_j v_j^2 \\
+             E_l = \frac{1}{2} \left[ \dot{x}_l^2\sum_{j=1}^{N} m_j + \dot{y}_l^2\sum_{j=1}^{N} m_j + \dot{\varphi}_l^2\sum_{j=1}^{N} m_j(d_{xjl}^2 + d_{yjl}^2) \right] \\
+             \quad + \dot{\varphi}_l \left[ (-\dot{x}_l\sin\varphi_l - \dot{y}_l\cos\varphi_l) \sum_{j=1}^{N} m_j d_{xjl} + (\dot{x}_l\cos\varphi_l - \dot{y}_l\sin\varphi_l) \sum_{j=1}^{N} m_j d_{yjl} \right]
+    \end{gathered}
 \end{equation}
 
 Știind că originea sistemului local se află în centrul de masă al corpului, momentele statice sunt nule ($S_x = S_y = 0$):
@@ -190,7 +261,7 @@ Calculăm derivata parțială a energiei în raport cu componenta $\dot{q}_k$:
 
 Deoarece matricea $A$ este constantă, derivata ei este zero. Derivata vectorului $\dot{q}$ în raport cu elementul $\dot{q}_k$ este un vector coloană $e_k$ care are $1$ pe poziția $k$ și $0$ în rest:
 \begin{equation}
-    \frac{\partial E}{\partial \dot{q}_k} = \frac{1}{2} \left[ \begin{bmatrix} 0 & \dots & 1 & \dots & 0 \end{bmatrix} A \dot{q} + 0 + \dot{q}^T A \begin{bmatrix} 0 \\ \vdots \\ 1 \\ \vdots \\ 0 \end{bmatrix} \right] = \frac{1}{2} [ e_k^T A \dot{q} + \dot{q}^T A e_k ]
+    \frac{\partial E}{\partial \dot{q}_k} = \frac{1}{2} \bigg[ \begin{bmatrix} 0 & 0 & \dots & 1 & \dots & 0 & 0\end{bmatrix} A \dot{q} + 0 + \dot{q}^T A \begin{bmatrix} 0 \\ \vdots \\ 1 \\ \vdots \\ 0 \end{bmatrix} \bigg] = \frac{1}{2} [ e_k^T A \dot{q} + \dot{q}^T A e_k ]
 \end{equation}
 
 Dacă notăm $e_k^T A \dot{q}$ cu $B$, atunci $\dot{q}^T A e_k = B^T$. Deoarece dimensiunile matricelor $e_k^T$, $A$ și $\dot{q}$ sunt $1 \times 3n$, $3n \times 3n$ și respectiv $3n \times 1$, rezultă că $B$ este o matrice $1 \times 1$, deci $B$ este un scalar. Pentru un scalar, $B = B^T$.
@@ -419,6 +490,48 @@ Ideea de bază este că într-un sistem sunt mult mai multe corpuri care nu se i
 
 Din cauza geometriilor, o detecție precisă între două corpuri trebuie să ia în considerare rotațiile lor și să verifice extremitățile formelor. Pentru a eficientiza simularea, separăm verificarea în două etape: o etapă foarte rapidă, dar care nu garantează rezultatul (Broad-Phase), și o etapă care verifică exact impactul, dar folosește o matematică mai complexă (Narrow-Phase / SAT).
 
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[scale=1.5, >=stealth]
+
+    % 1. Axele globale (sistemul fix)
+    \draw[dashed, gray!60] (-3,0) -- (3,0);
+    \draw[dashed, gray!60] (0,-2.5) -- (0,2.5);
+    
+    % Centrul C
+    \filldraw (0,0) circle (1pt) node[below=2pt] {$C$};
+
+    % 2. Corpul rotit (P_A)
+    \begin{scope}[rotate=30]
+        % Dreptunghiul (Bara)
+        \draw[thick, fill=blue!15] (-2,-1) rectangle (2,1);
+        \node[blue!80!black] at (-0.5, 0.5) {$P_A$};
+        
+        % Axele locale
+        \draw[->, thick, blue] (0,0) -- (2.5,0) node[right] {$\vec{i}_l$};
+        \draw[->, thick, blue] (0,0) -- (0,1.5) node[above] {$\vec{j}_l$};
+    \end{scope}
+    
+    % Unghiul phi
+    \draw[->, thick] (1.5,0) arc (0:30:1.5) node[midway, right=1pt] {$\varphi$};
+
+    % 3. Cutia de incadrare B_A (Bounding Box)
+    \draw[thick, red, dashed] (-2.232, -1.866) rectangle (2.232, 1.866);
+    \node[red] at (-1.8, 1.5) {$B_A$};
+
+    % 4. Cotele
+    % Sageata orizontala (jos) - folosim fill=white pentru ca textul sa "taie" linia
+    \draw[<->, gray!80!black] (-2.232, -2.1) -- (2.232, -2.1) 
+          node[midway, fill=white, text=black, inner sep=2pt] {$2 \cdot \text{razaLatime}$};
+    
+    % Sageata verticala (dreapta) - text rotit la 90 de grade
+    \draw[<->, gray!80!black] (2.5, -1.866) -- (2.5, 1.866) 
+          node[midway, fill=white, text=black, inner sep=2pt, rotate=90] {$2 \cdot \text{razaInaltime}$};
+
+\end{tikzpicture}
+\caption{Reprezentarea unui corp rigid $P_A$ rotit, încadrat de cutia sa $B_A$ (Axis-Aligned Bounding Box).}
+\label{fig:aabb}
+\end{figure}
 \subsection{Demonstrația matematică a fazei de filtrare}
 
 În jurul fiecărui corp considerăm o cutie de încadrare (Bounding Box), cu laturile mereu paralele cu axele sistemului de coordonate.
@@ -436,9 +549,50 @@ Dacă testul rapid al cutiilor returnează mulțimea vidă:
 \begin{equation}
     B_A \cap B_B = \emptyset \implies P_A \cap P_B = \emptyset
 \end{equation}
-\textbf{Concluzie:} Corpurile sigur nu se intersectează, deci putem opri verificarea pentru această pereche.
+Deci corpurile sigur nu se intersectează, deci putem opri verificarea pentru această pereche.
 
 \paragraph{Cazul II: Cutiile se intersectează}
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[scale=1.5, >=stealth]
+
+    % 1. Zona de intersectie a aerului (Galbena)
+    % Trasata sub corpuri ca sa aiba un efect de evidentiere fin (highlighter)
+    \fill[yellow!40] (0.73, 0.153) rectangle (1.235, 1.752);
+
+    % --- CORPUL A ---
+    \begin{scope}[shift={(-1,0)}, rotate=25]
+        \draw[thick, fill=blue!15] (-2,-1) rectangle (2,1);
+        \node[blue!80!black] at (0,0) {$P_A$};
+    \end{scope}
+    
+    % Cutia de Incadrare A (Albastru intrerupt)
+    \draw[thick, blue, dashed] (-3.235, -1.752) rectangle (1.235, 1.752);
+    \node[blue] at (-2.9, 1.5) {$B_A$};
+
+    % --- CORPUL B ---
+    \begin{scope}[shift={(2.2, 1.5)}, rotate=-40]
+        \draw[thick, fill=red!15] (-1.5,-0.5) rectangle (1.5,0.5);
+        \node[red!80!black] at (0,0) {$P_B$};
+    \end{scope}
+    
+    % Cutia de Incadrare B (Rosu intrerupt)
+    \draw[thick, red, dashed] (0.73, 0.153) rectangle (3.67, 2.847);
+    \node[red] at (3.3, 2.6) {$B_B$};
+
+    % --- ADNOTARI SI SAGEATA ---
+    \draw[<-, thick, gray!80!black] (1.1, 0.8) -- (2.5, -0.5) node[right, text=black, align=left] {
+        Intersecția cutiilor ($B_A \cap B_B \neq \emptyset$) \\ 
+        "Aerul" se suprapune ($M_A \cap M_B \neq \emptyset$) \\
+        Corpurile \textbf{nu} se ating ($P_A \cap P_B = \emptyset$)
+    };
+
+\end{tikzpicture}
+\caption{Ilustrarea unui caz de "fals pozitiv" în faza de filtrare (Broad-Phase). Cutiile de încadrare se intersectează, dar formele geometrice reale trec una pe lângă cealaltă fără coliziune.}
+\label{fig:broadphase_falsepositive}
+\end{figure}
+
 Dacă testul detectează o suprapunere:
 \begin{equation}
     B_A \cap B_B \neq \emptyset
@@ -467,7 +621,219 @@ Acest scenariu reprezintă situația fizică în care doar "aerul" din cele dou�
 
 \textbf{Concluzie:} Testul la scară largă nu este suficient pentru a verifica și confirma coliziunea efectivă. Din acest motiv, motorul fizic necesită implementarea unui algoritm de detecție detaliată care să verifice strict intersecția formelor reale. Deși, la prima vedere pare ca complicăm lucrurile și adăugam operații în plus, timpul pierdut prin necesitatea de a face două verificari pentru corpurile care sunt apropariate unele de altele, este cu mult mai puțin decât timpul pe care l-am fi pierdut dacă am fi facut verificari complexe între toate corpurile. 
 
-\subsection{Faza de detectie exacta (Narrow-Phase): Aplicarea Teoremei Axelor de Separare.}
+\subsection{Faza de detecție exactă (Narrow-Phase)}
+
+\subsubsection{Algoritmul de detectare}
+
+\subsubsection{Algoritmul de clipping }
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[scale=1.5]
+    % Desenam axa de referinta si segmentul R1 R2 (Nicovala)
+    \draw[dashed, gray] (-2,0) -- (3,0);
+    \draw[thick] (0,0) node[below] {$R_1$} -- (2,0) node[below] {$R_2$};
+    
+    % Desenam micile delimitari laterale
+    \draw[dashed, gray] (0,-0.5) -- (0,1.5);
+    \draw[dashed, gray] (2,-0.5) -- (2,1.5);
+
+    % Vectorii normala (n) si tangenta (t)
+    \draw[->, thick, blue] (0,0) -- (0,1) node[right] {$\vec{n}$};
+    \draw[->, thick, red] (0,0) -- (1,0) node[below] {$\vec{t}$};
+
+    % Segmentul incident (Ciocanul) care traverseaza planul
+    \draw[thick] (-1, 1.5) -- (1.5, -0.5);
+    \filldraw (-1, 1.5) circle (1pt) node[left] {$J_1$};
+    \filldraw (1.5, -0.5) circle (1pt) node[right] {$J_2$};
+
+    % Punctul de intersectie calculat prin interpolare
+    \filldraw (0.875, 0) circle (1.5pt) node[above right] {$J'_1$};
+\end{tikzpicture}
+\caption{Reprezentarea tăierii laturii incidente în raport cu planul de referință.}
+\end{figure}
+
+După obținerea normalei de coliziune și a adâncimii de penetrare cu ajutorul algoritmului SAT , este necesară găsirea punctelor exacte de contact (manifold-ul) pentru a ști unde să aplicăm forțele de răspuns. Vom folosi un algoritm bazat pe tăierea poligoanelor (clipping), similar cu algoritmul Sutherland-Hodgman.
+
+Pentru a rezolva coliziunea, trebuie să aflăm originea acestui vector pentru a putea stabili cum trebuie mutate corpurile la ciocnire sau rezemare.
+
+Primul pas este identificarea părților din corpuri care se ating efectiv. Presupunem că un corp $A$ (incident) intră într-un corp $B$ (referință). Pentru a simplifica problema și a oferi generalitate, corpul $B$ se va comporta ca o suprafață plană (o "nicovală"), minimizând problema la a găsi latura din $B$ în care corpul $A$ se înfige.
+
+Știind direcția din care vine impactul, calculăm produsele scalare $\langle \vec{n}, \vec{n}_{latura} \rangle$ între normala de coliziune obținută din SAT și normalele locale ale fiecărei laturi din corpul $B$, pentru a afla ce axă este mai apropiată de cea pe care trebuie să ne mișcăm. 
+
+Valoarea maximă a acestui produs scalar ne indică latura lovită. Odată identificată această latură de referință pe corpul $B$, definim sistemul de coordonate al contactului:
+\begin{itemize}
+    \item Normala suprafeței de contact, $\vec{n}_{ref}$, ca fiind normala acestei laturi.
+    \item Vectorul tangent, $\vec{t}$, obținut prin rotirea normalei cu $90^\circ$ în plan. Acesta este tangent la suprafața de contact și indică direcția de-a lungul laturii.
+\end{itemize}
+
+În mod analog, analizăm laturile corpului $A$ în raport cu direcția opusă ($-\vec{n}$) pentru a găsi \textit{latura incidentă} (cea care se ciocnește de planul lui $B$). Prin reducerea intersecției volumelor la aceste două segmente esențiale, putem aplica un algoritm de decupare (clipping) pentru a extrage exact punctele finale de contact.
+
+\subsubsection{Extragerea punctelor de contact (Clipping)}
+
+Se identifică latura de referință (nicovala) pe corpul lovit, definită de punctele $R_1$ și $R_2$, și latura incidentă (ciocanul) pe corpul care lovește, definită de punctele $J_1$ și $J_2$.
+
+Versorul tangent devine:
+$$ \vec{t} = \frac{\vec{R}_2 - \vec{R}_1}{||\vec{R}_2 - \vec{R}_1||} $$
+Iar normala la suprafața de contact se definește ca:
+$$ \vec{n} = (-t_y, t_x) $$
+
+Algoritmul presupune trecerea segmentului incident $J_1 J_2$ prin trei plane de tăiere.
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[scale=1.15, >=stealth]
+
+    % Setari generale pentru desen
+    \tikzstyle{nicovala} = [thick]
+    \tikzstyle{hasura} = [pattern=north east lines, pattern color=gray!80]
+    \tikzstyle{plan} = [dashed, gray, thick]
+    \tikzstyle{segment} = [thick, blue]
+    \tikzstyle{punct} = [circle, fill, inner sep=1.2pt]
+    \tikzstyle{punct_taiat} = [circle, fill=red, inner sep=1.2pt]
+
+    % ================= a) Taierea la stanga =================
+    \begin{scope}[shift={(0,0)}]
+        % Hasura teren
+        \fill[hasura] (-0.5,0) rectangle (2.5,-0.2);
+        \draw[nicovala] (-0.5,0) -- (2.5,0);
+        
+        \node[below right] at (0,0) {$R_1$};
+        \node[below left] at (2,0) {$R_2$};
+
+        % Planul 1 de taiere
+        \draw[plan] (0,-0.5) -- (0,1.5) node[above, text=black] {Plan 1};
+
+        % Segmentul incident initial
+        \draw[segment] (-0.8, 1.2) -- (2.5, -0.6);
+        \node[left, text=black] at (-0.8, 1.2) {$J_1$};
+        \node[right, text=black] at (2.5, -0.6) {$J_2$};
+        
+        \node[punct, blue] at (-0.8, 1.2) {};
+        \node[punct, blue] at (2.5, -0.6) {};
+
+        \draw[->, very thick] (0.6, 0) -- (0.6, 0.6) node[above] {$\vec{\boldsymbol{n}}$};
+        \draw[->, very thick] (0.6, 0) -- (1.2, 0) node[below] {$\vec{\boldsymbol{\tau}}$};
+
+        % Punctul nou calculat J'_1
+        \node[punct_taiat] at (0, 0.76) {};
+        \node[above right, red] at (0, 0.76) {$J'_1$};
+        
+        \node[below] at (1,-1) {\textbf{a) Tăiere la $R_1$}};
+    \end{scope}
+
+    % ================= b) Taierea la dreapta =================
+    \begin{scope}[shift={(4.8,0)}]
+        % Hasura teren
+        \fill[hasura] (-0.5,0) rectangle (2.5,-0.2);
+        \draw[nicovala] (-0.5,0) -- (2.5,0);
+        
+        \node[below right] at (0,0) {$R_1$};
+        \node[below left] at (2,0) {$R_2$};
+
+        % Planul 2 de taiere
+        \draw[plan] (2,-0.5) -- (2,1.5) node[above, text=black] {Plan 2};
+
+        % Segmentul incident curent
+        \draw[segment] (0, 0.76) -- (2.5, -0.6);
+        \node[above left, text=black] at (0, 0.76) {$J'_1$};
+        \node[right, text=black] at (2.5, -0.6) {$J_2$};
+        
+        \node[punct, blue] at (0, 0.76) {};
+        \node[punct, blue] at (2.5, -0.6) {};
+
+
+        \draw[->, very thick] (0.6, 0) -- (0.6, 0.6) node[above] {$\vec{\boldsymbol{n}}$};
+        \draw[->, very thick] (0.6, 0) -- (1.2, 0) node[below] {$\vec{\boldsymbol{\tau}}$};
+
+        % Punctul nou calculat J'_2
+        \node[punct_taiat] at (2, -0.33) {};
+        \node[above right, red] at (2, -0.33) {$J'_2$};
+
+        \node[below] at (1,-1) {\textbf{b) Tăiere la $R_2$}};
+    \end{scope}
+
+    % ================= c) Taierea de adancime =================
+    \begin{scope}[shift={(9.6,0)}]
+        % Hasura teren
+        \fill[hasura] (-0.5,0) rectangle (2.5,-0.2);
+        \draw[nicovala] (-0.5,0) -- (2.5,0);
+        
+        \node[below right] at (0,0) {$R_1$};
+        \node[below left] at (2,0) {$R_2$};
+
+        % Segmentul incident "in aer" (Dashed)
+        \draw[dashed, blue] (0, 0.76) -- (1.4, 0);
+        \node[above left, text=black] at (0, 0.76) {$J'_1$};
+        \node[punct, blue] at (0, 0.76) {};
+        
+        % Segmentul care a patruns in corp (Solid Red)
+        \draw[very thick, red] (1.4, 0) -- (2, -0.33);
+        \node[punct, blue] at (2, -0.33) {};
+        \node[below right, text=black] at (2, -0.33) {$J'_2$};
+
+        \draw[->, very thick] (0.6, 0) -- (0.6, 0.6) node[above] {$\vec{\boldsymbol{n}}$};
+        \draw[->, very thick] (0.6, 0) -- (1.2, 0) node[below] {$\vec{\boldsymbol{\tau}}$};
+
+        % Punctul de contact final la suprafata J''_1
+        \node[punct_taiat] at (1.4, 0) {};
+        % yshift=2pt il muta o idee mai sus ca sa nu se lipeasca de linia neagra
+        \node[above right, red, yshift=2pt] at (1.4, 0) {$J''_1$}; 
+
+        \node[below] at (1,-1) {\textbf{c) Punctul de contact}};
+    \end{scope}
+
+\end{tikzpicture}
+\caption{Fazele algoritmului de clipping pentru găsirea manifold-ului de contact. Tăieturile succesive elimină punctele care nu pătrund în corpul de referință.}
+\label{fig:clipping_steps}
+\end{figure}
+
+\begin{enumerate}
+    \item \textbf{Tăierea la stânga lui $R_1$:} Eliminăm punctele $P$ de pe perimetrul lui $A$ pentru care distanța $d(P) = \langle (P - R_1), \vec{t} \rangle < 0$.
+    \item \textbf{Tăierea la dreapta lui $R_2$:} Eliminăm punctele pentru care distanța $d(P) = \langle (P - R_2), -\vec{t} \rangle < 0$.
+    \item \textbf{Tăierea de adâncime (deasupra lui $R_1 R_2$):} Eliminăm punctele aflate deasupra suprafeței de contact, adică $d(P) = \langle (P - R_1), \vec{n} \rangle > 0$. Salvăm doar punctele cu $d(P) \le 0$, acestea reprezentând zona de intersecție reală.
+\end{enumerate}
+
+Pentru a găsi punctul exact de intersecție $J'$ cu un plan, se verifică produsul distanțelor. Deoarece nu putem verifica o infinitate de puncte, ne bazăm pe capetele segmentului. Dacă $d(J_1) \cdot d(J_2) < 0$, capetele se află de o parte și de alta a planului, indicând o traversare a frontierei. În acest caz, se folosește interpolarea liniară.
+
+Factorul de interpolare $t$ se calculează astfel:
+$$ t = \left| \frac{d(J_1)}{d(J_1) - d(J_2)} \right| $$
+Noul punct valid va înlocui punctul din exterior, având coordonatele calculate pe componente:
+$$ J'_1 = J_1 + t(J_2 - J_1) $$
+
+După aplicarea acestor trei tăieturi succesive, obținem 1 sau 2 puncte de contact finale ($J_1$ și $J_2$ trunchiate). În aceste puncte se va aplica forța de impact.
+\subsection{Rezolvarea coliziunilor: Corecția de poziție și calculul impulsului}
+
+\subsubsection{Corecția de poziție (Positional Projection)}
+În realitate, corpurile solide nu se interpătrund. În program, acest lucru se întâmplă din cauza cuantelor discrete de timp $\Delta t$. Înainte de a aplica impulsurile pe corpuri pentru a modifica vitezele, trebuie să corectăm acest fenomen.
+
+Cunoscând adâncimea de coliziune $l$ și normala la intersecție $\vec{n}$ din algoritmul SAT, corecția o vom face prin mutarea relativă a corpurilor. Pentru a asigura stabilitatea obiectelor de tip perete (cu masă infinită), mutarea se ponderează folosind \textit{masa inversă} a corpurilor. 
+
+Notăm masele inverse cu $invM_A = \frac{1}{m_A}$ și $invM_B = \frac{1}{m_B}$. 
+Corecția pozițiilor centrelor de masă devine:
+$$ \vec{x}_{CA} = \vec{x}_{CA_{vechi}} - \vec{n} \cdot l \cdot \frac{invM_A}{invM_A + invM_B} $$
+$$ \vec{x}_{CB} = \vec{x}_{CB_{vechi}} + \vec{n} \cdot l \cdot \frac{invM_B}{invM_A + invM_B} $$
+
+Acest calcul asigură faptul că mișcarea este direct proporțională cu masa inversă (obiectele grele sunt mutate mai puțin). O masă infinită ($invM = 0$) va prelua corecție $0\%$.
+
+\subsubsection{Calculul Impulsului}
+Folosim cele două puncte $J_1$ și $J_2$ rezultate din algoritmul de tăiere pentru a calcula impulsul de reacțiune $j$. Acest impuls modifică instantaneu vitezele liniare și unghiulare.
+
+Intensitatea impulsului $j$ pe un punct de contact se determină prin ecuația de rezoluție:
+$$ j = \frac{-(1 + e) v_n}{invM_A + invM_B + \frac{(\vec{r}_A \times \vec{n})^2}{I_A} + \frac{(\vec{r}_B \times \vec{n})^2}{I_B}} $$
+Unde:
+\begin{itemize}
+    \item $e$ este coeficientul de restituție (elasticitatea impactului).
+    \item $v_n$ este viteza relativă a punctelor de contact proiectată pe normală: $v_n = \langle \vec{v}_{rel}, \vec{n} \rangle$.
+    \item $\vec{r}_A$ și $\vec{r}_B$ sunt vectorii de distanță de la centrele de masă la punctul de contact.
+    \item $I_A$ și $I_B$ sunt momentele de inerție principale.
+\end{itemize}
+
+Vectorul final al impulsului este $\vec{J} = j \cdot \vec{n}$. Conform principiului acțiunii și reacțiunii, vitezele se actualizează astfel:
+$$ \vec{v}_A = \vec{v}_A - \vec{J} \cdot invM_A $$
+$$ \omega_A = \omega_A - \frac{\vec{r}_A \times \vec{J}}{I_A} $$
+$$ \vec{v}_B = \vec{v}_B + \vec{J} \cdot invM_B $$
+$$ \omega_B = \omega_B + \frac{\vec{r}_B \times \vec{J}}{I_B} $$
 \subsection{Rezolvarea coliziunilor: Calculul impulsului si frecarea Coulomb.}
 
 \section{Implementare si Arhitectura Software}
@@ -484,7 +850,7 @@ Acest scenariu reprezintă situația fizică în care doar "aerul" din cele dou�
 \subsection{Obiective atinse si limitari curente.}
 \subsection{ Directii viitoare de dezvoltare.}
 
-\section{Bibliografie}
+\section*{Bibliografie}
 
 \begin{thebibliography}{ }
 \bibitem{text1} Real-Time Collision Detection -- Christer Ericson
