@@ -18,7 +18,7 @@ public:
 
     float k_s,k_d,g,k_a;                          //spring constant si dampening constant -- sunt encesare pentru a introduce o amortizare foarte slaba care sa anuleze erorile de tip floating-point-arithmetic
                                              // constanta gravitationala       
-    public:                                   
+    matrice coeficientRestituire, coeficientFrecare;                                  
     matrice Q, J_F, A, A_inv, Lambda, JdotQ;       // Q - vectorul fortelor externe
                                             // J_f - Jacobianul legaturilor
                                             //JdotQ - produsul dintre derivata jacobianului si derivata coordonatelor
@@ -84,6 +84,28 @@ public:
             stare(i * 3 + 1 + 3 * nr_corpuri, 0) = corpuri[i].v_y;
             stare(i * 3 + 2 + 3 * nr_corpuri, 0) = corpuri[i].omega;
         }
+    }
+
+    void seteazaCoeficientRestituire(){             //valoarea din  punctul (i,j) este coeficientul dintre corpurile i si j;
+        coeficientRestituire = matrice( nr_corpuri,  nr_corpuri);
+        for(int i = 0; i < nr_corpuri; i++){
+            for(int j = 0; j < i; j++){
+                coeficientRestituire(i,j) = i == j ?  0.0f : 0.9f;
+                coeficientRestituire(j,i) = 0.9f;
+            }
+        }
+
+    }
+
+    void seteazaCoeficientFrecare(){             //valoarea din  punctul (i,j) este coeficientul dintre corpurile i si j;
+        coeficientFrecaree = matrice( nr_corpuri,  nr_corpuri);
+        for(int i = 0; i < nr_corpuri; i++){
+            for(int j = 0; j < i; j++){
+                coeficientFrecare(i,j) = i == j ?  0.0f : 0.1f;
+                coeficientFrecare(j,i) = 0.1f;
+            }
+        }
+
     }
 
     void seteazaStare(){

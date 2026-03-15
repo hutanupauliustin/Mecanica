@@ -345,5 +345,128 @@ PuncteContact extrageManifold(Latura ref, Latura inc) {
 }
 
 void ciocnire(sistem &S, int corpA, int corpB, intersectie inter){
-   
+    // 1. Gasim laturile si extragem punctele de contact (Clipping)
+    Latura laturaReferinta = latura_optima(S, corpA, corpB, inter);
+    Latura laturaIncidenta = latura_incidenta(S, corpA, corpB, inter);
+    PuncteContact contacte = extrageManifold(laturaReferinta, laturaIncidenta);
+
+    // Daca nu exista puncte de contact valide, oprim executia
+    if (contacte.nrPuncte == 0) return;
+
+    rigid& A = S.corpuri[corpA];
+    rigid& B = S.corpuri[corpB];
+
+    // Inversul maselor si inertiilor (pentru obiecte statice se considera 0)
+    float invM_A = (A.M > 1e10f) ? 0.0f : 1.0f / A.M;
+    float invM_B = (B.M > 1e10f) ? 0.0f : 1.0f / B.M;
+    float invI_A = (A.J > 1e10f) ? 0.0f : 1.0f / A.J;
+    float invI_B = (B.J > 1e10f) ? 0.0f : 1.0f / B.J;
+
+    float sumaMaseInverse = invM_A + invM_B;
+    if (sumaMaseInverse == 0.0f) return;
+
+    // ==============================================================
+    // 2. CORECTIA DE POZITIE (Pentru a nu se scufunda corpurile)
+    // ==============================================================
+    float adancime_maxima = 0.0f;
+    for (int i = 0; i < contacte.nrPuncte; i++) {
+        if (contacte.adancimi[i] > adancime_maxima) {
+            adancime_maxima = contacte.adancimi[i];
+        }
+    }
+    
+    const float joc = 0.01f;              //are rol in stabilizare, "jocul" admisibil pentru ca corpurile sa fie considerate una peste altele, ca sa nu tremure la simulare
+    const float procent_corectie = 0.2f;  //cat de mult sa scoata afara corpurile unul din altul, daca il lasam la 1.0f, e posibil sa introduca acceleratii mari in cazuri cu mai multe corpuri
+    
+    float corectie = std::max(adancime_maxima - joc, 0.0f) * procent_corectie;
+    float mutare_A = corectie * (invM_A / sumaMaseInverse);
+    float mutare_B = corectie * (invM_B / sumaMaseInverse);
+    
+    // Mutam centrele de masa pe directia normalei
+    A.x -= inter.normala.x * mutare_A;
+    A.y -= inter.normala.y * mutare_A;
+    B.x += inter.normala.x * mutare_B;
+    B.y += inter.normala.y * mutare_B;
+
+    // ==============================================================
+    // 3. CALCULUL PERCUTIEI 'P' 
+    // ==============================================================
+    float k = S.coeficientRestituire(corpA, corpB); // Preluam coeficientul din sistem
+    float mu = S.coeficientFrecare(corpA, corpB); // Coeficient de frecare
+    
+    float n_x = inter.normala.x;
+    float n_y = inter.normala.y;
+
+    for (int i = 0; i < contacte.nrPuncte; i++) {
+        // Coordonatele relative ale punctului de contact fata de centrul de masa
+        // Acestea sunt x_A, y_A si x_B, y_B din demonstratia ta matematica
+        float x_A = contacte.puncte[i].x - A.x;
+        float y_A = contacte.puncte[i].y - A.y;
+        float x_B = contacte.puncte[i].x - B.x;
+        float y_B = contacte.puncte[i].y - B.y;
+
+        // Termenii de moment: (x * n_y - y * n_x)
+        float termen_rot_A = (x_A * n_y - y_A * n_x);
+        float termen_rot_B = (x_B * n_y - y_B * n_x);
+
+        // Proiectiile vitezelor pe normala (v_CA,n' si v_CB,n')
+        float v_CA_n = A.v_x * n_x + A.v_y * n_y + A.omega * termen_rot_A;
+        float v_CB_n = B.v_x * n_x + B.v_y * n_y + B.omega * termen_rot_B;
+
+        // Diferenta vitezelor pe normala
+        float v_rel_n = v_CB_n - v_CA_n;
+
+        // Daca se indeparteaza deja, sarim peste percutie
+        if (v_rel_n > 0.0f) continue;
+
+        // Calculul numitorului ecuatiei (masa efectiva pe normala)
+        float numitor = invM_A + invM_B + (termen_rot_A * termen_rot_A) * invI_A + (termen_rot_B * termen_rot_B) * invI_B;
+
+        // Calculul final al percutiei P
+        float P = -(1.0f + k) * v_rel_n;
+        P /= (numitor * (float)contacte.nrPuncte); // Impartim daca avem mai multe puncte de contact
+
+        // Aplicarea percutiei P direct pe viteze
+        A.v_x -= P * n_x * invM_A;
+        A.v_y -= P * n_y * invM_A;
+        A.omega -= P * termen_rot_A * invI_A;
+
+        B.v_x += P * n_x * invM_B;
+        B.v_y += P * n_y * invM_B;
+        B.omega += P * termen_rot_B * invI_B;
+        
+        // ==============================================================
+        // 4. CALCULUL FRECARII (Asemanator, dar pe directia tangentei)
+        // ==============================================================
+        float t_x = -n_y;
+        float t_y = n_x;
+        
+        float termen_rot_At = (x_A * t_y - y_A * t_x);
+        float termen_rot_Bt = (x_B * t_y - y_B * t_x);
+        
+        float v_CA_t = A.v_x * t_x + A.v_y * t_y + A.omega * termen_rot_At;
+        float v_CB_t = B.v_x * t_x + B.v_y * t_y + B.omega * termen_rot_Bt;
+        
+        float v_rel_t = v_CB_t - v_CA_t;
+        
+        float numitor_t = invM_A + invM_B + 
+                          (termen_rot_At * termen_rot_At) * invI_A + 
+                          (termen_rot_Bt * termen_rot_Bt) * invI_B;
+                          
+        float P_t = -v_rel_t / (numitor_t * (float)contacte.nrPuncte);
+        
+        // Plafonam frecarea sa nu depaseasca limita Coulomb (mu * forta normala P)
+        if (std::abs(P_t) > P * mu) {
+            P_t = (P_t > 0.0f ? 1.0f : -1.0f) * P * mu;
+        }
+        
+        // Aplicarea percutiei de frecare P_t
+        A.v_x -= P_t * t_x * invM_A;
+        A.v_y -= P_t * t_y * invM_A;
+        A.omega -= P_t * termen_rot_At * invI_A;
+
+        B.v_x += P_t * t_x * invM_B;
+        B.v_y += P_t * t_y * invM_B;
+        B.omega += P_t * termen_rot_Bt * invI_B;
+    }
 }

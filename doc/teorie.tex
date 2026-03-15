@@ -857,7 +857,7 @@ Acest calcul asigură faptul că mișcarea este direct proporțională cu masa i
     \draw[->,  very thick, blue!80!black] (Cl) -- ++(120:1.0) node[right] {$\bar{j}_A$};
 
     % Arcul pentru unghiul phi_A
-    \draw[->, thick] (Cl) ++(1.4, 0) arc (0:30:1.4) node[midway, right=2pt] {$\varphi_A$};
+    \draw[->, thick] (Cl) ++(0.5, 0) arc (0:30:0.5) node[midway, right=2pt] {$\varphi_A$};
 
     % 6. Vectorii de pozitie
     % Vectorul r_l (O -> C_l)
@@ -879,8 +879,8 @@ Considerăm două corpuri care se ciocnesc, având masele $m_A, m_B$ și momente
 
 Fie punctul $C_1$ (respectiv $C_2$) punctul din cele două sisteme de referință ale corpurilor. Deoarece mișcarea plan-paralelă se comportă ca o mișcare de rotație blocată în timp, introducem punctele fictive $C_1, C_2$, care sunt de fapt punctul de contact $C$ în sistemele de referință ale celor 2 corpuri. Viteza punctului $C$ se calculează astfel:
 \begin{align}
-    \bar{v}_{cA} &= \bar{v}_A + \bar{\omega}_A \times \bar{r}_{1A} \\
-    \bar{v}_{cB} &= \bar{v}_B + \bar{\omega}_B \times \bar{r}_{2B} 
+    \bar{v}_{cA} &= \bar{v}_A + \bar{\omega}_A \times \bar{r}_{A} \\
+    \bar{v}_{cB} &= \bar{v}_B + \bar{\omega}_B \times \bar{r}_{B} 
 \end{align}
 
 În timpul ciocnirii, apare o percuție $P_A$ orientată pe direcția normală la ciocnire. Din principiul acțiunii și reacțiunii, primului corp i se aplică percuția $P_A$, iar celuilalt corp percuția $P_B$:
@@ -948,6 +948,69 @@ Putem generaliza formulele finale de actualizare a vitezelor pentru oricare dint
     \dot{\varphi}_{A,B}'' &= \frac{P}{J_{A,B}} \left[ n_x(y_{A,B} - y_{A,Bc}) + n_y(-x_{A,B} + x_{A,Bc}) \right] + \dot{\varphi}_{A,B}'
 \end{align}
 
+\subsection{Calculul percuției și vitezelor post-impact}
+
+Cunoaștem coeficientul de restituire $k$ (sau $e$) dintre cele două corpuri. Conform legii lui Newton pentru ciocniri, diferența vitezelor pe direcția normalei la suprafața de contact, după impact, este proporțională și de sens opus cu diferența vitezelor de dinainte de impact:
+\begin{equation}
+    v_{CB,n}'' - v_{CA,n}'' = -k \left( v_{CB,n}' - v_{CA,n}' \right)
+\end{equation}
+unde $v_{C,n} = \bar{v}_C \cdot \bar{n}$ reprezintă proiecția vitezei punctului de contact pe versorul normal $\bar{n}$.
+
+Vitezele punctelor de contact considerate ca aparținând corpului $A$, respectiv corpului $B$, se scriu folosind relația de distribuție a vitezelor:
+\begin{equation}
+    \begin{aligned}
+        \bar{v}_{CA}'' &= \bar{v}_A'' + \bar{\omega}_A'' \times \bar{r}_{A} = \begin{bmatrix} \dot{x}_A'' \\ \dot{y}_A'' \end{bmatrix} + \begin{vmatrix} \bar{i} & \bar{j} & \bar{k} \\ 0 & 0 & \dot{\varphi}_A'' \\ x_{A} & y_{A} & 0 \end{vmatrix} = \begin{bmatrix} \dot{x}_A'' - y_{A} \dot{\varphi}_A'' \\ \dot{y}_A'' + x_{A} \dot{\varphi}_A'' \end{bmatrix} \\
+        \bar{v}_{CB}'' &= \bar{v}_B'' + \bar{\omega}_B'' \times \bar{r}_{B} = \begin{bmatrix} \dot{x}_B'' \\ \dot{y}_B'' \end{bmatrix} + \begin{vmatrix} \bar{i} & \bar{j} & \bar{k} \\ 0 & 0 & \dot{\varphi}_B'' \\ x_{B} & y_{B} & 0 \end{vmatrix} = \begin{bmatrix} \dot{x}_B'' - y_{B} \dot{\varphi}_B'' \\ \dot{y}_B'' + x_{B} \dot{\varphi}_B'' \end{bmatrix}
+    \end{aligned}
+\end{equation}
+\textit{(Notă: am notat cu $x_{A}, y_{A}$ și $x_{B}, y_{B}$ coordonatele relative ale punctelor de contact față de centrele de masă ale celor două corpuri).}
+
+Efectuăm produsul scalar al fiecărei viteze cu versorul normal $\bar{n} = [n_x, n_y]^T$ pentru a obține proiecțiile individuale pe direcția ciocnirii:
+\begin{equation}
+    \begin{aligned}
+        v_{CA,n}'' &= \bar{v}_{CA}'' \cdot \bar{n} = (\dot{x}_A'' - y_A \dot{\varphi}_A'')n_x + (\dot{y}_A'' + x_A \dot{\varphi}_A'')n_y \\
+                   &= \dot{x}_A'' n_x + \dot{y}_A'' n_y + \dot{\varphi}_A''(x_A n_y - y_A n_x) \\
+        v_{CB,n}'' &= \bar{v}_{CB}'' \cdot \bar{n} = (\dot{x}_B'' - y_B \dot{\varphi}_B'')n_x + (\dot{y}_B'' + x_B \dot{\varphi}_B'')n_y \\
+                   &= \dot{x}_B'' n_x + \dot{y}_B'' n_y + \dot{\varphi}_B''(x_B n_y - y_B n_x)
+    \end{aligned}
+\end{equation}
+
+Înlocuim vitezele modificate de percuția $P$. Considerând că normala $\bar{n}$ este orientată de la A la B (deci corpul B primește percuția $+P$, iar corpul A primește reacțiunea $-P$):
+\begin{equation}
+    \begin{cases}
+        \dot{x}_B'' = \dot{x}_B' + \frac{P n_x}{m_B} \\
+        \dot{y}_B'' = \dot{y}_B' + \frac{P n_y}{m_B} \\
+        \dot{\varphi}_B'' = \dot{\varphi}_B' + \frac{P}{J_B}(x_B n_y - y_B n_x)
+    \end{cases}
+    \qquad \text{și} \qquad
+    \begin{cases}
+        \dot{x}_A'' = \dot{x}_A' - \frac{P n_x}{m_A} \\
+        \dot{y}_A'' = \dot{y}_A' - \frac{P n_y}{m_A} \\
+        \dot{\varphi}_A'' = \dot{\varphi}_A' - \frac{P}{J_A}(x_A n_y - y_A n_x)
+    \end{cases}
+\end{equation}
+
+Introducem aceste expresii în ecuațiile proiecțiilor pe normală și, ținând cont că $n_x^2 + n_y^2 = 1$, componentele se grupează astfel:
+\begin{equation}
+    \begin{aligned}
+        v_{CA,n}'' &= \left[ \dot{x}_A' n_x + \dot{y}_A' n_y + \dot{\varphi}_A'(x_A n_y - y_A n_x) \right] - P \left[ \frac{1}{m_A} + \frac{(x_A n_y - y_A n_x)^2}{J_A} \right] \\
+                   &= v_{CA,n}' - P \left[ \frac{1}{m_A} + \frac{(x_A n_y - y_A n_x)^2}{J_A} \right] \\
+        v_{CB,n}'' &= \left[ \dot{x}_B' n_x + \dot{y}_B' n_y + \dot{\varphi}_B'(x_B n_y - y_B n_x) \right] + P \left[ \frac{1}{m_B} + \frac{(x_B n_y - y_B n_x)^2}{J_B} \right] \\
+                   &= v_{CB,n}' + P \left[ \frac{1}{m_B} + \frac{(x_B n_y - y_B n_x)^2}{J_B} \right]
+    \end{aligned}
+\end{equation}
+
+Scădem cele două relații pentru a forma diferența vitezelor pe normală după impact:
+\begin{equation}
+    v_{CB,n}'' - v_{CA,n}'' = (v_{CB,n}' - v_{CA,n}') + P \left[ \frac{1}{m_A} + \frac{1}{m_B} + \frac{(x_A n_y - y_A n_x)^2}{J_A} + \frac{(x_B n_y - y_B n_x)^2}{J_B} \right]
+\end{equation}
+
+Știind din legea ciocnirilor că $v_{CB,n}'' - v_{CA,n}'' = -k (v_{CB,n}' - v_{CA,n}')$, obținem în final formula percuției $P$:
+\begin{equation}
+    P = \frac{-(1 + k) (v_{CB,n}' - v_{CA,n}')}{\frac{1}{m_A} + \frac{1}{m_B} + \frac{(x_A n_y - y_A n_x)^2}{J_A} + \frac{(x_B n_y - y_B n_x)^2}{J_B}}
+\end{equation}
+
+Odată calculat scalarul $P$, vitezele finale de translație și rotație ale ambelor corpuri se obțin prin simpla sa înlocuire în sistemele de ecuații cinematice anterioare.
 \section{Implementare si Arhitectura Software}
 \subsection{Structura aplicatiei: C++, organizarea pe componente si OpenGL pentru randare grafica.}
 \subsection{Rezolvarea sistemului de constrângeri pe accelerații.}
