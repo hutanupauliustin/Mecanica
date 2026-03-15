@@ -1,5 +1,6 @@
 1. Explicatie SAT in teorie
 2. Explicatie matematica frecarilor si implementarea in cod
+3. Adaugarea coliziuni disc-disc si disc-dreptunghi
 3. Adaugarea percutiilor de legatura, pentru a permite mentinerea legaturilor si cand au loc ciocniri
 4. Implementarea legaturilor unilaterale 
 5. Adaugarea interfatei grafice

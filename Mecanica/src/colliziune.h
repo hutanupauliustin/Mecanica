@@ -292,7 +292,6 @@ struct PuncteContact {
     int nrPuncte;
 };
 
-// Functia principala descrisa la 3.4.3
 PuncteContact extrageManifold(Latura ref, Latura inc) {
     PuncteContact manifold;
     manifold.nrPuncte = 0;
@@ -303,8 +302,8 @@ PuncteContact extrageManifold(Latura ref, Latura inc) {
     t.x /= lungime;
     t.y /= lungime;
 
-    // Normala la suprafata de contact n = (-t_y, t_x)
-    Vec2 n = {-t.y, t.x};
+    // Normala la suprafata de contact n 
+    Vec2 n = ref.n;
 
     // Vectorii pentru prelucrarea in cascada a laturii incidente J1J2
     Vec2 intrari[2] = {inc.p1, inc.p2};
@@ -468,5 +467,28 @@ void ciocnire(sistem &S, int corpA, int corpB, intersectie inter){
         B.v_x += P_t * t_x * invM_B;
         B.v_y += P_t * t_y * invM_B;
         B.omega += P_t * termen_rot_Bt * invI_B;
+    }
+}
+
+void verificarCiocniri(sistem &S){
+
+    for(int i = 0; i < S.nr_corpuri; i++){
+        S.corpuri[i].seteazaBoundingBox();
+    }
+
+    for(int i = 0; i < S.nr_corpuri; i++){
+        for(int j = i + 1; j < S.nr_corpuri; j++){
+
+            if(S.corpuri[i].M > 1e10f && S.corpuri[j].M > 1e10f)        //daca luam doi pereti, nu incercam sa calculam ciocnirea dintre ei
+                continue;
+
+            if(intersectareScaraLarga(S,i,j)){
+
+                intersectie inter = intersectareScaraMica(S,i,j);
+                if(inter.seLovesc){
+                ciocnire(S,i,j,inter);
+                }
+            }
+        }
     }
 }

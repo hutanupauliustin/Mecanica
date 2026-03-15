@@ -86,23 +86,23 @@ public:
         }
     }
 
-    void seteazaCoeficientRestituire(){             //valoarea din  punctul (i,j) este coeficientul dintre corpurile i si j;
+    void seteazaCoeficientRestituire(float val){             //valoarea din  punctul (i,j) este coeficientul dintre corpurile i si j;
         coeficientRestituire = matrice( nr_corpuri,  nr_corpuri);
         for(int i = 0; i < nr_corpuri; i++){
             for(int j = 0; j < i; j++){
-                coeficientRestituire(i,j) = i == j ?  0.0f : 0.9f;
-                coeficientRestituire(j,i) = 0.9f;
+                coeficientRestituire(i,j) = i == j ?  0.0f : val;
+                coeficientRestituire(j,i) = val;
             }
         }
 
     }
 
-    void seteazaCoeficientFrecare(){             //valoarea din  punctul (i,j) este coeficientul dintre corpurile i si j;
-        coeficientFrecaree = matrice( nr_corpuri,  nr_corpuri);
+    void seteazaCoeficientFrecare(float val){             //valoarea din  punctul (i,j) este coeficientul dintre corpurile i si j;
+        coeficientFrecare = matrice( nr_corpuri,  nr_corpuri);
         for(int i = 0; i < nr_corpuri; i++){
             for(int j = 0; j < i; j++){
-                coeficientFrecare(i,j) = i == j ?  0.0f : 0.1f;
-                coeficientFrecare(j,i) = 0.1f;
+                coeficientFrecare(i,j) = i == j ?  0.0f : val;
+                coeficientFrecare(j,i) = val;
             }
         }
 
