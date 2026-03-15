@@ -4,3 +4,8 @@
 3. Adaugarea percutiilor de legatura, pentru a permite mentinerea legaturilor si cand au loc ciocniri
 4. Implementarea legaturilor unilaterale 
 5. Adaugarea interfatei grafice
+6. adaugă corpuri de tip triungh
+7. adaugă un sistem mai robust de plan ( poți schimba mărimea și da zoom in, zoom out) 
+8. adăugarea de sleeping la corpuri 
+9. adăugarea warm starting 
+10. adăugarea de arcuri
