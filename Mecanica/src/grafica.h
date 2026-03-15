@@ -4,6 +4,20 @@
 #include <iostream>
 #include "sistem.h"
 
+float zoomScale = 10.0f;
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    // yoffset este +1 când dai scroll în sus (zoom in) și -1 când dai scroll în jos (zoom out)
+    zoomScale -= (float)yoffset * 0.5f; // 0.5f este sensibilitatea (cât de rapid faci zoom)
+    
+    // Punem limite pentru a nu da zoom prea aproape și pentru a evita împărțirea la 0 (sau numere negative care întorc ecranul cu capul în jos)
+    if (zoomScale < 1.0f) 
+        zoomScale = 1.0f; 
+    if (zoomScale > 100.0f) 
+        zoomScale = 100.0f; 
+}
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)   //modifica marimea ecranului cand se modifica marinea ferestrei
     {
         glViewport(0, 0, width, height);
@@ -11,6 +25,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)   //mo
 
 void processInput(GLFWwindow *window)
 {
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     
@@ -102,6 +119,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
 
 void updateVerticesData(sistem &S, float* vertices){
     // Structura datelor per punct: [x, y, phi, width, height, type] (6 float-uri)
+    // type : 1 -- cerc 2 -- dreptunghi 4 --arc
     int stride = 6;
 
     // 1. Corpuri
@@ -135,6 +153,31 @@ void updateVerticesData(sistem &S, float* vertices){
         vertices[idx + 4] = height; // Height
         vertices[idx + 5] = type; // Type 1 = Cerc
     }
+
+    //3. Arcuri
+
+    offset = (S.nr_corpuri + S.nr_legaturi)*stride;
+    for(int i = 0; i <  S.arcuri.size();i++){
+        int idx = offset + i * stride;
+
+        float x1, y1, x2, y2;
+        S.corpuri[S.arcuri[i].contorCorpA].coordPunctPeCorp(x1, y1, S.arcuri[i].l_xA, S.arcuri[i].l_yA);
+        S.corpuri[S.arcuri[i].contorCorpB].coordPunctPeCorp(x2, y2, S.arcuri[i].l_xB, S.arcuri[i].l_yB);
+
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        float phi = std::atan2(y2 - y1, x2 - x1);
+        float lungime = std::sqrt(dx * dx + dy * dy);
+
+        vertices[idx + 0] = (x1 + x2 )/ 2.0f;
+        vertices[idx + 1] = (y1 + y2 )/ 2.0f;
+        vertices[idx + 2] = phi;
+
+        vertices[idx + 3] = lungime;
+        vertices[idx + 4] = 1.0f;
+        vertices[idx + 5] = 2.0f;   
+    }
+       
 }
 
 // Modificam functia pentru a returna fereastra si a seta programul shader prin referinta
@@ -155,7 +198,8 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram){
 
     glfwMakeContextCurrent(window);                                 //specifica placii video ca lucram cu fereastra creata
     glfwSwapInterval(1); // Activeaza V-Sync (limiteaza la 60 FPS) pentru a nu rula simularea prea repede
-    
+    glfwSetScrollCallback(window, scroll_callback);
+
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
@@ -244,7 +288,7 @@ void initBuffers(unsigned int &VAO, unsigned int &VBO) {
 void drawSystem(sistem &S, unsigned int VAO, unsigned int VBO, unsigned int shaderProgram, float* Buffer) {
     // 1. Actualizam datele in RAM
     updateVerticesData(S, Buffer);
-    int totalPoints = S.nr_corpuri + S.nr_legaturi;
+    int totalPoints = S.nr_corpuri + S.nr_legaturi + S.arcuri.size();
 
     // 2. Trimitem datele la GPU
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -255,9 +299,9 @@ void drawSystem(sistem &S, unsigned int VAO, unsigned int VBO, unsigned int shad
     glBindVertexArray(VAO);
     glPointSize(1.0f); // Desenam puncte mari sa se vada
 
-    // Setam factorul de scalare: 1 unitate OpenGL = 10 metri in simulare
+    // Setam factorul de scalare
     int scaleVertexLoc = glGetUniformLocation(shaderProgram, "scale");
-    glUniform1f(scaleVertexLoc, 1.0f / 10.0f); // Impartim la 10 pentru a incadra +/- 10m in ecran
+    glUniform1f(scaleVertexLoc, 1.0f / zoomScale);
     
     // Obtinem locatia variabilei 'color' din shader
     int colorLoc = glGetUniformLocation(shaderProgram, "color");
@@ -269,4 +313,6 @@ void drawSystem(sistem &S, unsigned int VAO, unsigned int VBO, unsigned int shad
     // 2. Desenam Legaturile (Alb) - incepand de unde s-au terminat corpurile
     glUniform4f(colorLoc, 1.0f, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_POINTS, S.nr_corpuri, S.nr_legaturi);
+
+
 }

@@ -5,6 +5,94 @@
 #include <cmath>
 #include <vector>
 
+class arc{
+
+    public:
+
+    int contorCorpA;
+    int contorCorpB;
+    
+    float l_xA, l_yA;
+    float l_xB, l_yB;
+
+    float lungime_0;
+    float k,d;  // k--constanta elastica d--constanda de dampening
+
+    arc(){
+        contorCorpA = 0;
+        contorCorpB = 0;
+        l_xA = 0.0f;
+        l_yA = 0.0f;
+        l_xB = 0.0f;
+        l_yB = 0.0f;
+        lungime_0 = 0.0f;
+        k = 0.0f;
+        d = 0.0f;
+
+    }
+
+    arc(int a, int b, float lxa, float lya, float lxb, float lyb, float k_val, float d_val, float l0)
+        : contorCorpA(a), contorCorpB(b), l_xA(lxa), l_yA(lya), l_xB(lxb), l_yB(lyb), k(k_val), d(d_val), lungime_0(l0) {}
+
+    // Permite definirea arcului folosind coordonate GLOBALE pentru punctele de prindere
+    static arc Creaza(rigid& A, rigid& B, float globalXA, float globalYA, float globalXB, float globalYB, float constanta_k, float constanta_d = 0.0f, float lungime_repaus = -1.0f) {
+        // Calculam vectorul de la centrul corpului la punctul de legatura (in coordonate globale)
+        float dxA = globalXA - A.x;
+        float dyA = globalYA - A.y;
+        
+        float dxB = globalXB - B.x;
+        float dyB = globalYB - B.y;
+
+        // Transformam coordonatele in sistemul de referinta local al fiecarui corp
+        float l_xA = dxA * cos(A.phi) + dyA * sin(A.phi);
+        float l_yA = -dxA * sin(A.phi) + dyA * cos(A.phi);
+
+        float l_xB = dxB * cos(B.phi) + dyB * sin(B.phi);
+        float l_yB = -dxB * sin(B.phi) + dyB * cos(B.phi);
+
+        // Daca nu se specifica o lungime de repaus (valoare negativa), o calculam ca distanta curenta dintre puncte
+        float l0 = lungime_repaus;
+        if (l0 < 0.0f) {
+            l0 = std::sqrt((globalXB - globalXA) * (globalXB - globalXA) + (globalYB - globalYA) * (globalYB - globalYA));
+        }
+
+        return arc(A.index, B.index, l_xA, l_yA, l_xB, l_yB, constanta_k, constanta_d, l0);
+    }
+    
+
+    void aplicaFortaElastica(rigid &A, rigid &B){        
+        
+        float x1,y1,x2,y2;
+
+        A.coordPunctPeCorp(x1,y1,l_xA, l_yA);
+        B.coordPunctPeCorp(x2,y2,l_xB, l_yB);
+
+        float l = std::sqrt( (x2-x1) * (x2-x1) + (y2-y1) * (y2-y1));
+
+        float directie_x = (x2-x1) / l;               
+        float directie_y = (y2-y1) / l;
+
+        float fe_x = -k * (l - lungime_0) * directie_x;
+        float fe_y = -k * (l - lungime_0) * directie_y;
+
+        A.f_x += fe_x;
+        A.f_y += fe_y;
+        A.moment += l_xA * fe_y - l_yA * fe_x;
+
+        B.f_x += -fe_x;
+        B.f_y += -fe_y;
+        B.moment += l_yB * fe_x - l_xB * fe_y;
+
+    }
+
+    void getGraphics(){
+        type = 1;
+        widht = 0.5f;
+        height = 0.5f;
+        phi = 0.0f;
+    }
+};
+
 class sistem
 {
 public:
@@ -12,6 +100,7 @@ public:
     int nr_legaturi;
     std::vector<rigid> corpuri;
     std::vector<legatura*> legaturi;                   // vector de pointeri
+    std::vector<arc> arcuri;
 
     int p;                                  // p este numarul de ecuatii adaugate de legaturi (2 pt articulatii, 3 pt incastrare, etc.)
     matrice stare;                          // am sa ma refer la ecuatiile adaugate f_1,f_2... cu numele de "constrangeri"
@@ -70,6 +159,11 @@ public:
         legaturi.push_back(l);
         nr_legaturi = legaturi.size();
         p += l->getNumarEcuatii();
+    }
+
+    void adaugaArcuri(arc &a)
+    {
+        arcuri.push_back(a);
     }
 
     void incarcaStare(){
@@ -221,9 +315,18 @@ void seteazaConstrangeri()
             Q = matrice(3 * nr_corpuri, 1);
         }
 
-        for (int i = 0; i < nr_corpuri; i++)
-        {
-            corpuri[i].aflaForteProprii(g, k_a); // Trimitem g-ul sistemului catre corp
+        // 1. Initializam fortele (gravitatie, frecare aer)
+        for (int i = 0; i < nr_corpuri; i++) {
+            corpuri[i].aflaForteProprii(g, k_a); 
+        }
+
+        // 2. Adaugam fortele elastice 
+        for (int i = 0; i < arcuri.size(); i++) {
+            arcuri[i].aplicaFortaElastica(this->corpuri[arcuri[i].contorCorpA], this->corpuri[arcuri[i].contorCorpB]);
+        }
+
+        // 3. Incarcam totul in matricea sistemului
+        for (int i = 0; i < nr_corpuri; i++) {
             Q(3 * i, 0) = corpuri[i].f_x;
             Q(3 * i + 1, 0) = corpuri[i].f_y;
             Q(3 * i + 2, 0) = corpuri[i].moment;

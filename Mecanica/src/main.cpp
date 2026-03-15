@@ -64,7 +64,7 @@ int main(){
 
         // Buffer local pentru coordonate
         // 6 valori (x, y, phi, w, h, type) * (nr_corpuri + nr_legaturi)
-        std::vector<float> vertexBuffer(6 * (S.nr_corpuri + S.nr_legaturi));
+        std::vector<float> vertexBuffer(6 * (S.nr_corpuri + S.nr_legaturi + S.arcuri.size()));
 
         // Variabile de timp
         float t = 0.0f;

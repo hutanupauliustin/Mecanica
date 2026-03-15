@@ -24,8 +24,6 @@ struct geometrie{
 
 };
 
-
-
 class rigid
 {
 public:
@@ -67,7 +65,7 @@ public:
         }
     }
 
-    void coordPunctPeCorp(int &punct_x, int &punct_y, int d_x, int d_y){                //d_x si d_y sunt coordonatele punctului fata de sistemul de referinta mobil al corpului
+    void coordPunctPeCorp(float &punct_x, float &punct_y, float d_x, float d_y){                //d_x si d_y sunt coordonatele punctului fata de sistemul de referinta mobil al corpului
         punct_x = x + d_x* cos(phi) - d_y * sin(phi);
         punct_y = y + d_x* sin(phi) + d_y * cos(phi);
     }

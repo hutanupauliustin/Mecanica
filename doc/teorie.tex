@@ -3,7 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[hidelinks]{hyperref}
 \usepackage{tikz}
-\usetikzlibrary{patterns, arrows.meta}
+\usetikzlibrary{patterns, arrows.meta, decorations.pathmorphing}
 \geometry{a4paper, margin=2cm}
 \renewcommand{\refname}{}
 \renewcommand{\contentsname}{Cuprins}
@@ -37,17 +37,11 @@
     \draw[->, thick] (0,0) -- (0,5.5) node[left] {$Y$};
     \node[below left] at (0,0) {$O$};
 
-    % 2. Corpul rigid 'l' 
+    % 2. Corpul rigid 'l'
     \draw[thick, fill=blue!5] plot [smooth cycle, tension=0.8] coordinates {
-        (3.5, 0.9) 
-        (5.2, 1.5)  
-        (5.8, 3.0)  
-        (5.0, 4.5) 
-        (3.5, 4.8)  
-        (2.0, 4.2)  
-        (2.6, 2.8)  
-        (2.4, 1.4)  
+        (2.3, 1.8) (4.1, 1.7) (4.5, 3.3) (3.3, 4.3) (2.5, 3.5)
     };
+    \node[blue!80!black, font=\large] at (1.5, 2.0) {$l$}; % Numele corpului
         
     % Eticheta corpului
     \node[blue!80!black, font=\large] at (5.2, 2.5) {$l$};
@@ -474,6 +468,112 @@ Prin urmare, atunci când calculăm produsul $\dot{J}_F \dot{q}$, componenta cor
         0
     \end{bmatrix}
 \end{equation}
+\subsection{Fortele dintre corpuri}
+\subsubsection{Forte elastice}
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[scale=1.5, >=stealth]
+
+    % 1. Axele globale (Sistemul fix OXY)
+    \draw[->, thick] (0,0) -- (7.5,0) node[below] {$X$};
+    \draw[->, thick] (0,0) -- (0,5.0) node[left] {$Y$};
+    \node[below left] at (0,0) {$O$};
+
+    % 2. Corpul rigid 'A'
+    \draw[thick, fill=blue!5] plot [smooth cycle, tension=0.8] coordinates {
+        (1.0, 1.5) (2.8, 1.2) (3.2, 2.8) (2.0, 3.8) (1.2, 3.0)
+    };
+    % Numele corpului mutat mai sus la stanga
+    \node[blue!80!black, font=\large] at (1.2, 3.5) {$A$}; 
+
+    \coordinate (CA) at (2.0, 2.5);
+    \filldraw (CA) circle (1.5pt) node[left=3pt] {$C_A$}; 
+
+    \coordinate (PtA) at (2.6, 3.2);
+    \filldraw (PtA) circle (1.5pt) node[above=3pt] {$A$}; % Punctul de prindere
+
+    % 3. Corpul rigid 'B'
+    \draw[thick, fill=red!5] plot [smooth cycle, tension=0.8] coordinates {
+        (4.5, 2.5) (6.5, 2.0) (7.2, 3.5) (5.8, 4.8) (4.8, 4.0)
+    };
+    % Numele corpului B mutat mai in dreapta
+    \node[red!80!black, font=\large] at (6.6, 2.5) {$B$};
+
+    \coordinate (CB) at (5.8, 3.4);
+    \filldraw (CB) circle (1.5pt) node[right=3pt] {$C_B$}; 
+
+    \coordinate (PtB) at (4.8, 3.0);
+    \filldraw (PtB) circle (1.5pt) node[above right=2pt] {$B$};
+
+    % 4. Vectorii globali de pozitie
+    \draw[->, very thick, green!60!black] (0,0) -- (PtA) 
+        node[pos=0.6, above left=1pt] {$\bar{r}_1$}; 
+    \draw[->, very thick, green!60!black] (0,0) -- (PtB) 
+        node[pos=0.6, below right=1pt] {$\bar{r}_2$};
+
+    % 5. Vectorii locali de pozitie
+    \draw[->, very thick, purple] (CA) -- (PtA) 
+        node[midway, above left=1pt] {$\bar{\rho}_A$}; 
+    \draw[->, very thick, purple] (CB) -- (PtB) 
+        node[midway, below right=1pt] {$\bar{\rho}_B$}; 
+
+    % 6. Arcul elastic (foloseste decoratia zigzag)
+    \draw[decorate, decoration={zigzag, segment length=3mm, amplitude=1.5mm}, thick, orange!90!black] (PtA) -- (PtB);
+
+    % 7. Versorul directiei si forta aplicata (MUTATE DE PE ARC)
+    % Desenate paralel, un pic mai sus si mai jos
+    \draw[->, very thick, orange!80!black] ([yshift=3mm]PtA) -- ++(1.4, -0.127) 
+        node[above] {$\bar{F}_e$};
+    \draw[->, very thick, blue] ([yshift=-3.5mm]PtA) -- ++(0.8, -0.072) 
+        node[below] {$\overline{dir}$};
+
+\end{tikzpicture}
+\caption{Reprezentarea unui arc elastic, interacționând între punctele de prindere $A$ și $B$ a două corpuri rigide distincte.}
+\label{fig:arc_elastic}
+\end{figure}
+\label{fig:arc_elastic}
+
+Pentru a defini un arc între două corpuri, considerăm punctele de prindere $A$ și $B$, definite prin vectorii de poziție locali $\bar{\rho}_A = [l_{xA}, l_{yA}]^T$ și $\bar{\rho}_B = [l_{xB}, l_{yB}]^T$. 
+Pozițiile globale ale acestor puncte, $\bar{r}_1$ și $\bar{r}_2$, se calculează folosind matricele de rotație ale corpurilor.
+
+Lungimea curentă a arcului $l$ este norma diferenței celor doi vectori de poziție:
+\begin{equation}
+    l = ||\bar{r}_2 - \bar{r}_1|| = \sqrt{(X_2 - X_1)^2 + (Y_2 - Y_1)^2}
+\end{equation}
+
+Versorul direcției arcului (care arată de la corpul A spre corpul B) este:
+\begin{equation}
+    \overline{dir} = \frac{\bar{r}_2 - \bar{r}_1}{||\bar{r}_2 - \bar{r}_1||}
+\end{equation}
+
+Conform legii lui Hooke, forța elastică generată de arc este proporțională cu deformația sa $\Delta x = l - l_0$, unde $l_0$ este lungimea de repaus. Vectorul forței aplicate corpului A va fi:
+\begin{equation}
+    \bar{F}_{e} = k (l - l_0) \overline{dir}
+\end{equation}
+\textit{(Notă: Corpul B va acționa cu aceeași forță, dar de sens opus: $-\bar{F}_{e}$, conform principiului acțiunii și reacțiunii).}
+
+Trebuie să considerăm și momentul generat de forța elastică:
+\begin{equation}
+    \bar{M}_{CA}(\bar{F}_e) = \bar{\rho}_A \times \bar{F}_e = 
+    \begin{vmatrix} 
+    \bar{i} & \bar{j} & \bar{k} \\ 
+    l_{xA} & l_{yA} & 0 \\ 
+    F_{ex} & F_{ey} & 0 
+    \end{vmatrix} 
+    = (l_{xA} F_{ey} - l_{yA} F_{ex})\bar{k}
+\end{equation}
+
+Pentru corpul B, forța aplicată este reacțiunea ($-\bar{F}_e$):
+\begin{equation}
+    \bar{M}_{CB}(-\bar{F}_e) = \bar{\rho}_B \times (-\bar{F}_e) = 
+    \begin{vmatrix} 
+    \bar{i} & \bar{j} & \bar{k} \\ 
+    l_{xB} & l_{yB} & 0 \\ 
+    -F_{ex} & -F_{ey} & 0 
+    \end{vmatrix} 
+    = (-l_{xB} F_{ey} + l_{yB} F_{ex})\bar{k}
+\end{equation}
 \newpage
 
 \section{Detecția și Rezolvarea Coliziunilor}
@@ -818,61 +918,76 @@ Acest calcul asigură faptul că mișcarea este direct proporțională cu masa i
 
 \subsubsection{Demonstrația analitică a impulsului de coliziune}
 
+\begin{figure}[h!]
+\centering
 \begin{tikzpicture}[scale=1.5, >=stealth]
 
     % 1. Axele globale (Sistemul fix OXY)
-    \draw[->, thick] (0,0) -- (6.5,0) node[below] {$X$};
+    \draw[->, thick] (0,0) -- (8.0,0) node[below] {$X$};
     \draw[->, thick] (0,0) -- (0,5.5) node[left] {$Y$};
     \node[below left] at (0,0) {$O$};
 
-    % 2. Corpul rigid 'A' 
-    \draw[thick, fill=blue!5] plot [smooth cycle, tension=0.8] coordinates {
-        (3.5, 0.9) 
-        (5.2, 1.5)  
-        (5.8, 3.0)  
-        (5.0, 4.5) 
-        (3.5, 4.8)  
-        (2.0, 4.2)  
-        (2.6, 2.8)  
-        (2.4, 1.4)  
+    % 2. Corpul rigid 'A'
+    \draw[thick, fill=blue!5] plot [smooth cycle, tension=0.7] coordinates {
+        (1.5, 2.0) (3.2, 1.8) (4.3, 2.9) (3.5, 4.5) (1.5, 4.0)
     };
-        
-    % Eticheta corpului
-    \node[blue!80!black, font=\large] at (5.2, 2.5) {$A$};
+    \node[blue!80!black, font=\large] at (1.8, 3.8) {$A$};
 
-    % 3. Centrul de masa (C_l)
-    \coordinate (Cl) at (3.5, 2.6);
-    \filldraw (Cl) circle (1.5pt) node[below right=2pt, inner sep=1pt] {$C_A$};
+    \coordinate (CA) at (2.6, 2.9);
+    % Mutam textul in stanga punctului
+    \filldraw (CA) circle (1.5pt) node[left=4pt] {$C_A$};
 
-    % 4. Punctul oarecare 'j' de pe corp (distantat mai mult pt claritate)
-    \coordinate (J) at (3.4, 4.0);
-    \filldraw (J) circle (1.5pt) node[above right=1pt] {$j$};
+    % 3. Corpul rigid 'B'
+    \draw[thick, fill=red!5] plot [smooth cycle, tension=0.7] coordinates {
+        (4.3, 2.9) (5.5, 1.8) (7.2, 2.5) (7.0, 4.5) (5.2, 4.6)
+    };
+    \node[red!80!black, font=\large] at (6.8, 4.0) {$B$};
 
-    % 5. Sistemul de referinta local (atasat de C_l)
-    % Linia orizontala punctata pentru referinta unghiului
-    \draw[dashed, gray!80!black] (Cl) -- ++(2.2, 0);
+    \coordinate (CB) at (5.8, 3.0);
+    % Mutam textul in dreapta punctului
+    \filldraw (CB) circle (1.5pt) node[below=4pt] {$C_B$};
 
-    % Axele locale x_A si y_A rotite cu 30 de grade
-    \draw[->,  very thick, blue!80!black] (Cl) -- ++(30:1.0) node[below right] {$\bar{i}_A$};
-    \draw[->,  very thick, blue!80!black] (Cl) -- ++(120:1.0) node[right] {$\bar{j}_A$};
+    % 4. Punctul de contact C
+    \coordinate (C) at (4.3, 2.85); 
+    \filldraw (C) circle (1.5pt) node[below=5pt] {$C$};
 
-    % Arcul pentru unghiul phi_A
-    \draw[->, thick] (Cl) ++(0.5, 0) arc (0:30:0.5) node[midway, right=2pt] {$\varphi_A$};
+    % 5. Axele locale si unghiurile
+    % Pentru corpul A
+    \draw[->, thick, gray!80!black] (CA) -- ++(25:0.9) node[right=-1pt] {$\bar{i}_A$};
+    \draw[->, thick, gray!80!black] (CA) -- ++(115:0.9) node[above] {$\bar{j}_A$};
+    \draw[->, gray] (CA) ++(0.5,0) arc (0:25:0.5) node[midway, right=1pt, yshift=2pt] {$\varphi_A$};
+    \draw[dashed, gray] (CA) -- ++(0.6,0);
 
-    % 6. Vectorii de pozitie
-    % Vectorul r_l (O -> C_l)
-    \draw[->, very thick, red!80!black] (0,0) -- (Cl) 
-        node[midway,below right=6pt, inner sep=2pt] {$\bar{r}_A$};
+    % Pentru corpul B
+    \draw[->, thick, gray!80!black] (CB) -- ++(-15:0.9) node[right] {$\bar{i}_B$};
+    \draw[->, thick, gray!80!black] (CB) -- ++(75:0.9) node[above] {$\bar{j}_B$};
+    \draw[->, gray] (CB) ++(0.5,0) arc (0:-15:0.5) node[midway, right=1pt, yshift=-2pt] {$\varphi_B$};
+    \draw[dashed, gray] (CB) -- ++(0.6,0);
+
+    % 6. Vectorii globali de pozitie (mutam textul mai jos pe sageata - pos=0.5)
+    \draw[->, very thick, green!60!black] (0,0) -- (CA) node[pos=0.5, left=2pt] {$\bar{r}_A$};
+    \draw[->, very thick, green!60!black] (0,0) -- (CB) node[pos=0.5, below right=1pt] {$\bar{r}_B$};
+
+    % 7. Vectorii relativi de la centre la punctul de contact (text deasupra liniilor)
+    \draw[->, very thick, purple] (CA) -- (C) node[pos=0.85, above=1.2pt] {$\bar{r}_{Ac}$};
+    \draw[->, very thick, purple] (CB) -- (C) node[pos=0.5, above=2pt] {$\bar{r}_{Bc}$};
+
+    % 8. Normala si Percutiile de Impact
+    \def\ang{-15} 
     
-    % Vectorul r_j (O -> j)
-    \draw[->, very thick, green!60!black] (0,0) -- (J) 
-        node[midway,below right=4pt, inner sep=2pt] {$\bar{r}_A$};
+    % Normala de contact n (albastru)
+    \draw[->, very thick, blue] (C) -- ++(\ang:1.1) node[below right] {$\bar{n}$};
     
-    % Vectorul relativ r_jl (C_l -> j)
-    \draw[->, very thick, purple] (Cl) -- (J) 
-        node[midway,below right=4pt , inner sep=2pt] {$\bar{r}_{jl}$};
+    % Percutia pe B (A actiuneaza asupra lui B) -> sageata rosie mutata mai SUS
+    \draw[->, very thick, red!90!black] ([yshift=2.5mm]C) -- ++(\ang:1.0) node[above left=14pt] {$P\bar{n}$};
+    
+    % Percutia pe A (Reactiunea dinspre B) -> sageata rosie mutata mai JOS ca sa evite CA
+    \draw[->, very thick, red!90!black] ([yshift=-2.5mm]C) -- ++(\ang+180:1.0) node[below left=2pt] {$-P\bar{n}$};
 
 \end{tikzpicture}
+\caption{Reprezentarea coliziunii între două corpuri rigide $A$ și $B$. Punctul de contact $C$ este definit prin vectorii de poziție relativi $\bar{r}_{Ac}$ și $\bar{r}_{Bc}$. Interacțiunea generează percuțiile $+P\bar{n}$ și $-P\bar{n}$ care acționează de-a lungul normalei de coliziune $\bar{n}$.}
+\label{fig:ciocnire_corpuri}
+\end{figure}
 
 
 Considerăm două corpuri care se ciocnesc, având masele $m_A, m_B$ și momentele de inerție $J_A, J_B$. Fie punctul de contact $C$. Vectorii $\bar{r}_{Ac}$ și $\bar{r}_{Bc}$ sunt vectorii de poziție ai punctului $C$ în coordonatele celor 2 corpuri. Cunoaștem vitezele inițiale ale celor 2 corpuri: $\dot{x}_A, \dot{y}_A, \dot{x}_B, \dot{y}_B$.
