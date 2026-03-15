@@ -816,25 +816,137 @@ $$ \vec{x}_{CB} = \vec{x}_{CB_{vechi}} + \vec{n} \cdot l \cdot \frac{invM_B}{inv
 
 Acest calcul asigură faptul că mișcarea este direct proporțională cu masa inversă (obiectele grele sunt mutate mai puțin). O masă infinită ($invM = 0$) va prelua corecție $0\%$.
 
-\subsubsection{Calculul Impulsului}
-Folosim cele două puncte $J_1$ și $J_2$ rezultate din algoritmul de tăiere pentru a calcula impulsul de reacțiune $j$. Acest impuls modifică instantaneu vitezele liniare și unghiulare.
+\subsubsection{Demonstrația analitică a impulsului de coliziune}
 
-Intensitatea impulsului $j$ pe un punct de contact se determină prin ecuația de rezoluție:
-$$ j = \frac{-(1 + e) v_n}{invM_A + invM_B + \frac{(\vec{r}_A \times \vec{n})^2}{I_A} + \frac{(\vec{r}_B \times \vec{n})^2}{I_B}} $$
-Unde:
-\begin{itemize}
-    \item $e$ este coeficientul de restituție (elasticitatea impactului).
-    \item $v_n$ este viteza relativă a punctelor de contact proiectată pe normală: $v_n = \langle \vec{v}_{rel}, \vec{n} \rangle$.
-    \item $\vec{r}_A$ și $\vec{r}_B$ sunt vectorii de distanță de la centrele de masă la punctul de contact.
-    \item $I_A$ și $I_B$ sunt momentele de inerție principale.
-\end{itemize}
+\begin{tikzpicture}[scale=1.5, >=stealth]
 
-Vectorul final al impulsului este $\vec{J} = j \cdot \vec{n}$. Conform principiului acțiunii și reacțiunii, vitezele se actualizează astfel:
-$$ \vec{v}_A = \vec{v}_A - \vec{J} \cdot invM_A $$
-$$ \omega_A = \omega_A - \frac{\vec{r}_A \times \vec{J}}{I_A} $$
-$$ \vec{v}_B = \vec{v}_B + \vec{J} \cdot invM_B $$
-$$ \omega_B = \omega_B + \frac{\vec{r}_B \times \vec{J}}{I_B} $$
-\subsection{Rezolvarea coliziunilor: Calculul impulsului si frecarea Coulomb.}
+    % 1. Axele globale (Sistemul fix OXY)
+    \draw[->, thick] (0,0) -- (6.5,0) node[below] {$X$};
+    \draw[->, thick] (0,0) -- (0,5.5) node[left] {$Y$};
+    \node[below left] at (0,0) {$O$};
+
+    % 2. Corpul rigid 'A' 
+    \draw[thick, fill=blue!5] plot [smooth cycle, tension=0.8] coordinates {
+        (3.5, 0.9) 
+        (5.2, 1.5)  
+        (5.8, 3.0)  
+        (5.0, 4.5) 
+        (3.5, 4.8)  
+        (2.0, 4.2)  
+        (2.6, 2.8)  
+        (2.4, 1.4)  
+    };
+        
+    % Eticheta corpului
+    \node[blue!80!black, font=\large] at (5.2, 2.5) {$A$};
+
+    % 3. Centrul de masa (C_l)
+    \coordinate (Cl) at (3.5, 2.6);
+    \filldraw (Cl) circle (1.5pt) node[below right=2pt, inner sep=1pt] {$C_A$};
+
+    % 4. Punctul oarecare 'j' de pe corp (distantat mai mult pt claritate)
+    \coordinate (J) at (3.4, 4.0);
+    \filldraw (J) circle (1.5pt) node[above right=1pt] {$j$};
+
+    % 5. Sistemul de referinta local (atasat de C_l)
+    % Linia orizontala punctata pentru referinta unghiului
+    \draw[dashed, gray!80!black] (Cl) -- ++(2.2, 0);
+
+    % Axele locale x_A si y_A rotite cu 30 de grade
+    \draw[->,  very thick, blue!80!black] (Cl) -- ++(30:1.0) node[below right] {$\bar{i}_A$};
+    \draw[->,  very thick, blue!80!black] (Cl) -- ++(120:1.0) node[right] {$\bar{j}_A$};
+
+    % Arcul pentru unghiul phi_A
+    \draw[->, thick] (Cl) ++(1.4, 0) arc (0:30:1.4) node[midway, right=2pt] {$\varphi_A$};
+
+    % 6. Vectorii de pozitie
+    % Vectorul r_l (O -> C_l)
+    \draw[->, very thick, red!80!black] (0,0) -- (Cl) 
+        node[midway,below right=6pt, inner sep=2pt] {$\bar{r}_A$};
+    
+    % Vectorul r_j (O -> j)
+    \draw[->, very thick, green!60!black] (0,0) -- (J) 
+        node[midway,below right=4pt, inner sep=2pt] {$\bar{r}_A$};
+    
+    % Vectorul relativ r_jl (C_l -> j)
+    \draw[->, very thick, purple] (Cl) -- (J) 
+        node[midway,below right=4pt , inner sep=2pt] {$\bar{r}_{jl}$};
+
+\end{tikzpicture}
+
+
+Considerăm două corpuri care se ciocnesc, având masele $m_A, m_B$ și momentele de inerție $J_A, J_B$. Fie punctul de contact $C$. Vectorii $\bar{r}_{Ac}$ și $\bar{r}_{Bc}$ sunt vectorii de poziție ai punctului $C$ în coordonatele celor 2 corpuri. Cunoaștem vitezele inițiale ale celor 2 corpuri: $\dot{x}_A, \dot{y}_A, \dot{x}_B, \dot{y}_B$.
+
+Fie punctul $C_1$ (respectiv $C_2$) punctul din cele două sisteme de referință ale corpurilor. Deoarece mișcarea plan-paralelă se comportă ca o mișcare de rotație blocată în timp, introducem punctele fictive $C_1, C_2$, care sunt de fapt punctul de contact $C$ în sistemele de referință ale celor 2 corpuri. Viteza punctului $C$ se calculează astfel:
+\begin{align}
+    \bar{v}_{cA} &= \bar{v}_A + \bar{\omega}_A \times \bar{r}_{1A} \\
+    \bar{v}_{cB} &= \bar{v}_B + \bar{\omega}_B \times \bar{r}_{2B} 
+\end{align}
+
+În timpul ciocnirii, apare o percuție $P_A$ orientată pe direcția normală la ciocnire. Din principiul acțiunii și reacțiunii, primului corp i se aplică percuția $P_A$, iar celuilalt corp percuția $P_B$:
+\begin{equation}
+    \bar{P}_A = P \cdot \bar{n} \quad ; \quad \bar{P}_2 = -P \cdot \bar{n} 
+\end{equation}
+
+Aplicând teorema impulsului ($\bar{H}'' - \bar{H}' = \sum \bar{P}$)  și proiectând pe axele sistemului global, obținem ecuațiile pentru ambele corpuri:
+\begin{align}
+    ox: m_A \dot{x}_A'' - m_A \dot{x}_A' &= \langle P \cdot \bar{n}, \bar{i} \rangle = P \cdot n_x \\
+    oy: m_A \dot{y}_A'' - m_A \dot{y}_A' &= \langle P \cdot \bar{n}, \bar{j} \rangle = P \cdot n_y \\
+    ox: m_2 \dot{x}_B'' - m_2 \dot{x}_B' &= \langle -P \cdot \bar{n}, \bar{i} \rangle = -P \cdot n_x \\
+    oy: m_2 \dot{y}_B'' - m_2 \dot{y}_B' &= \langle -P \cdot \bar{n}, \bar{j} \rangle = -P \cdot n_y \\
+\end{align}
+
+\paragraph{Calculul momentului cinetic}
+Momentul cinetic se definește ca $\bar{K}_0 = \bar{r} \times m\bar{v} + \bar{J}\bar{\omega}$. Deoarece vectorii se află în plan, rezultatul produsului vectorial are doar componentă pe axa Z, deci il putem considera ca un scalar pentru usurinta notatiilor.
+\begin{equation}
+    K_0 = m x \dot{y} - m y \dot{x} + J \dot{\varphi} 
+\end{equation}
+
+În formă vectorială, aplicăm teorema momentului cinetic:
+\begin{equation}
+    \bar{K}_0'' - \bar{K}_0' = \sum \bar{r}_i \times \bar{P}_i \implies \bar{K}_0'' - \bar{K}_0' = \bar{r}_{1c} \times \bar{P} 
+\end{equation}
+
+Calculăm produsul vectorial cu ajutorul determinantului:
+\begin{equation}
+    \begin{vmatrix} 
+    \bar{i} & \bar{j} & \bar{k} \\ 
+    x_{Ac} & y_{Ac} & 0 \\ 
+    P_x & P_y & 0 
+    \end{vmatrix} = \bar{k}(x_{Ac} P_y - y_{Ac} P_x) 
+\end{equation}
+
+Aplicăm aceasta pentru corpul A:
+\begin{equation}
+    m_A x_A'' \dot{y}_A'' - m_A y_A'' \dot{x}_A'' + J_A \dot{\varphi}_A'' - (m_A x_A' \dot{y}_A' - m_A y_A' \dot{x}_A' + J_A \dot{\varphi}_A') = x_{Ac} P_y - y_{Ac} P_x 
+\end{equation}
+
+Pentru că ciocnirea are loc într-un timp foarte scurt, pozițiile rămân neschimbate: $x''=x'$ și $y''=y'$. Substituim relațiile pentru vitezele liniare $\dot{x}_A''$ și $\dot{y}_A''$:
+\begin{equation}
+    m_A x_A \frac{P n_y + m_A \dot{y}_A'}{m_A} - m_A y_A \frac{P n_x + m_A \dot{x}_A'}{m_A} + J_A \dot{\varphi}_A'' - m_A x_A' \dot{y}_A' + m_A y_A' \dot{x}_A' - J_A \dot{\varphi}_A' = x_{Ac} P n_y - y_{Ac} P n_x 
+\end{equation}
+
+Desfacem parantezele și simplificăm masele de la numărător și numitor:
+\begin{equation}
+    x_A P n_y + x_A m_A \dot{y}_A' - y_A P n_x - y_A m_A \dot{x}_A' + J_A \dot{\varphi}_A'' - m_A x_A \dot{y}_A' + m_A y_A \dot{x}_A' - J_A \dot{\varphi}_A' = x_{Ac} P n_y - y_{Ac} P n_x
+\end{equation}
+
+Termenii opuși se anulează (ex: $x_A m_A \dot{y}_A'$ se reduce cu $- m_A x_A \dot{y}_A'$). Izolăm $J_A \dot{\varphi}_A''$:
+\begin{equation}
+    J_A \dot{\varphi}_A'' = x_{Ac} P n_y - y_{Ac} P n_x - x_A P n_y + y_A P n_x + J_A \dot{\varphi}_1'
+\end{equation}
+
+Dând factor comun componentele normalei și împărțind la inerție, obținem expresia finală pentru viteza unghiulară:
+\begin{equation}
+    \dot{\varphi}_A'' = \frac{P}{J_A} \left[ n_x(y_A - y_{Ac}) + n_y(-x_A + x_{Ac}) \right] + \dot{\varphi}_A' 
+\end{equation}
+
+Putem generaliza formulele finale de actualizare a vitezelor pentru oricare dintre cele două corpuri (ținând cont de semnul percuției):
+\begin{align}
+    \dot{x}_{A,B}'' &= \frac{P n_x + m_{A,B} \dot{x}_{A,B}'}{m_{A,B}} \\
+    \dot{y}_{A,B}'' &= \frac{P n_y + m_{A,B} \dot{y}_{A,B}'}{m_{A,B}} \\
+    \dot{\varphi}_{A,B}'' &= \frac{P}{J_{A,B}} \left[ n_x(y_{A,B} - y_{A,Bc}) + n_y(-x_{A,B} + x_{A,Bc}) \right] + \dot{\varphi}_{A,B}'
+\end{align}
 
 \section{Implementare si Arhitectura Software}
 \subsection{Structura aplicatiei: C++, organizarea pe componente si OpenGL pentru randare grafica.}
