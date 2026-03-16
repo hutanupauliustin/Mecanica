@@ -1,5 +1,5 @@
 #include "sistem.h"
-#include "grafica.h"
+#include "grafica_input.h"
 #include "fizica.h" // Includem header-ul, nu fisierul sursa
 
 // Constanta pentru conversia grade -> radiani
@@ -61,11 +61,11 @@ float d_retea = 15.0f;
 for(int r = 0; r < randuri; r++) {
     for(int c = 0; c < coloane; c++) {
         
-        int idxCurent = 1 + (r * coloane + c);
+        int idxCurent = 3 + (r * coloane + c);
         
         // Conexiune Orizontala
         if(c < coloane - 1) {
-            int idxDreapta = 1 + (r * coloane + (c + 1));
+            int idxDreapta = 3 + (r * coloane + (c + 1));
             arc aOriz = arc::Creaza(S.corpuri[idxCurent], S.corpuri[idxDreapta], 
                                     S.corpuri[idxCurent].x, S.corpuri[idxCurent].y,
                                     S.corpuri[idxDreapta].x, S.corpuri[idxDreapta].y,
@@ -75,7 +75,7 @@ for(int r = 0; r < randuri; r++) {
         
         // Conexiune Verticala
         if(r < randuri - 1) {
-            int idxJos = 1 + ((r + 1) * coloane + c);
+            int idxJos = 3 + ((r + 1) * coloane + c);
             arc aVert = arc::Creaza(S.corpuri[idxCurent], S.corpuri[idxJos], 
                                     S.corpuri[idxCurent].x, S.corpuri[idxCurent].y,
                                     S.corpuri[idxJos].x, S.corpuri[idxJos].y,
@@ -93,10 +93,10 @@ float d_diag = d_retea;
 for(int r = 1; r < randuri - 1; r++) {
     for(int c = 1; c < coloane - 1; c++) {
         
-        int stanga_sus  = 1 + (r * coloane + c);
-        int dreapta_sus = 1 + (r * coloane + (c + 1));
-        int stanga_jos  = 1 + ((r + 1) * coloane + c);
-        int dreapta_jos = 1 + ((r + 1) * coloane + (c + 1));
+        int stanga_sus  = 3 + (r * coloane + c);
+        int dreapta_sus = 3 + (r * coloane + (c + 1));
+        int stanga_jos  = 3 + ((r + 1) * coloane + c);
+        int dreapta_jos = 3 + ((r + 1) * coloane + (c + 1));
 
         arc aDiag1 = arc::Creaza(S.corpuri[stanga_sus], S.corpuri[dreapta_jos], 
                                  S.corpuri[stanga_sus].x, S.corpuri[stanga_sus].y,
@@ -112,14 +112,17 @@ for(int r = 1; r < randuri - 1; r++) {
     }
 }
 
-
-
-
 // 6. Pregatire finala
 S.seteazaCoeficientFrecare(0.2);
 S.seteazaCoeficientRestituire(0.8);
 S.incarcaStare();
 S.seteazaMatriceInertie();
+
+S.corpuri[S.id_corp_mouse].collider.culoare.r = 1.0f;
+S.corpuri[S.id_corp_mouse].collider.culoare.g = 0.0f;
+S.corpuri[S.id_corp_mouse].collider.culoare.b = 0.0f;
+S.corpuri[S.id_corp_mouse].collider.culoare.a = 1.0f;
+
 
     // Initializare OpenGL
     std::cout << "==> Deschidere Fereastra OpenGL..." << std::endl;
@@ -132,8 +135,8 @@ S.seteazaMatriceInertie();
         initBuffers(VAO, VBO);
 
         // Buffer local pentru coordonate
-        // 6 valori (x, y, phi, w, h, type) * (nr_corpuri + nr_legaturi)
-        std::vector<float> vertexBuffer(6 * (S.nr_corpuri + S.nr_legaturi + S.arcuri.size()));
+        // 10 valori (x, y, phi, w, h, type, red, green, blue, alpha) * (nr_corpuri + nr_legaturi)
+        std::vector<float> vertexBuffer(10 * (S.nr_corpuri + S.nr_legaturi + S.arcuri.size()));
 
         // Variabile de timp
         float t = 0.0f, dt = 0.001f;
@@ -145,7 +148,7 @@ S.seteazaMatriceInertie();
         int frameCount = 0;
         while(!glfwWindowShouldClose(window)) {
             // 1. Input
-            processInput(window, dt, running_flag);
+            processInput(window, dt, running_flag,S);
 
             // 2. Fizica 
             // std::cout << "Pas fizica..." << std::endl; 
@@ -171,7 +174,7 @@ S.seteazaMatriceInertie();
 
             float energie;
             if(running_flag) frameCount++;
-            if(frameCount % 100 == 0){
+            if(frameCount % 100 == 0 && running_flag == 1){
                  std::cout << "Cadre randate: " << frameCount << " Timp simulat: " << t <<" | dt current: " << dt <<std::endl;
                  if(arata_energie_flag){
                     energie = calculeazaEnergiaTotala(S, S.g);

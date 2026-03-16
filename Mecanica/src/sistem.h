@@ -119,6 +119,11 @@ public:
                                             //JdotQ - produsul dintre derivata jacobianului si derivata coordonatelor
     matrice F, Fpunct;                      // sunt folosite pentru corectia erorii, impreuna cu constantele k_s si k_d
     
+    int id_corp_lume;
+    int id_corp_mouse;
+
+    std::vector<int> corpuriSelectate;    
+
     sistem()
     {                                       // A - matricea de inertie
         nr_corpuri = 0;
@@ -131,6 +136,17 @@ public:
         k_a = 0.0f;
 
         stare = matrice(6 * nr_corpuri, 1);
+
+        rigid lume = rigid::Fix(0.0f, 0.0f);
+        adaugaCorpuri(lume);
+        id_corp_lume = 0;
+
+        rigid mouse = rigid::Bara(0.0f, 0.0f, 0.05f, 0.05f, 1e12f);
+        mouse.collider.obiectVirtual = true;
+        adaugaCorpuri(mouse);
+        id_corp_mouse = 1;
+
+        nr_corpuri = 2;
     }
 
     ~sistem()

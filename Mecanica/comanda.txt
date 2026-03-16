@@ -1,1 +1,0 @@
-g++ src/main.cpp src/glad.c -o proiectul_meu.exe -I includes -L lib -lglfw3 -lgdi32 -lopengl32

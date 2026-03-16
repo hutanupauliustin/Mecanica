@@ -13,15 +13,20 @@ struct boundingBox{
     float razaLatime;
 };
 
+struct culoare{
+    float r, g, b, a;
+};
+
 struct geometrie{
     formaGeometrica tip;
+    culoare culoare = {1.0f, 1.0f, 1.0f, 1.0f};
     float dimensiune1; // Raza pentru CERC, Latime pentru DREPTUNGHI
     float dimensiune2; // Lungime pentru DREPTUNGHI, este egala cu dimensiun1 in cazul cercului
     boundingBox bb;
     bool obiectStatic = 0;
+    bool obiectVirtual = 0;
+    bool selectat = 0;
     int layer = 0;
-
-
 };
 
 class rigid
