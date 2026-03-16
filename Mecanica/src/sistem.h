@@ -75,22 +75,22 @@ class arc{
         float fe_x = -k * (l - lungime_0) * directie_x;
         float fe_y = -k * (l - lungime_0) * directie_y;
 
-        A.f_x += fe_x;
-        A.f_y += fe_y;
+        A.f_x += -fe_x;
+        A.f_y += -fe_y;
         A.moment += l_xA * fe_y - l_yA * fe_x;
 
-        B.f_x += -fe_x;
-        B.f_y += -fe_y;
+        B.f_x += +fe_x;
+        B.f_y += +fe_y;
         B.moment += l_yB * fe_x - l_xB * fe_y;
 
     }
 
-    void getGraphics(){
+    /*void getGraphics(){
         type = 1;
         widht = 0.5f;
         height = 0.5f;
         phi = 0.0f;
-    }
+    }*/
 };
 
 class sistem

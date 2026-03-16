@@ -19,18 +19,49 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)   //modifica marimea ecranului cand se modifica marinea ferestrei
-    {
+{
         glViewport(0, 0, width, height);
+}
+
+void processInput(GLFWwindow *window, float &dt, bool &running_flag) {
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
+    // Accelerare
+    static bool plusApasat = false;
+    if(glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS) {
+        if(!plusApasat){
+            dt += 0.001f; 
+            if(dt > 0.01f) dt = 0.01f;
+            plusApasat = true;
+        }
+    } else {
+        // Se reseteaza abia cand ridici degetul de pe tasta
+        plusApasat = false;
     }
 
-void processInput(GLFWwindow *window)
-{
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+    // Decelerare
+    static bool minusApasat = false;
+    if(glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS) {
+        if(!minusApasat){
+            dt -= 0.001f; 
+            if(dt < 0.0001f) dt = 0.0001f;
+            minusApasat = true;
+        }
+    } else {
+        minusApasat = false;
+    }
 
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    
+    // Pauza
+    static bool spaceApasat = false;
+    if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
+        if(!spaceApasat) {
+            running_flag = !running_flag; 
+            spaceApasat = true;
+        }
+    } else {
+        spaceApasat = false; 
+    }
 }
 
 // --- 1. VERTEX SHADER: Primeste datele si le da mai departe la Geometry Shader ---
@@ -58,63 +89,61 @@ const char *vertexShaderSource = "#version 330 core\n"
 const char *geometryShaderSource = "#version 330 core\n"
     "layout (points) in;\n"
     "layout (triangle_strip, max_vertices = 4) out;\n"
-    
     "in VS_OUT {\n"
     "    float phi;\n"
     "    vec2 size;\n"
     "    float type;\n"
     "} gs_in[];\n"
-    
-    "out vec2 TexCoord;\n" // Coordonate locale pentru desenarea cercului in Fragment Shader
+    "out vec3 TexCoord;\n" // x, y locale si z = l_0
     "out float ShapeType;\n"
-    "uniform float scale;\n" // Zoom
-
+    "uniform float scale;\n"
     "void main() {\n"
     "    if(gs_in[0].type < 0.5) return;\n"
     "    float phi = gs_in[0].phi;\n"
     "    float c = cos(phi); float s = sin(phi);\n"
-    "    mat2 rot = mat2(c, s, -s, c);\n" // Matrice de rotatie 2D
+    "    mat2 rot = mat2(c, s, -s, c);\n"
     "    vec2 center = gl_in[0].gl_Position.xy;\n"
-    "    vec2 halfSize = gs_in[0].size / 2.0;\n"
     "    ShapeType = gs_in[0].type;\n"
-    
-        // Definim colturile unui patrat unitar centrat in origine\n
+    "    vec2 halfSize;\n"
+    "    if(ShapeType > 3.5) halfSize = vec2(gs_in[0].size.x / 2.0, 0.15);\n"
+    "    else halfSize = gs_in[0].size / 2.0;\n"
     "    vec2 offsets[4];\n"
     "    offsets[0] = vec2(-halfSize.x, -halfSize.y);\n"
     "    offsets[1] = vec2( halfSize.x, -halfSize.y);\n"
     "    offsets[2] = vec2(-halfSize.x,  halfSize.y);\n"
     "    offsets[3] = vec2( halfSize.x,  halfSize.y);\n"
-    
-    "    // Coordonate UV pentru cerc (-1 la 1)\n"
     "    vec2 uvs[4];\n"
-    "    uvs[0] = vec2(-1.0, -1.0); uvs[1] = vec2( 1.0, -1.0);\n"
-    "    uvs[2] = vec2(-1.0,  1.0); uvs[3] = vec2( 1.0,  1.0);\n"
-
-    "    // Daca e triunghi, modificam putin varfurile de sus\n"
-    "    if(ShapeType > 2.5) { \n"
-    "       offsets[2] = vec2(0.0, halfSize.y); \n" // Varful de sus centrat
-    "       offsets[3] = vec2(0.0, halfSize.y); \n" // Dublam varful pentru triangle_strip
-    "    }\n"
-
+    "    uvs[0] = vec2(-1.0, -1.0); uvs[1] = vec2(1.0, -1.0);\n"
+    "    uvs[2] = vec2(-1.0, 1.0);  uvs[3] = vec2(1.0, 1.0);\n"
     "    for(int i=0; i<4; i++) {\n"
-    "        vec2 pos = center + rot * offsets[i];\n" // Rotim si translatam
+    "        vec2 pos = center + rot * offsets[i];\n"
     "        gl_Position = vec4(pos * scale, 0.0, 1.0);\n"
-    "        TexCoord = uvs[i];\n"
+    "        TexCoord = vec3(uvs[i], gs_in[0].size.y);\n" // size.y este l_0
     "        EmitVertex();\n"
     "    }\n"
     "    EndPrimitive();\n"
     "}\0";
 
-// --- 3. FRAGMENT SHADER: Coloreaza si decupeaza cercul ---        //scris de AI
+// --- 3. FRAGMENT SHADER ---      
 const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
-    "in vec2 TexCoord;\n"
+    "in vec3 TexCoord;\n"
     "in float ShapeType;\n"
-    "uniform vec4 color;\n" // Variabila uniforma ("globala") pentru culoare
-    "void main()\n"
-    "{\n"                           // Daca e cerc (Type 0), desenam doar pixelii din interiorul razei\n
-    "    if(ShapeType < 1.5 && dot(TexCoord, TexCoord) > 1.0) discard;\n"
-    "    FragColor = color;\n" // Folosim variabila primita din cod
+    "uniform vec4 color;\n"
+    "void main() {\n"
+    // Cerc: folosim x si y din TexCoord (primele doua componente)
+    "    if(ShapeType < 1.5 && dot(TexCoord.xy, TexCoord.xy) > 1.0) discard;\n"
+    "    FragColor = color;\n"
+    "    if(ShapeType > 3.5) {\n"
+    "        float l_0 = TexCoord.z;\n"
+    "        float spirePerMetru = 8.0;\n"
+    "        float spire = l_0 * spirePerMetru;\n"
+    "        float unda = sin(TexCoord.x * 3.1415 * spire);\n"
+    // Atenuare cu parabola (inmultire, nu adunare)
+    "        unda *= (1.0 - TexCoord.x * TexCoord.x);\n"
+    // Verificam distanta pixelului pe Y local (TexCoord.y) fata de unda
+    "        if(abs(TexCoord.y - unda) > 0.35) discard;\n"
+    "    }\n"
     "}\0";
 
 void updateVerticesData(sistem &S, float* vertices){
@@ -167,15 +196,16 @@ void updateVerticesData(sistem &S, float* vertices){
         float dx = x2 - x1;
         float dy = y2 - y1;
         float phi = std::atan2(y2 - y1, x2 - x1);
-        float lungime = std::sqrt(dx * dx + dy * dy);
+        float lungime_curenta = std::sqrt(dx * dx + dy * dy);
+        float lungime_repaus = S.arcuri[i].lungime_0;
 
         vertices[idx + 0] = (x1 + x2 )/ 2.0f;
         vertices[idx + 1] = (y1 + y2 )/ 2.0f;
         vertices[idx + 2] = phi;
 
-        vertices[idx + 3] = lungime;
-        vertices[idx + 4] = 1.0f;
-        vertices[idx + 5] = 2.0f;   
+        vertices[idx + 3] = lungime_curenta; 
+        vertices[idx + 4] = lungime_repaus;       
+        vertices[idx + 5] = 4.0f;
     }
        
 }
@@ -306,13 +336,19 @@ void drawSystem(sistem &S, unsigned int VAO, unsigned int VBO, unsigned int shad
     // Obtinem locatia variabilei 'color' din shader
     int colorLoc = glGetUniformLocation(shaderProgram, "color");
 
-    // 1. Desenam Corpurile (Portocaliu) - de la index 0, atatea cate corpuri sunt
-    glUniform4f(colorLoc, 1.0f, 0.5f, 0.5f, 1.0f);
+    // 1. Desenam Corpurile (Roz) - de la index 0, atatea cate corpuri sunt
+    glUniform4f(colorLoc, 1.0f, 0.0f, 0.4f, 1.0f);
     glDrawArrays(GL_POINTS, 0, S.nr_corpuri);
 
     // 2. Desenam Legaturile (Alb) - incepand de unde s-au terminat corpurile
     glUniform4f(colorLoc, 1.0f, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_POINTS, S.nr_corpuri, S.nr_legaturi);
+
+    // 3. Desenam Arcurile (Portocaliu) 
+    glUniform4f(colorLoc, 1.0f, 0.61f, 0.0f, 1.0f);
+    glDrawArrays(GL_POINTS, S.nr_legaturi + S.nr_corpuri, S.arcuri.size());
+
+    glBindVertexArray(0);
 
 
 }

@@ -9,47 +9,32 @@ int main(){
     std::cout << "==> Initializare Sistem..." << std::endl;
     
     
-    sistem S; 
-    S.setareConstante(20.0f, 5.0f); 
-    S.setareConstantaGravitationala(9.81f);
-    S.setareConstantaFrecareAer(0.1f);
+sistem S; 
+S.setareConstantaGravitationala(9.81f); // Activam gravitatia
+S.setareConstantaFrecareAer(0.05f);     // O frecare usoara cu aerul ajuta la stabilitate
 
-    // 1. Podeaua
-    rigid podea = rigid::Bara(0.0f, -8.0f, 20.0f, 2.0f, 1e12f);
-    S.adaugaCorpuri(podea);
+// 2. Definire Corpuri
+// Tavanul: Corp fix situat in originea axelor (sau unde doresti)
+rigid tavan = rigid::Fix(0.0f, 5.0f); 
+S.adaugaCorpuri(tavan);
 
-    // 2. Pivotul invizibil al balansoarului (punct fix pe ecran)
-    rigid pivot = rigid::Fix(0.0f, -4.0f);
-    S.adaugaCorpuri(pivot);
+// Masa: O bara sau o cutie de 2kg, situata initial mai jos de tavan
+rigid masa = rigid::Bara(0.0f, 2.0f, 1.0f, 1.0f, 2.0f); 
+S.adaugaCorpuri(masa);
 
-    // 3. Scândura balansoarului (10 metri lungime, masă 10kg)
-    rigid scandura = rigid::Bara(0.0f, -4.0f, 10.0f, 0.4f, 10.0f);
-    S.adaugaCorpuri(scandura);
+// 3. Crearea Arcului (Oscilatorul Armonic)
+// Parametri: CorpA, CorpB, X_globalA, Y_globalA, X_globalB, Y_globalB, k, d, l0
+// Folosim k=100 pentru o elasticitate medie si d=5 pentru amortizare
+// Daca lasi l0 implicit (-1.0f), el se va calcula ca distanta initiala (3.0 metri)
+arc oscilator = arc::Creaza(S.corpuri[0], S.corpuri[1], 
+                            0.0f, 5.0f,   // Prindere pe tavan
+                            0.5f, 2.5f,   // Prindere coltul corpului
+                            100.0f, 5.0f); 
+S.adaugaArcuri(oscilator);
 
-    // Prindem scândura de pivot fix pe mijlocul ei
-    legatura* art = articulatie::Creaza(pivot, scandura, 0.0f, -4.0f);
-    S.adaugaLegaturi(art);
-
-    // 4. "Muniția" (O cutie ușoară care stă pe capătul din dreapta)
-    rigid munitie = rigid::Bara(4.0f, -3.0f, 1.0f, 1.0f, 2.0f);
-    S.adaugaCorpuri(munitie);
-
-    // 5. Greutatea care cade de sus (Masa mare, 50kg, cade pe capătul din stânga)
-    rigid greutate = rigid::Bara(-4.0f, 6.0f, 2.0f, 2.0f, 50.0f);
-    S.adaugaCorpuri(greutate);
-
-    // 6. Câteva cutii suspendate pe care muniția ar trebui să le lovească în zbor
-    for(int i = 0; i < 3; i++) {
-        rigid obstacol = rigid::Bara(4.0f + i * 0.5f, 3.0f + i * 2.0f, 1.2f, 1.2f, 1.0f);
-        S.adaugaCorpuri(obstacol);
-    }
-
-    // Setăm coeficienții înainte de a inițializa matricele
-    S.seteazaCoeficientFrecare(0.3f); // Frecare mai mare ca muniția să nu alunece de pe scândură prea repede
-    S.seteazaCoeficientRestituire(0.4f); // Scădem elasticitatea ca să nu sară greutatea aiurea
-
-    S.incarcaStare();
-    S.seteazaMatriceInertie();
+// 4. Pregatire finala
+S.incarcaStare();
+S.seteazaMatriceInertie();
 
 
     // Initializare OpenGL
@@ -67,25 +52,28 @@ int main(){
         std::vector<float> vertexBuffer(6 * (S.nr_corpuri + S.nr_legaturi + S.arcuri.size()));
 
         // Variabile de timp
-        float t = 0.0f;
-        float dt = 0.001f; // Pasul de timp redus pentru stabilitate
+        float t = 0.0f, dt = 0.001f;
+        bool running_flag = 1;
+        bool arata_energie_flag = 1;
 
         // Bucla principala
         std::cout << "==> Intrare in bucla de randare..." << std::endl;
         int frameCount = 0;
         while(!glfwWindowShouldClose(window)) {
             // 1. Input
-            processInput(window);
+            processInput(window, dt, running_flag);
 
             // 2. Fizica 
             // std::cout << "Pas fizica..." << std::endl; 
-            for(int i = 0; i < 20; i++) {   //facem calculele de mai multe ori intre cadre, pentru ca nu avem nevoie de mai mult de 60 de cadre pe secunda
-                S.stare = RK4(S, dt, t);
-                 S.seteazaStare();       //muta datele din matrice, in obiecte
-                verificarCiocniri(S);   //lucreaza pe variabilele din obiecte
-                S.incarcaStare();       //muta datele din obiecte in matricea de stare
+            if(running_flag){
+                for(int i = 0; i < 20; i++) {   //facem calculele de mai multe ori intre cadre, pentru ca nu avem nevoie de mai mult de 60 de cadre pe secunda
+                    S.stare = RK4(S, dt, t);
+                    S.seteazaStare();       //muta datele din matrice, in obiecte
+                    verificarCiocniri(S);   //lucreaza pe variabilele din obiecte
+                    S.incarcaStare();       //muta datele din obiecte in matricea de stare
 
-                t += dt;
+                    t += dt;
+                }
             }
            
             // 3. Randare
@@ -98,12 +86,13 @@ int main(){
             glfwPollEvents();
 
             float energie;
-            
-            frameCount++;
+            if(running_flag) frameCount++;
             if(frameCount % 100 == 0){
-                 std::cout << "Cadre randate: " << frameCount << " Timp simulat: " << t << std::endl;
-                 float energie = calculeazaEnergiaTotala(S, S.g);
-                std::cout << "Energie: " << energie / 1000.0f <<" KJ " <<std::endl;
+                 std::cout << "Cadre randate: " << frameCount << " Timp simulat: " << t <<" | dt current: " << dt <<std::endl;
+                 if(arata_energie_flag){
+                    energie = calculeazaEnergiaTotala(S, S.g);
+                    std::cout << "Energie: " << energie / 1000.0f <<" KJ " <<std::endl;
+                 }
             }
         }
         
