@@ -149,106 +149,46 @@ intersectie intersectareScaraMica(sistem &S,int corpA, int corpB){  //returneaza
     return inter;
 }
 
-Latura latura_optima(sistem &S, int corpA, int corpB, intersectie inter){
+Latura gasesteFataSuport(sistem &S, int corp, Vec2 directie) {
     Latura latura;
     
-    float x = S.corpuri[corpA].x;
-    float y = S.corpuri[corpA].y;
-    float phi = S.corpuri[corpA].phi;
+    float x = S.corpuri[corp].x;
+    float y = S.corpuri[corp].y;
+    float phi = S.corpuri[corp].phi;
     
-    // Jumatatile dimensiunilor
-    float hw = S.corpuri[corpA].collider.dimensiune1 / 2.0f;
-    float hh = S.corpuri[corpA].collider.dimensiune2 / 2.0f;
+    float hw = S.corpuri[corp].collider.dimensiune1 / 2.0f;
+    float hh = S.corpuri[corp].collider.dimensiune2 / 2.0f;
 
-    // Axele locale ale corpului (directiile X si Y rotite)
     Vec2 axa_x = {std::cos(phi), std::sin(phi)};
     Vec2 axa_y = {-std::sin(phi), std::cos(phi)};
 
-    // 1. Calculam cele 4 colturi in spatiul global
-    // C0 = Dreapta-Sus, C1 = Stanga-Sus, C2 = Stanga-Jos, C3 = Dreapta-Jos
     Vec2 colturi[4];
     colturi[0] = {x + axa_x.x * hw + axa_y.x * hh, y + axa_x.y * hw + axa_y.y * hh};
     colturi[1] = {x - axa_x.x * hw + axa_y.x * hh, y - axa_x.y * hw + axa_y.y * hh};
     colturi[2] = {x - axa_x.x * hw - axa_y.x * hh, y - axa_x.y * hw - axa_y.y * hh};
     colturi[3] = {x + axa_x.x * hw - axa_y.x * hh, y + axa_x.y * hw - axa_y.y * hh};
 
-    // 2. Normalele celor 4 laturi (Top, Left, Bottom, Right)
     Vec2 normale[4];
-    normale[0] = axa_y;                 // Top (între C0 și C1)
-    normale[1] = {-axa_x.x, -axa_x.y};  // Left (între C1 și C2)
-    normale[2] = {-axa_y.x, -axa_y.y};  // Bottom (între C2 și C3)
-    normale[3] = axa_x;                 // Right (între C3 și C0)
+    normale[0] = axa_y;                 
+    normale[1] = {-axa_x.x, -axa_x.y};  
+    normale[2] = {-axa_y.x, -axa_y.y};  
+    normale[3] = axa_x;                 
 
-    float maxim = -1e10;
+    float maxim = -1e10f;
     int index_optim = 0;
 
-    // 3. Cautam latura a carei normala este cea mai aliniata cu directia data
+    // Cautam fata care arata in "directie"
     for (int i = 0; i < 4; i++) {
-        float produs = produs_vect(inter.normala, normale[i]);
+        float produs = produs_vect(directie, normale[i]);
         if (produs > maxim) {
             maxim = produs;
             index_optim = i;
         }
     }
 
-    // 4. Atribuim punctele si normala in functie de indexul castigator
     latura.n = normale[index_optim];
     latura.p1 = colturi[index_optim];
-    // Modulo 4 ne asigura ca dupa C3 ne intoarcem la C0
     latura.p2 = colturi[(index_optim + 1) % 4]; 
-
-    return latura;
-}
-
-Latura latura_incidenta(sistem &S, int corpA, int corpB, intersectie inter){
-    Latura laturaOptima;
-    laturaOptima = latura_optima(S,corpA,corpB,inter);
-    Latura latura;
-    
-    float x = S.corpuri[corpB].x;
-    float y = S.corpuri[corpB].y;
-    float phi = S.corpuri[corpB].phi;
-    
-    // Jumatatile dimensiunilor
-    float hw = S.corpuri[corpB].collider.dimensiune1 / 2.0f;
-    float hh = S.corpuri[corpB].collider.dimensiune2 / 2.0f;
-
-    // Axele locale ale corpului (directiile X si Y rotite)
-    Vec2 axa_x = {std::cos(phi), std::sin(phi)};
-    Vec2 axa_y = {-std::sin(phi), std::cos(phi)};
-
-    // 1. Calculam cele 4 colturi in spatiul global
-    // C0 = Dreapta-Sus, C1 = Stanga-Sus, C2 = Stanga-Jos, C3 = Dreapta-Jos
-    Vec2 colturi[4];
-    colturi[0] = {x + axa_x.x * hw + axa_y.x * hh, y + axa_x.y * hw + axa_y.y * hh};
-    colturi[1] = {x - axa_x.x * hw + axa_y.x * hh, y - axa_x.y * hw + axa_y.y * hh};
-    colturi[2] = {x - axa_x.x * hw - axa_y.x * hh, y - axa_x.y * hw - axa_y.y * hh};
-    colturi[3] = {x + axa_x.x * hw - axa_y.x * hh, y + axa_x.y * hw - axa_y.y * hh};
-
-    // 2. Normalele celor 4 laturi (Top, Left, Bottom, Right)
-    Vec2 normale[4];
-    normale[0] = axa_y;                 // Top (între C0 și C1)
-    normale[1] = {-axa_x.x, -axa_x.y};  // Left (între C1 și C2)
-    normale[2] = {-axa_y.x, -axa_y.y};  // Bottom (între C2 și C3)
-    normale[3] = axa_x;                 // Right (între C3 și C0)
-
-    float minim = 1e10;
-    int index_incidenta = 0;
-
-    // 3. Cautam latura a carei normala este cea mai aliniata cu directia data
-    for (int i = 0; i < 4; i++) {
-        float produs = produs_vect(laturaOptima.n, normale[i]);
-        if (produs < minim) {
-            minim = produs;
-            index_incidenta = i;
-        }
-    }
-
-    // 4. Atribuim punctele si normala in functie de indexul castigator
-    latura.n = normale[index_incidenta];
-    latura.p1 = colturi[index_incidenta];
-    // Modulo 4 ne asigura ca dupa C3 ne intoarcem la C0
-    latura.p2 = colturi[(index_incidenta + 1) % 4]; 
 
     return latura;
 }
@@ -344,17 +284,39 @@ PuncteContact extrageManifold(Latura ref, Latura inc) {
 }
 
 void ciocnire(sistem &S, int corpA, int corpB, intersectie inter){
-    // 1. Gasim laturile si extragem punctele de contact (Clipping)
-    Latura laturaReferinta = latura_optima(S, corpA, corpB, inter);
-    Latura laturaIncidenta = latura_incidenta(S, corpA, corpB, inter);
+    
+    rigid &A = S.corpuri[corpA];
+    rigid &B = S.corpuri[corpB];
+    
+    // Normala de la SAT arata mereu de la A spre B
+    Vec2 normala_A = inter.normala;
+    Vec2 normala_B = {-inter.normala.x, -inter.normala.y};
+
+    // 1. Gasim cele mai bune fete pentru ambele corpuri
+    Latura fataA = gasesteFataSuport(S, corpA, normala_A);
+    Latura fataB = gasesteFataSuport(S, corpB, normala_B);
+
+    // 2. Determinam care este "Latura de Referinta"
+    // Referinta e fata cea mai "perpendiculara" pe impact (produs scalar cel mai mare / aproape de 1)
+    float dotA = produs_vect(fataA.n, normala_A);
+    float dotB = produs_vect(fataB.n, normala_B);
+
+    Latura laturaReferinta, laturaIncidenta;
+    
+    // O mica toleranta pentru a favoriza corpul A la egalitate (ca sa nu "fluture" intre decizii)
+    if (dotB > dotA + 0.001f) {
+        laturaReferinta = fataB;
+        laturaIncidenta = fataA;
+    } else {
+        laturaReferinta = fataA;
+        laturaIncidenta = fataB;
+    }
+
+    // 3. Acum extragem punctele. Decuparea va functiona intotdeauna perfect!
     PuncteContact contacte = extrageManifold(laturaReferinta, laturaIncidenta);
 
-    // Daca nu exista puncte de contact valide, oprim executia
+    // Daca totusi nu exista contact (frecare/margini limitrofe), evitam aplicarea impulsului
     if (contacte.nrPuncte == 0) return;
-
-    rigid& A = S.corpuri[corpA];
-    rigid& B = S.corpuri[corpB];
-
     // Inversul maselor si inertiilor (pentru obiecte statice se considera 0)
     float invM_A = (A.M > 1e10f) ? 0.0f : 1.0f / A.M;
     float invM_B = (B.M > 1e10f) ? 0.0f : 1.0f / B.M;

@@ -8,34 +8,118 @@ float INF = 1e12f;
 int main(){
     std::cout << "==> Initializare Sistem..." << std::endl;
     
-    
+    // 1. Initializare Sistem
 sistem S; 
-S.setareConstantaGravitationala(9.81f); // Activam gravitatia
-S.setareConstantaFrecareAer(0.05f);     // O frecare usoara cu aerul ajuta la stabilitate
+S.setareConstantaGravitationala(9.81f);
+S.setareConstantaFrecareAer(0.2f); 
 
-// 2. Definire Corpuri
-// Tavanul: Corp fix situat in originea axelor (sau unde doresti)
-rigid tavan = rigid::Fix(0.0f, 5.0f); 
-S.adaugaCorpuri(tavan);
+// 2. Adaugam Podeaua
+// Folosim o masa "infinita" (INF) ca sa se comporte ca un corp static.
+// O punem mai jos (ex: y = -2.0f) si o facem suficient de lata sa prinda tot grid-ul.
+rigid podea = rigid::Bara(0.0f, -2.0f, 15.0f, 1.0f, INF); 
+S.adaugaCorpuri(podea);
 
-// Masa: O bara sau o cutie de 2kg, situata initial mai jos de tavan
-rigid masa = rigid::Bara(0.0f, 2.0f, 1.0f, 1.0f, 2.0f); 
-S.adaugaCorpuri(masa);
+// Parametrii retelei
+const int randuri = 5;
+const int coloane = 5;
+float spatiere = 1.0f; 
+float startX = -2.0f;  
+float startY = 6.0f;   
 
-// 3. Crearea Arcului (Oscilatorul Armonic)
-// Parametri: CorpA, CorpB, X_globalA, Y_globalA, X_globalB, Y_globalB, k, d, l0
-// Folosim k=100 pentru o elasticitate medie si d=5 pentru amortizare
-// Daca lasi l0 implicit (-1.0f), el se va calcula ca distanta initiala (3.0 metri)
-arc oscilator = arc::Creaza(S.corpuri[0], S.corpuri[1], 
-                            0.0f, 5.0f,   // Prindere pe tavan
-                            0.5f, 2.5f,   // Prindere coltul corpului
-                            100.0f, 5.0f); 
-S.adaugaArcuri(oscilator);
+// 3. Generarea corpurilor din grid (cu rotatie initiala)
+float unghi_inclinare = 0.1f;
+float cos_u = std::cos(unghi_inclinare);
+float sin_u = std::sin(unghi_inclinare);
 
-// 4. Pregatire finala
+for(int r = 0; r < randuri; r++) {
+    for(int c = 0; c < coloane; c++) {
+        // Coordonatele locale in cadrul grilei (fata de coltul stanga-sus)
+        float local_x = c * spatiere;
+        float local_y = -r * spatiere; 
+        
+        // Aplicam matricea de rotatie 2D
+        float rot_x = local_x * cos_u - local_y * sin_u;
+        float rot_y = local_x * sin_u + local_y * cos_u;
+        
+        // Translatam grila rotita in pozitia de start pe ecran
+        float x = startX + rot_x;
+        float y = startY + rot_y;
+        
+        // Corpurile au masa normala (1kg) si sunt orientate cu acelasi unghi
+        rigid corp = rigid::Bara(x, y, 0.4f, 0.4f, 1.0f); 
+        corp.phi = unghi_inclinare; // Rotim vizual si cutiile ca sa se alinieze cu plasa
+        
+        S.adaugaCorpuri(corp);
+    }
+}
+
+// 4. Generarea arcurilor
+float k_retea = 250.0f; 
+float d_retea = 15.0f;  
+
+// --- A. Arcurile Orizontale si Verticale ---
+for(int r = 0; r < randuri; r++) {
+    for(int c = 0; c < coloane; c++) {
+        
+        int idxCurent = 1 + (r * coloane + c);
+        
+        // Conexiune Orizontala
+        if(c < coloane - 1) {
+            int idxDreapta = 1 + (r * coloane + (c + 1));
+            arc aOriz = arc::Creaza(S.corpuri[idxCurent], S.corpuri[idxDreapta], 
+                                    S.corpuri[idxCurent].x, S.corpuri[idxCurent].y,
+                                    S.corpuri[idxDreapta].x, S.corpuri[idxDreapta].y,
+                                    k_retea, d_retea, spatiere);
+            S.adaugaArcuri(aOriz);
+        }
+        
+        // Conexiune Verticala
+        if(r < randuri - 1) {
+            int idxJos = 1 + ((r + 1) * coloane + c);
+            arc aVert = arc::Creaza(S.corpuri[idxCurent], S.corpuri[idxJos], 
+                                    S.corpuri[idxCurent].x, S.corpuri[idxCurent].y,
+                                    S.corpuri[idxJos].x, S.corpuri[idxJos].y,
+                                    k_retea, d_retea, spatiere);
+            S.adaugaArcuri(aVert);
+        }
+    }
+}
+
+// --- B. Arcurile Diagonale ---
+float spatiere_diag = spatiere * 1.41421356f; 
+float k_diag = k_retea * 0.8f; 
+float d_diag = d_retea;
+
+for(int r = 1; r < randuri - 1; r++) {
+    for(int c = 1; c < coloane - 1; c++) {
+        
+        int stanga_sus  = 1 + (r * coloane + c);
+        int dreapta_sus = 1 + (r * coloane + (c + 1));
+        int stanga_jos  = 1 + ((r + 1) * coloane + c);
+        int dreapta_jos = 1 + ((r + 1) * coloane + (c + 1));
+
+        arc aDiag1 = arc::Creaza(S.corpuri[stanga_sus], S.corpuri[dreapta_jos], 
+                                 S.corpuri[stanga_sus].x, S.corpuri[stanga_sus].y,
+                                 S.corpuri[dreapta_jos].x, S.corpuri[dreapta_jos].y,
+                                 k_diag, d_diag, spatiere_diag);
+        S.adaugaArcuri(aDiag1);
+
+        arc aDiag2 = arc::Creaza(S.corpuri[dreapta_sus], S.corpuri[stanga_jos], 
+                                 S.corpuri[dreapta_sus].x, S.corpuri[dreapta_sus].y,
+                                 S.corpuri[stanga_jos].x, S.corpuri[stanga_jos].y,
+                                 k_diag, d_diag, spatiere_diag);
+        S.adaugaArcuri(aDiag2);
+    }
+}
+
+
+
+
+// 6. Pregatire finala
+S.seteazaCoeficientFrecare(0.2);
+S.seteazaCoeficientRestituire(0.8);
 S.incarcaStare();
 S.seteazaMatriceInertie();
-
 
     // Initializare OpenGL
     std::cout << "==> Deschidere Fereastra OpenGL..." << std::endl;
@@ -53,7 +137,7 @@ S.seteazaMatriceInertie();
 
         // Variabile de timp
         float t = 0.0f, dt = 0.001f;
-        bool running_flag = 1;
+        bool running_flag = 0;
         bool arata_energie_flag = 1;
 
         // Bucla principala

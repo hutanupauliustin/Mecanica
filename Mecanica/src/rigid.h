@@ -69,6 +69,11 @@ public:
         punct_x = x + d_x* cos(phi) - d_y * sin(phi);
         punct_y = y + d_x* sin(phi) + d_y * cos(phi);
     }
+
+    void vitezaPunctPeCorp(float &punct_v_x, float &punct_v_y, float d_x, float d_y){
+        punct_v_x = v_x  - d_y * omega;
+        punct_v_y = v_y  - d_x * omega;
+    }
     
     void seteazaBoundingBox(){                  // "deseneaza" o cutie dreptunghiulara cu laturile paralele cu axele OX si OY ale sistemului, care sa cuprinda intreg rigidul
         

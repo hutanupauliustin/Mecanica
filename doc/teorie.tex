@@ -526,7 +526,7 @@ Prin urmare, atunci când calculăm produsul $\dot{J}_F \dot{q}$, componenta cor
     \draw[->, very thick, orange!80!black] ([yshift=3mm]PtA) -- ++(1.4, -0.127) 
         node[above] {$\bar{F}_e$};
     \draw[->, very thick, blue] ([yshift=-3.5mm]PtA) -- ++(0.8, -0.072) 
-        node[below] {$\overline{dir}$};
+        node[below] {$\overline{u}$};
 
 \end{tikzpicture}
 \caption{Reprezentarea unui arc elastic, interacționând între punctele de prindere $A$ și $B$ a două corpuri rigide distincte.}
@@ -543,12 +543,12 @@ Lungimea curentă a arcului $l$ este norma diferenței celor doi vectori de pozi
 
 Versorul direcției arcului (care arată de la corpul A spre corpul B) este:
 \begin{equation}
-    \overline{dir} = \frac{\bar{r}_2 - \bar{r}_1}{||\bar{r}_2 - \bar{r}_1||}
+    \overline{u} = \frac{\bar{r}_2 - \bar{r}_1}{||\bar{r}_2 - \bar{r}_1||}
 \end{equation}
 
 Conform legii lui Hooke, forța elastică generată de arc este proporțională cu deformația sa $\Delta x = l - l_0$, unde $l_0$ este lungimea de repaus. Vectorul forței aplicate corpului A va fi:
 \begin{equation}
-    \bar{F}_{e} = k (l - l_0) \overline{dir}
+    \bar{F}_{e} = - k (l - l_0) \overline{u}
 \end{equation}
 \textit{(Notă: Corpul B va acționa cu aceeași forță, dar de sens opus: $-\bar{F}_{e}$, conform principiului acțiunii și reacțiunii).}
 
@@ -572,6 +572,11 @@ Pentru corpul B, forța aplicată este reacțiunea ($-\bar{F}_e$):
     -F_{ex} & -F_{ey} & 0 
     \end{vmatrix} 
     = (-l_{xB} F_{ey} + l_{yB} F_{ex})\bar{k}
+\end{equation}
+
+Datorita erorilor aparute din cauza aritmeticii cu virgula mobila, nu putem folosi arcuri ideale din cauza riscului de crestere a energiei. Suntem obligati sa lucram cu arcuri amortizate. Diferenta apare cu un termen nou de amortizare, forta devenind:
+\begin{equation} 
+   \bar{F}_{e} = - ( k (l - l_0)  + d  \langle \overline{v_B} - \overline{v_A}, \overline{u}  \rangle ) \overline{u}
 \end{equation}
 \newpage
 

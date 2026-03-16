@@ -63,34 +63,40 @@ class arc{
     void aplicaFortaElastica(rigid &A, rigid &B){        
         
         float x1,y1,x2,y2;
+        float v_x1,v_y1,v_x2,v_y2;
+
 
         A.coordPunctPeCorp(x1,y1,l_xA, l_yA);
         B.coordPunctPeCorp(x2,y2,l_xB, l_yB);
+
+        A.vitezaPunctPeCorp(v_x1,v_y1,l_xA, l_yA);
+        B.vitezaPunctPeCorp(v_x2,v_y2,l_xB, l_yB);
 
         float l = std::sqrt( (x2-x1) * (x2-x1) + (y2-y1) * (y2-y1));
 
         float directie_x = (x2-x1) / l;               
         float directie_y = (y2-y1) / l;
 
-        float fe_x = -k * (l - lungime_0) * directie_x;
-        float fe_y = -k * (l - lungime_0) * directie_y;
+        float viteza_rel = (v_x2 - v_x1) * directie_x + (v_y2 - v_y1) * directie_y;
+
+        float fe_x = (-k * (l - lungime_0) - d * viteza_rel )* directie_x;
+        float fe_y = (-k * (l - lungime_0) - d * viteza_rel )* directie_y;
+        
+        float r_xA = x1 - A.x;
+        float r_yA = y1 - A.y;
+        float r_xB = x2 - B.x;
+        float r_yB = y2 - B.y;
+
 
         A.f_x += -fe_x;
         A.f_y += -fe_y;
-        A.moment += l_xA * fe_y - l_yA * fe_x;
+        A.moment += -r_xA * fe_y + r_yA * fe_x;
 
-        B.f_x += +fe_x;
-        B.f_y += +fe_y;
-        B.moment += l_yB * fe_x - l_xB * fe_y;
+        B.f_x += fe_x;
+        B.f_y += fe_y;
+        B.moment += r_xB * fe_y - r_yB * fe_x;
 
     }
-
-    /*void getGraphics(){
-        type = 1;
-        widht = 0.5f;
-        height = 0.5f;
-        phi = 0.0f;
-    }*/
 };
 
 class sistem
