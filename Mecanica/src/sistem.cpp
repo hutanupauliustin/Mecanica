@@ -107,6 +107,7 @@ public:
     std::vector<rigid> corpuri;
     std::vector<legatura*> legaturi;                   // vector de pointeri
     std::vector<arc> arcuri;
+    std::vector<int> corpuriSelectate;    
 
     int p;                                  // p este numarul de ecuatii adaugate de legaturi (2 pt articulatii, 3 pt incastrare, etc.)
     matrice stare;                          // am sa ma refer la ecuatiile adaugate f_1,f_2... cu numele de "constrangeri"
@@ -119,10 +120,8 @@ public:
                                             //JdotQ - produsul dintre derivata jacobianului si derivata coordonatelor
     matrice F, Fpunct;                      // sunt folosite pentru corectia erorii, impreuna cu constantele k_s si k_d
     
-    int id_corp_lume;
+    int id_corp_lume;               //corpuri prestabilite
     int id_corp_mouse;
-
-    std::vector<int> corpuriSelectate;    
 
     sistem()
     {                                       // A - matricea de inertie
@@ -193,12 +192,21 @@ public:
         
         for (int i = 0; i < nr_corpuri; i++)
         {
-            stare(i * 3, 0) = corpuri[i].x;
-            stare(i * 3 + 1, 0) = corpuri[i].y;
-            stare(i * 3 + 2, 0) = corpuri[i].phi;
-            stare(i * 3 + 3 * nr_corpuri, 0) = corpuri[i].v_x;
-            stare(i * 3 + 1 + 3 * nr_corpuri, 0) = corpuri[i].v_y;
-            stare(i * 3 + 2 + 3 * nr_corpuri, 0) = corpuri[i].omega;
+            if(this->corpuri[i].activ == 0){
+                stare(i * 3, 0) = 0;
+                stare(i * 3 + 1, 0) = 0;
+                stare(i * 3 + 2, 0) = 0;
+                stare(i * 3 + 3 * nr_corpuri, 0) = 0;
+                stare(i * 3 + 1 + 3 * nr_corpuri, 0) = 0;
+                stare(i * 3 + 2 + 3 * nr_corpuri, 0) = 0;
+            }else{
+                stare(i * 3, 0) = corpuri[i].x;
+                stare(i * 3 + 1, 0) = corpuri[i].y;
+                stare(i * 3 + 2, 0) = corpuri[i].phi;
+                stare(i * 3 + 3 * nr_corpuri, 0) = corpuri[i].v_x;
+                stare(i * 3 + 1 + 3 * nr_corpuri, 0) = corpuri[i].v_y;
+                stare(i * 3 + 2 + 3 * nr_corpuri, 0) = corpuri[i].omega;
+            }
         }
     }
 
@@ -323,9 +331,15 @@ void seteazaConstrangeri()
 
         for (int i = 0; i < nr_corpuri; i++)
         {
+            if(this->corpuri[i].activ == 0){
+            A(3 * i,     3 * i)     = 0; 
+            A(3 * i + 1, 3 * i + 1) = 0; 
+            A(3 * i + 2, 3 * i + 2) = 0; 
+            }else{
             A(3 * i,     3 * i)     = corpuri[i].M; 
             A(3 * i + 1, 3 * i + 1) = corpuri[i].M; 
             A(3 * i + 2, 3 * i + 2) = corpuri[i].J; 
+            }
         }   
         
         A_inv = A.inverse();

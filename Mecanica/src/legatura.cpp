@@ -9,13 +9,6 @@ public:
     int contorCorpA;
     int contorCorpB;
 
-
-    legatura()
-    {
-        contorCorpA = 0;
-        contorCorpB = 0;
-    }
-
     legatura(int a, int b) : contorCorpA(a), contorCorpB(b) {}
 
     virtual ~legatura() = default; // "virtual" ii spune destructorului sa stearga si spatiul utilizat de celelalte clase
