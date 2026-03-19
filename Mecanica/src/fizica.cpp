@@ -1,7 +1,7 @@
-#pragma once
 #include "sistem.h"
 #include "matrice.h"
 #include "colliziune.h"
+#include "fizica.h"
 
 //rezolva sisteme olonoame scleronome, cu legaturi bilaterale
 

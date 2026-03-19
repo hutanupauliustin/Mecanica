@@ -1,44 +1,18 @@
-#pragma once
-#include "rigid.h"
-#include "matrice.h"
 #include <cmath>
+#include "legatura.h"
 
-class legatura
-{
-public:
-    int contorCorpA;
-    int contorCorpB;
 
-    legatura(int a, int b) : contorCorpA(a), contorCorpB(b) {}
+    legatura::legatura(int a, int b) : contorCorpA(a), contorCorpB(b) {}
 
-    virtual ~legatura() = default; // "virtual" ii spune destructorului sa stearga si spatiul utilizat de celelalte clase
-
-    virtual int getNumarEcuatii() const = 0;
-    virtual void calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare) = 0;
-    virtual void calculeazaConstrangereDerivate(matrice &F, int rand_start, const matrice &stare, int n) = 0;
-    virtual void calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) = 0;
-    virtual void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) = 0;
-    virtual float getAbscisa(matrice &stare) = 0;
-    virtual float getOrdonata(matrice &stare) = 0;
-    virtual void getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) = 0;
-};
-
-class articulatie : public legatura
-{
-private:
-    float l_xA, l_yA;
-    float l_xB, l_yB;
-
-public:
-    articulatie(int a, int b, float lxa, float lya, float lxb, float lyb)
+    articulatie::articulatie(int a, int b, float lxa, float lya, float lxb, float lyb)
         : legatura(a, b), l_xA(lxa), l_yA(lya), l_xB(lxb), l_yB(lyb) {}
 
-    int getNumarEcuatii() const override
+    int articulatie::getNumarEcuatii() const 
     {
         return 2;
     }
 
-    float getAbscisa(matrice &stare) override{
+    float articulatie::getAbscisa(matrice &stare) {
         
         int idxA = contorCorpA * 3;
         int idxB = contorCorpB * 3;
@@ -49,7 +23,7 @@ public:
         return xA + this->l_xA * cos(phiA) - this->l_yA * sin(phiA);
     }
 
-    float getOrdonata(matrice &stare) override{
+    float articulatie::getOrdonata(matrice &stare) {
         
         int idxA = contorCorpA * 3;
         int idxB = contorCorpB * 3;
@@ -60,7 +34,7 @@ public:
         return yA + this->l_xA * sin(phiA) + this->l_yA * cos(phiA);
     }
 
-    virtual void getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) override{
+    void articulatie::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) {
         type = 1;
         widht = 0.5f;
         height = 0.5f;
@@ -68,7 +42,7 @@ public:
     }
 
 
-    void calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare) override {
+    void articulatie::calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare)  {
         int idxA = contorCorpA * 3;
         int idxB = contorCorpB * 3;
         float xA = stare(idxA + 0, 0);
@@ -89,7 +63,7 @@ public:
 
     }
 
-    void calculeazaConstrangereDerivate(matrice &Fpunct, int rand_start, const matrice &stare, int n) override {
+    void articulatie::calculeazaConstrangereDerivate(matrice &Fpunct, int rand_start, const matrice &stare, int n)  {
         int offsetViteze = 3 * n; 
 
         int idxA = contorCorpA * 3;
@@ -121,7 +95,7 @@ public:
 
     }
 
-    void calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) override
+    void articulatie::calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) 
 {
     int idxA = contorCorpA * 3;
     int idxB = contorCorpB * 3;
@@ -153,7 +127,7 @@ public:
     J_F(rand_start + 1, idxB + 2) = -l_xB * cosB + l_yB * sinB; // coloana phi_B
 }
 
-    void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) override{
+    void articulatie::calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) {
         
         int idxA = contorCorpA * 3;
         int idxB = contorCorpB * 3;
@@ -188,7 +162,7 @@ public:
 
     // --- FACTORY METHOD ---
     // Permite definirea articulatiei folosind coordonate GLOBALE (mult mai usor de vizualizat)
-    static articulatie* Creaza(rigid& A, rigid& B, float globalX, float globalY) {
+    articulatie* articulatie::Creaza(rigid& A, rigid& B, float globalX, float globalY) {
         // Calculam vectorul de la centrul corpului la punctul de legatura (in coordonate globale)
         float dxA = globalX - A.x;
         float dyA = globalY - A.y;
@@ -204,25 +178,16 @@ public:
 
         return new articulatie(A.index, B.index, l_xA, l_yA, l_xB, l_yB);
     }
-};
 
-class incastrare : public legatura
-{
-private:
-    float l_xA, l_yA;
-    float l_xB, l_yB;
-    float phi_0;
-
-public:
-    incastrare(int a, int b, float lxa, float lya, float lxb, float lyb, float unghiInitial)
+    incastrare::incastrare(int a, int b, float lxa, float lya, float lxb, float lyb, float unghiInitial)
         : legatura(a, b), l_xA(lxa), l_yA(lya), l_xB(lxb), l_yB(lyb), phi_0(unghiInitial) {}
 
-    int getNumarEcuatii() const override
+    int incastrare::getNumarEcuatii() const 
     {
         return 3;
     }
 
-    float getAbscisa(matrice &stare) override{
+    float incastrare::getAbscisa(matrice &stare) {
         
         int idxA = contorCorpA * 3;
         int idxB = contorCorpB * 3;
@@ -233,7 +198,7 @@ public:
         return xA + this->l_xA * cos(phiA) - this->l_yA * sin(phiA);
     }
 
-    float getOrdonata(matrice &stare) override{
+    float incastrare::getOrdonata(matrice &stare) {
         
         int idxA = contorCorpA * 3;
         int idxB = contorCorpB * 3;
@@ -244,7 +209,7 @@ public:
         return yA + this->l_xA * sin(phiA) + this->l_yA * cos(phiA);
     }
 
-        virtual void getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) override{
+         void incastrare::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) {
         int idxA = contorCorpA * 3;
         float phiA = stare(idxA + 2, 0);
 
@@ -255,7 +220,7 @@ public:
         }
 
 
-    void calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare) override {
+    void incastrare::calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare)  {
         int idxA = contorCorpA * 3;
         int idxB = contorCorpB * 3;
         float xA = stare(idxA + 0, 0);
@@ -278,7 +243,7 @@ public:
 
     }
 
-    void calculeazaConstrangereDerivate(matrice &Fpunct, int rand_start, const matrice &stare, int n) override {
+    void incastrare::calculeazaConstrangereDerivate(matrice &Fpunct, int rand_start, const matrice &stare, int n)  {
         int offsetViteze = 3 * n; 
 
         int idxA = contorCorpA * 3;
@@ -311,7 +276,7 @@ public:
 
     }
 
-    void calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) override
+    void incastrare::calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) 
     {
         int indexA = contorCorpA * 3;
         int indexB = contorCorpB * 3;
@@ -354,7 +319,7 @@ public:
         J_F(rand_start + 2, indexB + 2) = -1.0f;
     }
 
-   void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) override {
+   void incastrare::calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n)  {
         int idxA = contorCorpA * 3;
         int idxB = contorCorpB * 3;
         int offsetViteze = 3 * n; 
@@ -382,7 +347,7 @@ public:
         JdotQ(rand_start + 2, 0) = 0.0f;
     }
 
-    static incastrare* Creaza(rigid& A, rigid& B, float globalX, float globalY) {
+    incastrare* incastrare:: Creaza(rigid& A, rigid& B, float globalX, float globalY) {
         float dxA = globalX - A.x;
         float dyA = globalY - A.y;
         float dxB = globalX - B.x;
@@ -399,4 +364,3 @@ public:
 
         return new incastrare(A.index, B.index, l_xA, l_yA, l_xB, l_yB, phi0);
     }
-};

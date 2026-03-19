@@ -1,6 +1,6 @@
 #include "sistem.h"
-#include "grafica_input.h"
-#include "fizica.h" // Includem header-ul, nu fisierul sursa
+#include "grafica.h"
+#include "fizica.h"
 
 // Constanta pentru conversia grade -> radiani
 const float DEG_TO_RAD = 3.1415926535f / 180.0f;

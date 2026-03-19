@@ -1,8 +1,8 @@
-#pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "sistem.h"
+#include "input.h"
 
 float zoomScale = 10.0f;
 float cameraX = 0.0f;

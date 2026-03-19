@@ -1,129 +1,8 @@
-#pragma once
-#include "matrice.h"
-#include "legatura.h"
-#include "rigid.h"
+#include "sistem.h"
 #include <cmath>
 #include <vector>
 
-class arc{
-
-    public:
-
-    int contorCorpA;
-    int contorCorpB;
-    
-    float l_xA, l_yA;
-    float l_xB, l_yB;
-
-    float lungime_0;
-    float k,d;  // k--constanta elastica d--constanda de dampening
-
-    arc(){
-        contorCorpA = 0;
-        contorCorpB = 0;
-        l_xA = 0.0f;
-        l_yA = 0.0f;
-        l_xB = 0.0f;
-        l_yB = 0.0f;
-        lungime_0 = 0.0f;
-        k = 0.0f;
-        d = 0.0f;
-
-    }
-
-    arc(int a, int b, float lxa, float lya, float lxb, float lyb, float k_val, float d_val, float l0)
-        : contorCorpA(a), contorCorpB(b), l_xA(lxa), l_yA(lya), l_xB(lxb), l_yB(lyb), k(k_val), d(d_val), lungime_0(l0) {}
-
-    // Permite definirea arcului folosind coordonate GLOBALE pentru punctele de prindere
-    static arc Creaza(rigid& A, rigid& B, float globalXA, float globalYA, float globalXB, float globalYB, float constanta_k, float constanta_d = 0.0f, float lungime_repaus = -1.0f) {
-        // Calculam vectorul de la centrul corpului la punctul de legatura (in coordonate globale)
-        float dxA = globalXA - A.x;
-        float dyA = globalYA - A.y;
-        
-        float dxB = globalXB - B.x;
-        float dyB = globalYB - B.y;
-
-        // Transformam coordonatele in sistemul de referinta local al fiecarui corp
-        float l_xA = dxA * cos(A.phi) + dyA * sin(A.phi);
-        float l_yA = -dxA * sin(A.phi) + dyA * cos(A.phi);
-
-        float l_xB = dxB * cos(B.phi) + dyB * sin(B.phi);
-        float l_yB = -dxB * sin(B.phi) + dyB * cos(B.phi);
-
-        // Daca nu se specifica o lungime de repaus (valoare negativa), o calculam ca distanta curenta dintre puncte
-        float l0 = lungime_repaus;
-        if (l0 < 0.0f) {
-            l0 = std::sqrt((globalXB - globalXA) * (globalXB - globalXA) + (globalYB - globalYA) * (globalYB - globalYA));
-        }
-
-        return arc(A.index, B.index, l_xA, l_yA, l_xB, l_yB, constanta_k, constanta_d, l0);
-    }
-    
-
-    void aplicaFortaElastica(rigid &A, rigid &B){        
-        
-        float x1,y1,x2,y2;
-        float v_x1,v_y1,v_x2,v_y2;
-
-
-        A.coordPunctPeCorp(x1,y1,l_xA, l_yA);
-        B.coordPunctPeCorp(x2,y2,l_xB, l_yB);
-
-        A.vitezaPunctPeCorp(v_x1,v_y1,l_xA, l_yA);
-        B.vitezaPunctPeCorp(v_x2,v_y2,l_xB, l_yB);
-
-        float l = std::sqrt( (x2-x1) * (x2-x1) + (y2-y1) * (y2-y1));
-
-        float directie_x = (x2-x1) / l;               
-        float directie_y = (y2-y1) / l;
-
-        float viteza_rel = (v_x2 - v_x1) * directie_x + (v_y2 - v_y1) * directie_y;
-
-        float fe_x = (-k * (l - lungime_0) - d * viteza_rel )* directie_x;
-        float fe_y = (-k * (l - lungime_0) - d * viteza_rel )* directie_y;
-        
-        float r_xA = x1 - A.x;
-        float r_yA = y1 - A.y;
-        float r_xB = x2 - B.x;
-        float r_yB = y2 - B.y;
-
-
-        A.f_x += -fe_x;
-        A.f_y += -fe_y;
-        A.moment += -r_xA * fe_y + r_yA * fe_x;
-
-        B.f_x += fe_x;
-        B.f_y += fe_y;
-        B.moment += r_xB * fe_y - r_yB * fe_x;
-
-    }
-};
-
-class sistem
-{
-public:
-    int nr_corpuri;
-    int nr_legaturi;
-    std::vector<rigid> corpuri;
-    std::vector<legatura*> legaturi;                   // vector de pointeri
-    std::vector<arc> arcuri;
-    std::vector<int> corpuriSelectate;    
-
-    int p;                                  // p este numarul de ecuatii adaugate de legaturi (2 pt articulatii, 3 pt incastrare, etc.)
-    matrice stare;                          // am sa ma refer la ecuatiile adaugate f_1,f_2... cu numele de "constrangeri"
-
-    float k_s,k_d,g,k_a;                          //spring constant si dampening constant -- sunt encesare pentru a introduce o amortizare foarte slaba care sa anuleze erorile de tip floating-point-arithmetic
-                                             // constanta gravitationala       
-    matrice coeficientRestituire, coeficientFrecare;                                  
-    matrice Q, J_F, A, A_inv, Lambda, JdotQ;       // Q - vectorul fortelor externe
-                                            // J_f - Jacobianul legaturilor
-                                            //JdotQ - produsul dintre derivata jacobianului si derivata coordonatelor
-    matrice F, Fpunct;                      // sunt folosite pentru corectia erorii, impreuna cu constantele k_s si k_d
-    
-    int id_corp_lume;               //corpuri prestabilite
-    int id_corp_mouse;
-
-    sistem()
+    sistem::sistem()
     {                                       // A - matricea de inertie
         nr_corpuri = 0;
         nr_legaturi = 0;
@@ -148,7 +27,7 @@ public:
         nr_corpuri = 2;
     }
 
-    ~sistem()
+    sistem::~sistem()
     {
         for (int i = 0; i < nr_legaturi; i++)
         {
@@ -156,38 +35,38 @@ public:
         }
     }
 
-    void setareConstantaGravitationala(float grav){
+    void sistem::setareConstantaGravitationala(float grav){
         g = grav;
     }
 
-    void setareConstante(float spring_constant, float dampening_constant){
+    void sistem::setareConstante(float spring_constant, float dampening_constant){
         k_s = spring_constant;
         k_d = dampening_constant;
     }
 
-    void setareConstantaFrecareAer(float constanta){
+    void sistem::setareConstantaFrecareAer(float constanta){
         k_a = constanta;
     }
 
-    void adaugaCorpuri(rigid &r){
+    void sistem::adaugaCorpuri(rigid &r){
         r.index = corpuri.size();
         corpuri.push_back(r);
         nr_corpuri = corpuri.size();
     }
 
-    void adaugaLegaturi(legatura *l)
+    void sistem::adaugaLegaturi(legatura *l)
     {
         legaturi.push_back(l);
         nr_legaturi = legaturi.size();
         p += l->getNumarEcuatii();
     }
 
-    void adaugaArcuri(arc &a)
+    void sistem::adaugaArcuri(arc &a)
     {
         arcuri.push_back(a);
     }
 
-    void incarcaStare(){
+    void sistem::incarcaStare(){
         stare = matrice(6 * nr_corpuri, 1);
         
         for (int i = 0; i < nr_corpuri; i++)
@@ -210,7 +89,7 @@ public:
         }
     }
 
-    void seteazaCoeficientRestituire(float val){             //valoarea din  punctul (i,j) este coeficientul dintre corpurile i si j;
+    void sistem::seteazaCoeficientRestituire(float val){             //valoarea din  punctul (i,j) este coeficientul dintre corpurile i si j;
         coeficientRestituire = matrice( nr_corpuri,  nr_corpuri);
         for(int i = 0; i < nr_corpuri; i++){
             for(int j = 0; j < i; j++){
@@ -221,7 +100,7 @@ public:
 
     }
 
-    void seteazaCoeficientFrecare(float val){             //valoarea din  punctul (i,j) este coeficientul dintre corpurile i si j;
+    void sistem::seteazaCoeficientFrecare(float val){             //valoarea din  punctul (i,j) este coeficientul dintre corpurile i si j;
         coeficientFrecare = matrice( nr_corpuri,  nr_corpuri);
         for(int i = 0; i < nr_corpuri; i++){
             for(int j = 0; j < i; j++){
@@ -232,7 +111,7 @@ public:
 
     }
 
-    void seteazaStare(){
+    void sistem::seteazaStare(){
         for (int i = 0; i < nr_corpuri; i++)
         {
             corpuri[i].x = stare(i * 3, 0);
@@ -244,7 +123,7 @@ public:
         }
     }
 
-    void seteazaJacobian()
+    void sistem::seteazaJacobian()
     {
 
         if (J_F.linii != p || J_F.coloane != 3 * nr_corpuri)
@@ -281,7 +160,7 @@ public:
         }
     }
 
-void seteazaConstrangeri()
+void sistem::seteazaConstrangeri()
     {
 
         if (F.linii != p || F.coloane != 1)
@@ -318,7 +197,7 @@ void seteazaConstrangeri()
         }
     }
 
-    void seteazaMatriceInertie()
+    void sistem::seteazaMatriceInertie()
     {
         if (A.linii != 3 * nr_corpuri || A.coloane != 3 * nr_corpuri) {
             A = matrice('0', 3 * nr_corpuri, 3 * nr_corpuri);
@@ -345,7 +224,7 @@ void seteazaConstrangeri()
         A_inv = A.inverse();
     }
 
-    void seteazaForteExterne()
+    void sistem::seteazaForteExterne()
     {
         if (Q.linii != 3 * nr_corpuri || Q.coloane != 1) {
             Q = matrice(3 * nr_corpuri, 1);
@@ -368,4 +247,3 @@ void seteazaConstrangeri()
             Q(3 * i + 2, 0) = corpuri[i].moment;
         }
     }
-};

@@ -1,7 +1,4 @@
-#pragma once
-#include "sistem.h"
-#include "matrice.h"
-#include <cmath>
+#include "colliziune.h"
 
 bool intersectareScaraLarga(sistem &S, int corpA, int corpB)
 { // verifica doar daca cutiile in care sunt bagate corpurile se intersecteaza
@@ -19,11 +16,6 @@ bool intersectareScaraLarga(sistem &S, int corpA, int corpB)
 
     return false;
 }
-
-struct Vec2
-{
-    float x, y;
-};
 
 float produs_vect(Vec2 v1, Vec2 v2)
 {
@@ -44,19 +36,6 @@ Vec2 inmulteste(Vec2 a, float s)
 {
     return {a.x * s, a.y * s};
 }
-
-struct intersectie
-{
-    float adancimee;
-    Vec2 normala;
-    bool seLovesc;
-};
-
-struct Latura
-{
-    Vec2 p1, p2; // Cele doua capete ale laturii
-    Vec2 n;      // Normala laturii
-};
 
 intersectie intersectareScaraMica(sistem &S, int corpA, int corpB)
 { // returneaza cat de mult patrunde un corp in altul
@@ -249,12 +228,6 @@ int taierePlan(Vec2 intrari[2], int nrIntrari, Vec2 iesiri[2], Vec2 punctPlan, V
 }
 
 // Structura care va salva 1 sau 2 puncte si adancimile lor pentru a fi folosite la aplicarea impulsului
-struct PuncteContact
-{
-    Vec2 puncte[2];
-    float adancimi[2];
-    int nrPuncte;
-};
 
 PuncteContact extrageManifold(Latura ref, Latura inc)
 {

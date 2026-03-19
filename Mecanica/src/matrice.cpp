@@ -1,26 +1,13 @@
-#pragma once
-#include <stdlib.h>
-#include <iostream>
-#include <stdio.h>
-#include <cmath>
-#include <limits>
-#include <stdexcept>
+#include "matrice.h"
 
-class matrice
-{
-public:
-    int coloane;
-    int linii;
-    float *valori;
 
-    // 1. Constructori
-    matrice() : linii(0), coloane(0), valori(nullptr) {}
+    matrice::matrice() : linii(0), coloane(0), valori(nullptr) {}
 
-    matrice(int n, int m) : linii(n), coloane(m) {
+    matrice::matrice(int n, int m) : linii(n), coloane(m) {
         valori = new float[n * m](); // Initializeaza cu 0
     }
 
-    matrice(char type, int n, int m) : linii(n), coloane(m) {
+    matrice::matrice(char type, int n, int m) : linii(n), coloane(m) {
         valori = new float[n * m]();
         if (type == 'I' || type == 'i' || type == '1') {
             if (n == m) {
@@ -32,7 +19,7 @@ public:
     }
 
     // 2. Copy Constructor
-    matrice(const matrice &other) : linii(other.linii), coloane(other.coloane) {
+    matrice::matrice(const matrice &other) : linii(other.linii), coloane(other.coloane) {
         if (other.valori != nullptr) {
             valori = new float[linii * coloane];
             for (int i = 0; i < linii * coloane; i++) valori[i] = other.valori[i];
@@ -42,20 +29,20 @@ public:
     }
 
     // 3. Move Constructor (Furtul de memorie)
-    matrice(matrice &&other) noexcept : linii(other.linii), coloane(other.coloane), valori(other.valori) {
+    matrice::matrice(matrice &&other) noexcept : linii(other.linii), coloane(other.coloane), valori(other.valori) {
         other.linii = 0;
         other.coloane = 0;
         other.valori = nullptr;
     }
 
     // 4. Destructor
-    ~matrice() {
+    matrice::~matrice() {
         delete[] valori;
         valori = nullptr;
     }
 
     // 5. Copy Assignment
-    matrice &operator=(const matrice &B) {
+    matrice& matrice::operator=(const matrice &B) {
         if (this != &B) {
             delete[] valori;
             linii = B.linii;
@@ -71,7 +58,7 @@ public:
     }
 
     // 6. Move Assignment (Evita lag-ul pe procesor)
-    matrice &operator=(matrice &&B) noexcept {
+    matrice& matrice::operator=(matrice &&B) noexcept {
         if (this != &B) {
             delete[] valori;
             linii = B.linii;
@@ -86,16 +73,16 @@ public:
     }
 
     // 7. Accesare elemente
-    float *at(int i, int j) const {
+    float* matrice::at(int i, int j) const {
         if (valori == nullptr) throw std::runtime_error("[EROARE MATRICE] Accesare matrice neinitializata!");
         return valori + i * coloane + j;
     }
 
-    float &operator()(int i, int j) { return *at(i, j); }
-    const float &operator()(int i, int j) const { return *at(i, j); }
+    float& matrice::operator()(int i, int j) { return *at(i, j); }
+    const float& matrice::operator()(int i, int j) const { return *at(i, j); }
 
     // 8. Operatii matematice
-    matrice transpose() const {
+    matrice matrice::transpose() const {
         matrice T(coloane, linii);
         for (int i = 0; i < linii; i++) {
             for (int j = 0; j < coloane; j++) {
@@ -105,7 +92,7 @@ public:
         return T;
     }
 
-    matrice inverse() const {
+    matrice matrice::inverse() const {
         if (linii != coloane) return matrice();
         matrice B(linii, coloane);
         for (int i = 0; i < linii; i++) {
@@ -115,25 +102,25 @@ public:
         return B;
     }
 
-    matrice operator+(const matrice &B) const {
+    matrice matrice::operator+(const matrice &B) const {
         matrice S(linii, coloane);
         for (int i = 0; i < linii * coloane; i++) S.valori[i] = valori[i] + B.valori[i];
         return S;
     }
 
-    matrice operator-(const matrice &B) const {
+    matrice matrice::operator-(const matrice &B) const {
         matrice S(linii, coloane);
         for (int i = 0; i < linii * coloane; i++) S.valori[i] = valori[i] - B.valori[i];
         return S;
     }
 
-    matrice operator-() const {
+    matrice matrice::operator-() const {
         matrice S(linii, coloane);
         for (int i = 0; i < linii * coloane; i++) S.valori[i] = -valori[i];
         return S;
     }
 
-    matrice operator*(const matrice &B) const {
+    matrice matrice::operator*(const matrice &B) const {
         matrice P(linii, B.coloane);
         for (int i = 0; i < linii; i++) {
             for (int j = 0; j < B.coloane; j++) {
@@ -147,25 +134,24 @@ public:
         return P;
     }
 
-    matrice operator*(const float x) const {
+    matrice matrice::operator*(const float x) const {
         matrice R(linii, coloane);
         for (int i = 0; i < linii * coloane; i++) R.valori[i] = valori[i] * x;
         return R;
     }
 
-    matrice operator^(const char *pow) const {
+    matrice matrice::operator^(const char *pow) const {
         if (pow[0] == 'T' || pow[0] == 't') return this->transpose();
         if (pow[0] == '-' && pow[1] == '1') return this->inverse();
         return *this;
     }
 
-    void printmatrice() const {
+    void matrice::printmatrice() const {
         for (int i = 0; i < linii; i++) {
             for (int j = 0; j < coloane; j++) fprintf(stdout, "%8.4f ", (*this)(i, j));
             fprintf(stdout, "\n");
         }
     }
-};
 
 inline matrice operator*(const float x, const matrice &M) {
     return M * x;

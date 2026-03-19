@@ -1,8 +1,8 @@
-#pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "input.cpp"
+#include "input.h"
+#include "grafica.h"
 
 // --- 1. VERTEX SHADER: Primeste datele si le da mai departe la Geometry Shader ---
 const char *vertexShaderSource = "#version 330 core\n"
