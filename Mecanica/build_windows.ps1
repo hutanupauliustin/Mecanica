@@ -7,12 +7,12 @@ Clear-Host
 
 Write-Host "==> Începem compilarea pentru $NumeExe..." -ForegroundColor Cyan
 
-$sourceFiles = Get-ChildItem -Path "src", "imgui" -Recurse -Include *.cpp, *.c | ForEach-Object { $_.FullName }
+$sourceFiles = Get-ChildItem -Path "src", "ImGuiSrc" -Recurse -Include *.cpp, *.c | ForEach-Object { $_.FullName }
 
 
 Write-Host "Compilam fisierele: $sourceFiles"
 
-g++ $sourceFiles -o $NumeExe -O3 -I includes -I imgui -L lib -lglfw3 -lgdi32 -lopengl32 -static -static-libgcc -static-libstdc++
+g++ $sourceFiles -o $NumeExe -O3 -I includes -I ImGuiLib -L lib -lglfw3 -lgdi32 -lopengl32 -static -static-libgcc -static-libstdc++
 
 
 if ($?) {
