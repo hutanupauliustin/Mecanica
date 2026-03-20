@@ -5,14 +5,14 @@ param (
 
 Clear-Host
 
-Write-Host "==> Începem compilarea pentru $NumeExe..." -ForegroundColor Cyan
+Write-Host "==> Incepem compilarea pentru $NumeExe..." -ForegroundColor Cyan
 
-$sourceFiles = Get-ChildItem -Path "src", "ImGuiSrc" -Recurse -Include *.cpp, *.c | ForEach-Object { $_.FullName }
+$sourceFiles = Get-ChildItem -Path "src", "ImGuiSrc", "ImGuiLib", "lib" -Recurse -Include *.cpp, *.c -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
 
 
-Write-Host "Compilam fisierele: $sourceFiles"
+Write-Host "Compilam fisierele: $sourceFiles \n"
 
-g++ $sourceFiles -o $NumeExe -O3 -I includes -I ImGuiLib -L lib -lglfw3 -lgdi32 -lopengl32 -static -static-libgcc -static-libstdc++
+g++ $sourceFiles -o $NumeExe -O3 -I src -I lib -I includes -I ImGuiLib -L lib -lglfw3 -lgdi32 -lopengl32 -static -static-libgcc -static-libstdc++
 
 
 if ($?) {
