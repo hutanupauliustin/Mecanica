@@ -17,7 +17,7 @@ arc::arc(){
         : contorCorpA(a), contorCorpB(b), l_xA(lxa), l_yA(lya), l_xB(lxb), l_yB(lyb), k(k_val), d(d_val), lungime_0(l0) {}
 
     // Permite definirea arcului folosind coordonate GLOBALE pentru punctele de prindere
-    arc arc::Creaza(rigid& A, rigid& B, float globalXA, float globalYA, float globalXB, float globalYB, float constanta_k, float constanta_d = 0.0f, float lungime_repaus = -1.0f) {
+    arc arc::Creaza(rigid& A, rigid& B, float globalXA, float globalYA, float globalXB, float globalYB, float constanta_k, float constanta_d, float lungime_repaus) {
         // Calculam vectorul de la centrul corpului la punctul de legatura (in coordonate globale)
         float dxA = globalXA - A.x;
         float dyA = globalYA - A.y;
@@ -77,4 +77,5 @@ arc::arc(){
         B.f_x += fe_x;
         B.f_y += fe_y;
         B.moment += r_xB * fe_y - r_yB * fe_x;
+    }
     

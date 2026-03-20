@@ -2,7 +2,6 @@
 #include "legatura.h"
 
 
-    legatura::legatura(int a, int b) : contorCorpA(a), contorCorpB(b) {}
 
     articulatie::articulatie(int a, int b, float lxa, float lya, float lxb, float lyb)
         : legatura(a, b), l_xA(lxa), l_yA(lya), l_xB(lxb), l_yB(lyb) {}
@@ -15,23 +14,21 @@
     float articulatie::getAbscisa(matrice &stare) {
         
         int idxA = contorCorpA * 3;
-        int idxB = contorCorpB * 3;
         float xA = stare(idxA + 0, 0);
         float yA = stare(idxA + 1, 0);
         float phiA = stare(idxA + 2, 0);
 
-        return xA + this->l_xA * cos(phiA) - this->l_yA * sin(phiA);
+        return xA + this->l_xA * std::cos(phiA) - this->l_yA * std::sin(phiA);
     }
 
     float articulatie::getOrdonata(matrice &stare) {
         
         int idxA = contorCorpA * 3;
-        int idxB = contorCorpB * 3;
         float xA = stare(idxA + 0, 0);
         float yA = stare(idxA + 1, 0);
         float phiA = stare(idxA + 2, 0);
 
-        return yA + this->l_xA * sin(phiA) + this->l_yA * cos(phiA);
+        return yA + this->l_xA * std::sin(phiA) + this->l_yA * std::cos(phiA);
     }
 
     void articulatie::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) {
@@ -53,10 +50,10 @@
         float yB = stare(idxB + 1, 0);  
         float phiB = stare(idxB + 2, 0);
 
-        float sinA = sin(phiA);
-        float cosA = cos(phiA);
-        float sinB = sin(phiB);
-        float cosB = cos(phiB);
+        float sinA = std::sin(phiA);
+        float cosA = std::cos(phiA);
+        float sinB = std::sin(phiB);
+        float cosB = std::cos(phiB);
 
         F(rand_start, 0) = xA + this->l_xA * cosA - this->l_yA * sinA - (xB + this->l_xB *cosB - this->l_yB * sinB);
         F(rand_start + 1, 0) = yA + this->l_xA * sinA + this->l_yA * cosA - (yB + this->l_xB * sinB + this->l_yB * cosB);
@@ -85,10 +82,10 @@
         float vyB = stare(idxB + 1 + offsetViteze, 0);
         float phiPunctB = stare(idxB + 2 + offsetViteze, 0);
 
-        float sinA = sin(phiA);
-        float cosA = cos(phiA);
-        float sinB = sin(phiB);
-        float cosB = cos(phiB);
+        float sinA = std::sin(phiA);
+        float cosA = std::cos(phiA);
+        float sinB = std::sin(phiB);
+        float cosB = std::cos(phiB);
 
         Fpunct(rand_start, 0) = vxA - phiPunctA* this->l_xA * sinA - phiPunctA*this->l_yA * cosA - (vxB - phiPunctB* this->l_xB *sinB - phiPunctB*this->l_yB * cosB);
         Fpunct(rand_start + 1, 0) = vyA + phiPunctA*this->l_xA * cosA - phiPunctA*this->l_yA * sinA - (vyB + phiPunctB*this->l_xB * cosB - phiPunctB*this->l_yB * sinB);
@@ -103,10 +100,10 @@
     float phiA = stare(idxA + 2, 0);
     float phiB = stare(idxB + 2, 0);
 
-    float sinA = sin(phiA);
-    float cosA = cos(phiA);
-    float sinB = sin(phiB);
-    float cosB = cos(phiB);
+    float sinA = std::sin(phiA);
+    float cosA = std::cos(phiA);
+    float sinB = std::sin(phiB);
+    float cosB = std::cos(phiB);
 
     // randul lui f_p+1 -- constrangerea pe OX
     J_F(rand_start, idxA + 0) = 1.0f;                       // coloana x_A
@@ -140,10 +137,10 @@
         float phiPunctA = stare(idxA + 2 + offsetViteze, 0);
         float phiPunctB = stare(idxB + 2 + offsetViteze, 0);
 
-        float sinA = sin(phiA);
-        float cosA = cos(phiA);
-        float sinB = sin(phiB);
-        float cosB = cos(phiB);
+        float sinA = std::sin(phiA);
+        float cosA = std::cos(phiA);
+        float sinB = std::sin(phiB);
+        float cosB = std::cos(phiB);
 
         // Termenii -J_dot * q_dot
         
@@ -170,11 +167,11 @@
         float dxB = globalX - B.x;
         float dyB = globalY - B.y;
 
-        float l_xA = dxA * cos(A.phi) + dyA * sin(A.phi);
-        float l_yA = -dxA * sin(A.phi) + dyA * cos(A.phi);
+        float l_xA = dxA * std::cos(A.phi) + dyA * std::sin(A.phi);
+        float l_yA = -dxA * std::sin(A.phi) + dyA * std::cos(A.phi);
 
-        float l_xB = dxB * cos(B.phi) + dyB * sin(B.phi);
-        float l_yB = -dxB * sin(B.phi) + dyB * cos(B.phi);
+        float l_xB = dxB * std::cos(B.phi) + dyB * std::sin(B.phi);
+        float l_yB = -dxB * std::sin(B.phi) + dyB * std::cos(B.phi);
 
         return new articulatie(A.index, B.index, l_xA, l_yA, l_xB, l_yB);
     }
@@ -190,23 +187,21 @@
     float incastrare::getAbscisa(matrice &stare) {
         
         int idxA = contorCorpA * 3;
-        int idxB = contorCorpB * 3;
         float xA = stare(idxA + 0, 0);
         float yA = stare(idxA + 1, 0);
         float phiA = stare(idxA + 2, 0);
 
-        return xA + this->l_xA * cos(phiA) - this->l_yA * sin(phiA);
+        return xA + this->l_xA * std::cos(phiA) - this->l_yA * std::sin(phiA);
     }
 
     float incastrare::getOrdonata(matrice &stare) {
         
         int idxA = contorCorpA * 3;
-        int idxB = contorCorpB * 3;
         float xA = stare(idxA + 0, 0);
         float yA = stare(idxA + 1, 0);
         float phiA = stare(idxA + 2, 0);
 
-        return yA + this->l_xA * sin(phiA) + this->l_yA * cos(phiA);
+        return yA + this->l_xA * std::sin(phiA) + this->l_yA * std::cos(phiA);
     }
 
          void incastrare::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) {
@@ -231,10 +226,10 @@
         float yB = stare(idxB + 1, 0);  
         float phiB = stare(idxB + 2, 0);
 
-        float sinA = sin(phiA);
-        float cosA = cos(phiA);
-        float sinB = sin(phiB);
-        float cosB = cos(phiB);
+        float sinA = std::sin(phiA);
+        float cosA = std::cos(phiA);
+        float sinB = std::sin(phiB);
+        float cosB = std::cos(phiB);
 
         F(rand_start, 0) = xA + this->l_xA * cosA - this->l_yA * sinA - (xB + this->l_xB *cosB - this->l_yB * sinB);
         F(rand_start + 1, 0) = yA + this->l_xA * sinA + this->l_yA * cosA - (yB + this->l_xB * sinB + this->l_yB * cosB);
@@ -265,10 +260,10 @@
         float vyB = stare(idxB + 1 + offsetViteze, 0);
         float phiPunctB = stare(idxB + 2 + offsetViteze, 0);
 
-        float sinA = sin(phiA);
-        float cosA = cos(phiA);
-        float sinB = sin(phiB);
-        float cosB = cos(phiB);
+        float sinA = std::sin(phiA);
+        float cosA = std::cos(phiA);
+        float sinB = std::sin(phiB);
+        float cosB = std::cos(phiB);
 
         Fpunct(rand_start, 0) = vxA - phiPunctA* this->l_xA * sinA - phiPunctA*this->l_yA * cosA - (vxB - phiPunctB* this->l_xB *sinB - phiPunctB*this->l_yB * cosB);
         Fpunct(rand_start + 1, 0) = vyA + phiPunctA*this->l_xA * cosA - phiPunctA*this->l_yA * sinA - (vyB + phiPunctB*this->l_xB * cosB - phiPunctB*this->l_yB * sinB);
@@ -283,10 +278,10 @@
         float phiA = stare(indexA + 2, 0);
         float phiB = stare(indexB + 2, 0);
 
-        float sinA = sin(phiA);
-        float cosA = cos(phiA);
-        float sinB = sin(phiB);
-        float cosB = cos(phiB);
+        float sinA = std::sin(phiA);
+        float cosA = std::cos(phiA);
+        float sinB = std::sin(phiB);
+        float cosB = std::cos(phiB);
 
         // randul lui f_p+1 -- constrangerea pe OX
 
@@ -330,8 +325,8 @@
         float phiPunctA = stare(idxA + 2 + offsetViteze, 0);
         float phiPunctB = stare(idxB + 2 + offsetViteze, 0);
 
-        float sinA = sin(phiA); float cosA = cos(phiA);
-        float sinB = sin(phiB); float cosB = cos(phiB);
+        float sinA = std::sin(phiA); float cosA = std::cos(phiA);
+        float sinB = std::sin(phiB); float cosB = std::cos(phiB);
 
         // Componenta X (Identic ca la articulatie)
         float termA_X = -l_xA * (phiPunctA * phiPunctA) * cosA + l_yA * (phiPunctA * phiPunctA) * sinA;
@@ -353,11 +348,11 @@
         float dxB = globalX - B.x;
         float dyB = globalY - B.y;
 
-        float l_xA = dxA * cos(A.phi) + dyA * sin(A.phi);
-        float l_yA = -dxA * sin(A.phi) + dyA * cos(A.phi);
+        float l_xA = dxA * std::cos(A.phi) + dyA * std::sin(A.phi);
+        float l_yA = -dxA * std::sin(A.phi) + dyA * std::cos(A.phi);
 
-        float l_xB = dxB * cos(B.phi) + dyB * sin(B.phi);
-        float l_yB = -dxB * sin(B.phi) + dyB * cos(B.phi);
+        float l_xB = dxB * std::cos(B.phi) + dyB * std::sin(B.phi);
+        float l_yB = -dxB * std::sin(B.phi) + dyB * std::cos(B.phi);
 
         // 2. Calculam diferenta de unghi initiala
         float phi0 = A.phi - B.phi;

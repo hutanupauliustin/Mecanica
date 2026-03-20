@@ -13,7 +13,7 @@ public:
     int nr_legaturi;
     std::vector<rigid> corpuri;
     std::vector<legatura*> legaturi;                   // vector de pointeri
-    std::vector<arc> arcuri;
+    std::vector<arc> arcuri;                           // nu avem nevoie sa tinem minte numarl de arcuri, il putem scoate din arcuri.size()
 
     int p;                                  // p este numarul de ecuatii adaugate de legaturi (2 pt articulatii, 3 pt incastrare, etc.)
     matrice stare;                          // am sa ma refer la ecuatiile adaugate f_1,f_2... cu numele de "constrangeri"
@@ -41,6 +41,10 @@ public:
 
     void setareConstantaFrecareAer(float constanta);
 
+    void seteazaCoeficientRestituire(float val);
+
+    void seteazaCoeficientFrecare(float val);
+
     void adaugaCorpuri(rigid &r);
 
     void adaugaLegaturi(legatura *l);
@@ -48,10 +52,6 @@ public:
     void adaugaArcuri(arc &a);
 
     void incarcaStare();
-
-    void seteazaCoeficientRestituire(float val);
-
-    void seteazaCoeficientFrecare(float val);
 
     void seteazaStare();
 

@@ -153,6 +153,6 @@
         }
     }
 
-inline matrice operator*(const float x, const matrice &M) {
+matrice operator*(const float x, const matrice &M) {
     return M * x;
 }
