@@ -12,7 +12,7 @@
     rigid::rigid (float x_initial, float y_initial, float phi_initial, float masa, float momentInertie)
         :  x(x_initial), y(y_initial), phi(phi_initial), M(masa), J(momentInertie), v_x(0), v_y(0), omega(0), f_x(0), f_y(0), moment(0){}
 
-    void rigid::aflaForteProprii(float g, float k_a)
+    void rigid::aflaForteProprii(float g)
     {
         // Daca masa este foarte mare (infinita), consideram corpul fix si nu ii aplicam greutate
         // pentru a evita erori matematice (Infinity * ceva = NaN)
@@ -22,11 +22,12 @@
             moment =0;
         } else {
             f_x = 0;
-            f_y = -g * M; // Forta gravitationala
+            f_y = -g * M; 
 
-            f_x += k_a * v_x;
-            f_y += k_a * v_y;
-            moment = 0;
+            float drag = collider.coeficientAerodinamic;
+            f_x -= drag * v_x;
+            f_y -= drag * v_y;
+            moment -= drag * omega * 0.5f;
         }
     }
 
@@ -73,6 +74,7 @@
         r.M = Masa;
         r.J = (Masa * (Lungime * Lungime + Grosime * Grosime)) / 12.0f;
         r.collider.tip = DREPTUNGHI;
+        r.collider.coeficientAerodinamic = ((Lungime + Grosime) / 2.0f) * 1.05f;
         return r;
     }
 
@@ -85,6 +87,7 @@
         r.M = Masa;
         r.J = (Masa * Raza * Raza) / 2.0f;
         r.collider.tip = CERC;
+        r.collider.coeficientAerodinamic = Raza * 0.47f;
         return r;
     }
 

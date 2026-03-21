@@ -364,8 +364,7 @@ void ciocnire(sistem &S, int corpA, int corpB, intersectie inter)
     // ==============================================================
     // 3. CALCULUL PERCUTIEI 'P'
     // ==============================================================
-    float k = S.coeficientRestituire(corpA, corpB); // Preluam coeficientul din sistem
-    float mu = S.coeficientFrecare(corpA, corpB);   // Coeficient de frecare
+    float k = A.material.restituire * B.material.restituire; // Preluam coeficientul din sistem
 
     float n_x = inter.normala.x;
     float n_y = inter.normala.y;
@@ -401,6 +400,8 @@ void ciocnire(sistem &S, int corpA, int corpB, intersectie inter)
         float P = -(1.0f + k) * v_rel_n;
         P /= (numitor * (float)contacte.nrPuncte); // Impartim daca avem mai multe puncte de contact
 
+        if (P < 0.0f) P = 0.0f;
+
         // Aplicarea percutiei P direct pe viteze
         A.v_x -= P * n_x * invM_A;
         A.v_y -= P * n_y * invM_A;
@@ -411,9 +412,13 @@ void ciocnire(sistem &S, int corpA, int corpB, intersectie inter)
         B.omega += P * termen_rot_B * invI_B;
 
         // ==============================================================
-        // 4. CALCULUL FRECARII (Asemanator, dar pe directia tangentei)
+        // 4. CALCULUL FRECARIE DE ALUNECARE
         // ==============================================================
-        float t_x = -n_y;
+        
+        float mu_s = std::sqrt(A.material.frecareStatica*B.material.frecareStatica);   // Coeficient de frecare statica
+        float mu_d = std::sqrt(A.material.frecareDinamica*B.material.frecareDinamica);  // Coeficientul de frecare dinamica
+
+        float t_x = -n_y;               //vectorul tangent la ciocnire
         float t_y = n_x;
 
         float termen_rot_At = (x_A * t_y - y_A * t_x);
@@ -428,22 +433,48 @@ void ciocnire(sistem &S, int corpA, int corpB, intersectie inter)
                           (termen_rot_At * termen_rot_At) * invI_A +
                           (termen_rot_Bt * termen_rot_Bt) * invI_B;
 
-        float P_t = -v_rel_t / (numitor_t * (float)contacte.nrPuncte);
+        
+        float F_f_teoretic = -v_rel_t / (numitor_t * (float)contacte.nrPuncte);
+        float F_f_final;
 
-        // Plafonam frecarea sa nu depaseasca limita Coulomb (mu * forta normala P)
-        if (std::abs(P_t) > P * mu)
-        {
-            P_t = (P_t > 0.0f ? 1.0f : -1.0f) * P * mu;
+        if(std::abs(F_f_teoretic) <= P *mu_s){      //verificam daca aplicam frecarea statica sau cea dinamica
+            F_f_final = F_f_teoretic;
+        } else {
+            F_f_final = (F_f_teoretic > 0.0f ? 1.0f : -1.0f) * P *mu_d;
         }
 
-        // Aplicarea percutiei de frecare P_t
-        A.v_x -= P_t * t_x * invM_A;
-        A.v_y -= P_t * t_y * invM_A;
-        A.omega -= P_t * termen_rot_At * invI_A;
+        A.v_x -= F_f_final * t_x * invM_A;
+        A.v_y -= F_f_final * t_y * invM_A;
+        A.omega -= F_f_final * termen_rot_At * invI_A;
 
-        B.v_x += P_t * t_x * invM_B;
-        B.v_y += P_t * t_y * invM_B;
-        B.omega += P_t * termen_rot_Bt * invI_B;
+        B.v_x += F_f_final * t_x * invM_B;
+        B.v_y += F_f_final * t_y * invM_B;
+        B.omega += F_f_final * termen_rot_Bt * invI_B;
+
+        // ==============================================================
+        // 5. CALCULUL FRECARIE LA ROSTOGOLIRE
+        // ==============================================================
+
+        float s_s = std::sqrt(A.material.frecareRostogolireStatica*B.material.frecareRostogolireStatica);
+        float s_d = std::sqrt(A.material.frecareRostogolireDinamica*B.material.frecareRostogolireDinamica);
+
+        float d_omega = B.omega - A.omega;
+        float invI_suma = invI_A + invI_B;
+
+        if(invI_suma > 0.0001f){
+            float P_ung_teoretic = -d_omega / (invI_suma *(float)contacte.nrPuncte);
+            float P_ung_final;
+
+        if(std::abs(P_ung_teoretic) <= P* s_s){
+            P_ung_final = P_ung_teoretic;
+        } else {
+            P_ung_final = (P_ung_teoretic > 0.0f ? 1.0f : -1.0f) * P * s_d;
+        }
+
+        A.omega -= P_ung_final *invI_A;
+        B.omega -= P_ung_final *invI_B;
+        
+        }
     }
 }
 

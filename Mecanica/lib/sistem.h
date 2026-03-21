@@ -18,9 +18,8 @@ public:
     int p;                                  // p este numarul de ecuatii adaugate de legaturi (2 pt articulatii, 3 pt incastrare, etc.)
     matrice stare;                          // am sa ma refer la ecuatiile adaugate f_1,f_2... cu numele de "constrangeri"
 
-    float k_s,k_d,g,k_a;                          //spring constant si dampening constant -- sunt encesare pentru a introduce o amortizare foarte slaba care sa anuleze erorile de tip floating-point-arithmetic
-                                             // constanta gravitationala       
-    matrice coeficientRestituire, coeficientFrecare;                                  
+    float k_s,k_d,g;                          //spring constant si dampening constant -- sunt encesare pentru a introduce o amortizare foarte slaba care sa anuleze erorile de tip floating-point-arithmetic
+                                             // constanta gravitationala                                      
     matrice Q, J_F, A, A_inv, Lambda, JdotQ;       // Q - vectorul fortelor externe
                                             // J_f - Jacobianul legaturilor
                                             //JdotQ - produsul dintre derivata jacobianului si derivata coordonatelor
@@ -37,13 +36,7 @@ public:
 
     void setareConstantaGravitationala(float grav);
 
-    void setareConstante(float spring_constant, float dampening_constant);
-
-    void setareConstantaFrecareAer(float constanta);
-
-    void seteazaCoeficientRestituire(float val);
-
-    void seteazaCoeficientFrecare(float val);
+    void setareConstanteStabilizare(float spring_constant, float dampening_constant);
 
     void adaugaCorpuri(rigid &r);
 

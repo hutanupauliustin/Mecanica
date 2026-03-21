@@ -8,6 +8,22 @@ enum formaGeometrica{
     TRIUNGHI
 };
 
+struct material{
+    float restituire = 0;
+    float frecareStatica = 0;
+    float frecareDinamica = 0 ;
+    float frecareRostogolireStatica = 0;
+    float frecareRostogolireDinamica = 0;
+};
+
+namespace materiale {
+    //                              Restituire, Static, Dinamic, RostogStatic, RostogDinamic
+    const material Cauciuc =          {0.8f,       0.9f,   0.7f,    0.05f,       0.02f};
+    const material Gheata =           {0.1f,       0.05f,  0.01f,   0.01f,       0.007f};
+    const material Lemn =             {0.4f,       0.5f,   0.4f,    0.02f,       0.05f};
+    const material Piatra =           {0.2f,       0.8f,   0.6f,    0.04f,       0.01f};
+}
+
 struct boundingBox{
     float razaInaltime;
     float razaLatime;
@@ -27,6 +43,8 @@ struct geometrie{
     bool obiectVirtual = 0;
     bool selectat = 0;
     int layer = 0;
+
+    float coeficientAerodinamic = 0;
 };
 
 class rigid
@@ -41,10 +59,12 @@ public:
     float M, J;
     
     geometrie collider;
+    material material;
     
     rigid();
     rigid (float x_initial, float y_initial, float phi_initial, float masa, float momentInertie);
-    void aflaForteProprii(float g, float k_a);
+    
+    void aflaForteProprii(float g);
 
     void coordPunctPeCorp(float &punct_x, float &punct_y, float d_x, float d_y);                //d_x si d_y sunt coordonatele punctului fata de sistemul de referinta mobil al corpului
 

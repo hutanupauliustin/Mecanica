@@ -11,7 +11,6 @@
         k_d = 0.0f;
         k_s = 0.0f;
         g = 9.81f; // Initializare implicita
-        k_a = 0.0f;
 
         stare = matrice(6 * nr_corpuri, 1);
 
@@ -39,14 +38,11 @@
         g = grav;
     }
 
-    void sistem::setareConstante(float spring_constant, float dampening_constant){
+    void sistem::setareConstanteStabilizare(float spring_constant, float dampening_constant){
         k_s = spring_constant;
         k_d = dampening_constant;
     }
 
-    void sistem::setareConstantaFrecareAer(float constanta){
-        k_a = constanta;
-    }
 
     void sistem::adaugaCorpuri(rigid &r){
         r.index = corpuri.size();
@@ -87,28 +83,6 @@
                 stare(i * 3 + 2 + 3 * nr_corpuri, 0) = corpuri[i].omega;
             }
         }
-    }
-
-    void sistem::seteazaCoeficientRestituire(float val){             //valoarea din  punctul (i,j) este coeficientul dintre corpurile i si j;
-        coeficientRestituire = matrice( nr_corpuri,  nr_corpuri);
-        for(int i = 0; i < nr_corpuri; i++){
-            for(int j = 0; j < i; j++){
-                coeficientRestituire(i,j) = i == j ?  0.0f : val;
-                coeficientRestituire(j,i) = val;
-            }
-        }
-
-    }
-
-    void sistem::seteazaCoeficientFrecare(float val){             //valoarea din  punctul (i,j) este coeficientul dintre corpurile i si j;
-        coeficientFrecare = matrice( nr_corpuri,  nr_corpuri);
-        for(int i = 0; i < nr_corpuri; i++){
-            for(int j = 0; j < i; j++){
-                coeficientFrecare(i,j) = i == j ?  0.0f : val;
-                coeficientFrecare(j,i) = val;
-            }
-        }
-
     }
 
     void sistem::seteazaStare(){
@@ -232,7 +206,7 @@ void sistem::seteazaConstrangeri()
 
         // 1. Initializam fortele (gravitatie, frecare aer)
         for (int i = 0; i < nr_corpuri; i++) {
-            corpuri[i].aflaForteProprii(g, k_a); 
+            corpuri[i].aflaForteProprii(g); 
         }
 
         // 2. Adaugam fortele elastice 

@@ -7,3 +7,7 @@
 #include <iostream>
 
 #include "grafica.h"
+
+void setupGUI(){
+;
+}
