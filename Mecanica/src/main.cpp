@@ -1,128 +1,114 @@
 #include "sistem.h"
 #include "grafica.h"
 #include "fizica.h"
+#include <cmath>
+#include <iostream>
 
-// Constanta pentru conversia grade -> radiani
-const float DEG_TO_RAD = 3.1415926535f / 180.0f;
-float INF = 1e12f; 
-int main(){
-    std::cout << "==> Initializare Sistem..." << std::endl;
+const float PI = 3.1415926535f;
+
+int main() {
+    std::cout << "==> Initializare Sistem Static si Rostogolire..." << std::endl;
     
-    // 1. Initializare Sistem
-sistem S; 
-S.setareConstantaGravitationala(9.81f);
-S.setareConstantaFrecareAer(0.2f); 
+    sistem S; 
+    S.setareConstantaGravitationala(9.81f);
 
-// 2. Adaugam Podeaua
-// Folosim o masa "infinita" (INF) ca sa se comporte ca un corp static.
-// O punem mai jos (ex: y = -2.0f) si o facem suficient de lata sa prinda tot grid-ul.
-rigid podea = rigid::Bara(0.0f, -2.0f, 15.0f, 1.0f, INF); 
-S.adaugaCorpuri(podea);
+    // ============================================================
+    // PARAMETRII PROBLEMEI
+    // ============================================================
+    const float alpha = 33.0f * PI / 180.0f;
+    
+    const float L_OAB = 10.0f;  // Lungimea barei articulate
+    const float M_OAB = 15.0f;  // Greutatea Q
 
-// Parametrii retelei
-const int randuri = 5;
-const int coloane = 5;
-float spatiere = 1.0f; 
-float startX = -2.0f;  
-float startY = 6.0f;   
+    const float L_O1B = 4.0f;   // Lungimea barei incastrate
+    const float M_O1B = 20.0f;  // Greutatea P (o facem masiva ca sa fie si mai stabila)
 
-// 3. Generarea corpurilor din grid (cu rotatie initiala)
-float unghi_inclinare = 0.1f;
-float cos_u = std::cos(unghi_inclinare);
-float sin_u = std::sin(unghi_inclinare);
+    const float R_disc = 0.5f;  // Raza discului C
+    const float M_disc = 3.0f;  // Masa discului
 
-for(int r = 0; r < randuri; r++) {
-    for(int c = 0; c < coloane; c++) {
-        // Coordonatele locale in cadrul grilei (fata de coltul stanga-sus)
-        float local_x = c * spatiere;
-        float local_y = -r * spatiere; 
-        
-        // Aplicam matricea de rotatie 2D
-        float rot_x = local_x * cos_u - local_y * sin_u;
-        float rot_y = local_x * sin_u + local_y * cos_u;
-        
-        // Translatam grila rotita in pozitia de start pe ecran
-        float x = startX + rot_x;
-        float y = startY + rot_y;
-        
-        // Corpurile au masa normala (1kg) si sunt orientate cu acelasi unghi
-        rigid corp = rigid::Bara(x, y, 0.4f, 0.4f, 1.0f); 
-        corp.phi = unghi_inclinare; // Rotim vizual si cutiile ca sa se alinieze cu plasa
-        
-        S.adaugaCorpuri(corp);
-    }
-}
+    // Grosimile barelor (ne trebuie pentru a nu le genera una in alta)
+    const float grosime_OAB = 0.4f;
+    const float grosime_O1B = 0.4f;
 
-// 4. Generarea arcurilor
-float k_retea = 250.0f; 
-float d_retea = 15.0f;  
+    // ============================================================
+    // 1. Bara inclinata OAB (Articulata in O)
+    // ============================================================
+    float cx_OAB = (L_OAB / 2.0f) * std::cos(alpha);
+    float cy_OAB = (L_OAB / 2.0f) * std::sin(alpha);
 
-// --- A. Arcurile Orizontale si Verticale ---
-for(int r = 0; r < randuri; r++) {
-    for(int c = 0; c < coloane; c++) {
-        
-        int idxCurent = 3 + (r * coloane + c);
-        
-        // Conexiune Orizontala
-        if(c < coloane - 1) {
-            int idxDreapta = 3 + (r * coloane + (c + 1));
-            arc aOriz = arc::Creaza(S.corpuri[idxCurent], S.corpuri[idxDreapta], 
-                                    S.corpuri[idxCurent].x, S.corpuri[idxCurent].y,
-                                    S.corpuri[idxDreapta].x, S.corpuri[idxDreapta].y,
-                                    k_retea, d_retea, spatiere);
-            S.adaugaArcuri(aOriz);
-        }
-        
-        // Conexiune Verticala
-        if(r < randuri - 1) {
-            int idxJos = 3 + ((r + 1) * coloane + c);
-            arc aVert = arc::Creaza(S.corpuri[idxCurent], S.corpuri[idxJos], 
-                                    S.corpuri[idxCurent].x, S.corpuri[idxCurent].y,
-                                    S.corpuri[idxJos].x, S.corpuri[idxJos].y,
-                                    k_retea, d_retea, spatiere);
-            S.adaugaArcuri(aVert);
-        }
-    }
-}
+    rigid bara_OAB = rigid::Bara(cx_OAB, cy_OAB, L_OAB, grosime_OAB, M_OAB);
+    bara_OAB.phi = alpha;
+    bara_OAB.collider.culoare = {0.8f, 0.6f, 0.2f, 1.0f};
+    bara_OAB.material = materiale::Lemn;
+    S.adaugaCorpuri(bara_OAB);
+    int id_OAB = S.corpuri.size() - 1;
 
-// --- B. Arcurile Diagonale ---
-float spatiere_diag = spatiere * 1.41421356f; 
-float k_diag = k_retea * 0.8f; 
-float d_diag = d_retea;
+    // ============================================================
+    // 2. Bara orizontala O1B (Incastrata in dreapta, la O1)
+    // ============================================================
+    // Alegem punctul B la 6 metri distanta de O, pe bara OAB
+    float dist_B = 6.0f; 
+    float B_x = dist_B * std::cos(alpha);
+    float B_y = dist_B * std::sin(alpha);
 
-for(int r = 1; r < randuri - 1; r++) {
-    for(int c = 1; c < coloane - 1; c++) {
-        
-        int stanga_sus  = 3 + (r * coloane + c);
-        int dreapta_sus = 3 + (r * coloane + (c + 1));
-        int stanga_jos  = 3 + ((r + 1) * coloane + c);
-        int dreapta_jos = 3 + ((r + 1) * coloane + (c + 1));
+    // Calculam cat trebuie coborata bara orizontala ca sa atinga exact dedesubtul barei inclinate
+    float offset_y_OAB = (grosime_OAB / 2.0f) / std::cos(alpha);
+    float offset_y_O1B = grosime_O1B / 2.0f;
+    float coborare_totala = offset_y_OAB + offset_y_O1B + 0.05f; // + 0.05f luft de siguranta
 
-        arc aDiag1 = arc::Creaza(S.corpuri[stanga_sus], S.corpuri[dreapta_jos], 
-                                 S.corpuri[stanga_sus].x, S.corpuri[stanga_sus].y,
-                                 S.corpuri[dreapta_jos].x, S.corpuri[dreapta_jos].y,
-                                 k_diag, d_diag, spatiere_diag);
-        S.adaugaArcuri(aDiag1);
+    float cx_O1B = B_x + (L_O1B / 2.0f);
+    float cy_O1B = B_y - coborare_totala;
 
-        arc aDiag2 = arc::Creaza(S.corpuri[dreapta_sus], S.corpuri[stanga_jos], 
-                                 S.corpuri[dreapta_sus].x, S.corpuri[dreapta_sus].y,
-                                 S.corpuri[stanga_jos].x, S.corpuri[stanga_jos].y,
-                                 k_diag, d_diag, spatiere_diag);
-        S.adaugaArcuri(aDiag2);
-    }
-}
+    rigid bara_O1B = rigid::Bara(cx_O1B, cy_O1B, L_O1B, grosime_O1B, M_O1B);
+    bara_O1B.phi = 0.0f;
+    bara_O1B.collider.culoare = {0.4f, 0.7f, 1.0f, 1.0f};
+    bara_O1B.material = materiale::Lemn;
+    S.adaugaCorpuri(bara_O1B);
+    int id_O1B = S.corpuri.size() - 1;
 
-// 6. Pregatire finala
-S.seteazaCoeficientFrecare(0.2);
-S.seteazaCoeficientRestituire(0.8);
-S.incarcaStare();
-S.seteazaMatriceInertie();
+    // ============================================================
+    // 3. Discul C (Sus pe bara, gata sa alunece/rostogoleasca)
+    // ============================================================
+    float dist_C = 8.5f; // Il punem aproape de capatul de sus
+    
+    // Coordonatele punctului de pe centrul barei
+    float axa_x = dist_C * std::cos(alpha);
+    float axa_y = dist_C * std::sin(alpha);
 
-S.corpuri[S.id_corp_mouse].collider.culoare.r = 1.0f;
-S.corpuri[S.id_corp_mouse].collider.culoare.g = 0.0f;
-S.corpuri[S.id_corp_mouse].collider.culoare.b = 0.0f;
-S.corpuri[S.id_corp_mouse].collider.culoare.a = 1.0f;
+    // Ne ridicam pe normala la bara
+    float normal_x = -std::sin(alpha);
+    float normal_y =  std::cos(alpha);
+    
+    float distanta_ridicare = R_disc + (grosime_OAB / 2.0f) + 0.05f; // luft
 
+    rigid disc = rigid::Disc(axa_x + normal_x * distanta_ridicare, 
+                             axa_y + normal_y * distanta_ridicare, 
+                             R_disc, M_disc);
+    disc.collider.culoare = {1.0f, 0.3f, 0.3f, 1.0f};
+    
+    // Il facem din cauciuc ca sa prinda aderenta si sa se rostogoleasca frumos
+    disc.material = materiale::Cauciuc; 
+    S.adaugaCorpuri(disc);
+
+    // ============================================================
+    // 4. Legaturi (Articulatie in O si Incastrare in O1)
+    // ============================================================
+    // Calculam coordonatele punctului O1 (capatul drept al barei orizontale)
+    float O1_x = cx_O1B + (L_O1B / 2.0f);
+    float O1_y = cy_O1B;
+
+    // Legam bara OAB direct de Lume (S.corpuri[0]) in punctul O (0,0)
+    S.adaugaLegaturi(articulatie::Creaza(S.corpuri[0], S.corpuri[id_OAB], 0.0f, 0.0f));
+
+    // Legam bara O1B direct de Lume (S.corpuri[0]) in punctul O1
+    S.adaugaLegaturi(incastrare::Creaza(S.corpuri[0], S.corpuri[id_O1B], O1_x, O1_y));
+
+    // ============================================================
+    // 5. PREGATIREA MATRICELOR (NU STERGE ACESTE LINII!)
+    // ============================================================
+    S.setareConstanteStabilizare(10000.0f, 500.0f);
+    S.incarcaStare();
+    S.seteazaMatriceInertie();
 
     // Initializare OpenGL
     std::cout << "==> Deschidere Fereastra OpenGL..." << std::endl;
@@ -134,9 +120,12 @@ S.corpuri[S.id_corp_mouse].collider.culoare.a = 1.0f;
         unsigned int VAO, VBO;
         initBuffers(VAO, VBO);
 
+        // Initializare ImGui (trebuie facuta dupa openGLWindow)
+        setupGUI(window);
+
         // Buffer local pentru coordonate
         // 10 valori (x, y, phi, w, h, type, red, green, blue, alpha) * (nr_corpuri + nr_legaturi)
-        std::vector<float> vertexBuffer(10 * (S.nr_corpuri + S.nr_legaturi + S.arcuri.size()));
+        std::vector<float> vertexBuffer(10 * (S.corpuri.size() + S.legaturi.size() + S.arcuri.size()));
 
         // Variabile de timp
         float t = 0.0f, dt = 0.001f;
@@ -150,7 +139,10 @@ S.corpuri[S.id_corp_mouse].collider.culoare.a = 1.0f;
             // 1. Input
             processInput(window, dt, running_flag,S);
 
-            // 2. Fizica 
+            // 2. Pre-Generare GUI (Colecteaza evenimentele OS)
+            startFrameGUI();
+
+            // 3. Fizica 
             // std::cout << "Pas fizica..." << std::endl; 
             if(running_flag){
                 for(int i = 0; i < 20; i++) {   //facem calculele de mai multe ori intre cadre, pentru ca nu avem nevoie de mai mult de 60 de cadre pe secunda
@@ -163,16 +155,23 @@ S.corpuri[S.id_corp_mouse].collider.culoare.a = 1.0f;
                 }
             }
            
-            // 3. Randare
+            // 4. Randare OpenGL Lume
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
             drawSystem(S, VAO, VBO, shaderProgram, vertexBuffer.data());
 
+            // 5. Randare ImGui (peste scena de fizica)
+            float energie = 0.0f;
+            if(arata_energie_flag){
+                energie = calculeazaEnergiaTotala(S, S.g);
+            }
+            renderPanouDeControl(dt, running_flag, arata_energie_flag, t, energie);
+            endFrameGUI();
+
             glfwSwapBuffers(window);
             glfwPollEvents();
 
-            float energie;
             if(running_flag) frameCount++;
             if(frameCount % 100 == 0 && running_flag == 1){
                  std::cout << "Cadre randate: " << frameCount << " Timp simulat: " << t <<" | dt current: " << dt <<std::endl;
@@ -183,6 +182,8 @@ S.corpuri[S.id_corp_mouse].collider.culoare.a = 1.0f;
             }
         }
         
+        // Curatam GUI inainte sa inchidem programul
+        cleanupGUI();
         glfwTerminate();
     }
     return 0;

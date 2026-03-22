@@ -9,10 +9,11 @@
 class sistem
 {
 public:
-    int nr_corpuri;
-    int nr_legaturi;
+    //int nr_corpuri;
+    //int nr_legaturi;
     std::vector<rigid> corpuri;
     std::vector<legatura*> legaturi;                   // vector de pointeri
+    //std::vector<std::unique_ptr<legatura>> legaturi;
     std::vector<arc> arcuri;                           // nu avem nevoie sa tinem minte numarl de arcuri, il putem scoate din arcuri.size()
 
     int p;                                  // p este numarul de ecuatii adaugate de legaturi (2 pt articulatii, 3 pt incastrare, etc.)

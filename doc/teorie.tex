@@ -1069,7 +1069,7 @@ Putem generaliza formulele finale de actualizare a vitezelor pentru oricare dint
 \end{align}
 
 \subsection{Calculul percuției și vitezelor post-impact}
-
+\subsubsection{Calculul Percuției}
 Cunoaștem coeficientul de restituire $k$ (sau $e$) dintre cele două corpuri. Conform legii lui Newton pentru ciocniri, diferența vitezelor pe direcția normalei la suprafața de contact, după impact, este proporțională și de sens opus cu diferența vitezelor de dinainte de impact:
 \begin{equation}
     v_{CB,n}'' - v_{CA,n}'' = -k \left( v_{CB,n}' - v_{CA,n}' \right)
@@ -1131,6 +1131,70 @@ Scădem cele două relații pentru a forma diferența vitezelor pe normală dup�
 \end{equation}
 
 Odată calculat scalarul $P$, vitezele finale de translație și rotație ale ambelor corpuri se obțin prin simpla sa înlocuire în sistemele de ecuații cinematice anterioare.
+\subsubsection{Percuții de legătură}
+
+    Arhitectura descrisă până în acest punct prezintă o problemă la tratarea coliziunilor. Legăturile sunt meținute prin forțe de reacțiune continue. Însă, ciocnirile acționează ca evenimente discrete, prin percuții. Metoda curentă de a calcula elementele sistemului nu poate compensa șocul percuțiilor instantaneu. Aceasta insuficiență justifică folosirea unui algoritm de calculare si aplicare a percuțiilor de legătură.
+
+    Considerând ecuația de mișcare inițială a sistemului:
+\begin{equation}
+    A\ddot{q} = Q + J_F^T \Lambda
+\end{equation}
+
+Integrăm această ecuație pe durata coliziunii, de la $t'$ (momentul când se declanșează ciocnirea) până la $t''$ (momentul când se termină ciocnirea):
+\begin{equation}
+    \int_{t'}^{t''} A\ddot{q} dt = \int_{t'}^{t''} Q dt + \int_{t'}^{t''} J_F^T \Lambda dt
+\end{equation}
+
+Din ipotezele ciocnirilor, datorită intervalului foarte scurt de interacțiune ($\Delta t \to 0$), ignorăm forțele nepercutante (forțele continue). Adică, integrala vectorului forțelor externe devine zero: $\int_{t'}^{t''} Q dt = 0$. De asemenea, jacobianul constrângerilor $J_F$ depinde doar de poziții, așadar poate fi considerat constant pe durata impactului și scos de sub integrală. Ecuația devine:
+\begin{equation}
+    A(\dot{q}'' - \dot{q}') = 0 + J_F^T \int_{t'}^{t''} \Lambda dt = J_F^T \Lambda_{perc}
+\end{equation}
+
+Ecuațiile inițiale descriu un sistem continuu, așadar în ele nu apar percuțiile de impact externe. Pentru a trata coliziunea, trebuie să introducem separat percuția de impact $P$:
+\begin{equation}
+    A(\dot{q}'' - \dot{q}') = P + J_F^T \Lambda_{perc}
+\end{equation}
+
+Înmulțind la stânga cu inversa matricei maselor, $A^{-1}$, obținem:
+\begin{equation}
+    \dot{q}'' = \dot{q}' + A^{-1}P + A^{-1}J_F^T \Lambda_{perc}
+\end{equation}
+
+Notăm cu $\dot{q}^*$ vitezele sistemului imediat după ciocnire, calculate în situația ideală a absenței legăturilor cinematice:
+\begin{equation}
+    \dot{q}^* = \dot{q}' + A^{-1}P
+\end{equation}
+
+Înlocuind această notație, relația vitezelor se simplifică:
+\begin{equation}
+    \dot{q}'' = \dot{q}^* + A^{-1}J_F^T \Lambda_{perc}
+\end{equation}
+
+În acest moment avem o ecuație cu două necunoscute ($\dot{q}''$ și $\Lambda_{perc}$). A doua ecuație o putem afla din condiția geometrică a legăturilor, $F(q) = 0$. Derivând această condiție în raport cu timpul, rezultă:
+\begin{equation}
+    \frac{d}{dt}F(q) = 0 \implies \frac{\partial F}{\partial q} \cdot \frac{dq}{dt} = 0 \implies J_F \dot{q} = 0
+\end{equation}
+
+Pentru ca articulațiile să rămână intacte, constrângerea pe viteză trebuie să fie respectată riguros de noile viteze post-impact, ceea ce impune:
+\begin{equation}
+    J_F \dot{q}'' = 0
+\end{equation}
+
+Înmulțim ecuația (7) cu $J_F$ la stânga și impunem condiția $J_F \dot{q}'' = 0$:
+\begin{equation}
+    0 = J_F \dot{q}^* + (J_F A^{-1} J_F^T) \Lambda_{perc}
+\end{equation}
+
+Prin separarea termenilor, obținem forma finală a sistemului:
+\begin{equation}
+    (J_F A^{-1} J_F^T) \Lambda_{perc} = -J_F \dot{q}^*
+\end{equation}
+
+Sistemul obținut este liniar și simetric, deci se poate rezolva eficient prin descompunerea Cholesky. După extragerea multiplicatorilor $\Lambda_{perc}$, vitezele finale corectate ale sistemului se calculează cu relația:
+\begin{equation}
+    \dot{q}'' = \dot{q}^* + A^{-1}J_F^T \Lambda_{perc}
+\end{equation}
+
 \section{Implementare si Arhitectura Software}
 \subsection{Structura aplicatiei: C++, organizarea pe componente si OpenGL pentru randare grafica.}
 \subsection{Rezolvarea sistemului de constrângeri pe accelerații.}

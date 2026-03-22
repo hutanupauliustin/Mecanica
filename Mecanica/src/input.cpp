@@ -122,7 +122,7 @@ void processInput(GLFWwindow *window, float &dt, bool &running_flag, sistem &S) 
                 arc trage_spre_mouse = arc::Creaza(S.corpuri[S.id_corp_mouse], S.corpuri[id_corp], 
                                                    S.corpuri[S.id_corp_mouse].x, S.corpuri[S.id_corp_mouse].y,
                                                    S.corpuri[id_corp].x, S.corpuri[id_corp].y,
-                                                   500.0f, 20.0f, 0.1f); // Am pus lungimea de repaus 0.1f ca sa se lipeasca de cursor, cu putina toleranta
+                                                   5000.0f, 20.0f, 0.1f); // Am pus lungimea de repaus 0.1f ca sa se lipeasca de cursor, cu putina toleranta
                 S.adaugaArcuri(trage_spre_mouse);
                 
                 arcuriPuseDeMouse++; // Numaram cate am adaugat

@@ -4,15 +4,13 @@
 
     sistem::sistem()
     {                                       // A - matricea de inertie
-        nr_corpuri = 0;
-        nr_legaturi = 0;
                     // Lambda - vectorul multiplicatorilor lui Lagrange
         p = 0;
         k_d = 0.0f;
         k_s = 0.0f;
         g = 9.81f; // Initializare implicita
 
-        stare = matrice(6 * nr_corpuri, 1);
+        stare = matrice(2, 1);
 
         rigid lume = rigid::Fix(0.0f, 0.0f);
         adaugaCorpuri(lume);
@@ -23,12 +21,11 @@
         adaugaCorpuri(mouse);
         id_corp_mouse = 1;
 
-        nr_corpuri = 2;
     }
 
     sistem::~sistem()
     {
-        for (int i = 0; i < nr_legaturi; i++)
+        for (int i = 0; i < this->legaturi.size(); i++)
         {
             delete legaturi[i];
         }
@@ -47,13 +44,11 @@
     void sistem::adaugaCorpuri(rigid &r){
         r.index = corpuri.size();
         corpuri.push_back(r);
-        nr_corpuri = corpuri.size();
     }
 
     void sistem::adaugaLegaturi(legatura *l)
     {
         legaturi.push_back(l);
-        nr_legaturi = legaturi.size();
         p += l->getNumarEcuatii();
     }
 
@@ -63,6 +58,10 @@
     }
 
     void sistem::incarcaStare(){
+
+        int nr_corpuri = this->corpuri.size();
+        int nr_legaturi = this->legaturi.size();
+
         stare = matrice(6 * nr_corpuri, 1);
         
         for (int i = 0; i < nr_corpuri; i++)
@@ -86,6 +85,9 @@
     }
 
     void sistem::seteazaStare(){
+
+        int nr_corpuri = this->corpuri.size();
+
         for (int i = 0; i < nr_corpuri; i++)
         {
             corpuri[i].x = stare(i * 3, 0);
@@ -99,6 +101,8 @@
 
     void sistem::seteazaJacobian()
     {
+
+        int nr_corpuri = this->corpuri.size();
 
         if (J_F.linii != p || J_F.coloane != 3 * nr_corpuri)
         {
@@ -136,6 +140,7 @@
 
 void sistem::seteazaConstrangeri()
     {
+        int nr_corpuri = this->corpuri.size();
 
         if (F.linii != p || F.coloane != 1)
         {
@@ -173,6 +178,8 @@ void sistem::seteazaConstrangeri()
 
     void sistem::seteazaMatriceInertie()
     {
+        int nr_corpuri = this->corpuri.size();
+
         if (A.linii != 3 * nr_corpuri || A.coloane != 3 * nr_corpuri) {
             A = matrice('0', 3 * nr_corpuri, 3 * nr_corpuri);
         } else {
@@ -200,6 +207,8 @@ void sistem::seteazaConstrangeri()
 
     void sistem::seteazaForteExterne()
     {
+        int nr_corpuri = this->corpuri.size();
+
         if (Q.linii != 3 * nr_corpuri || Q.coloane != 1) {
             Q = matrice(3 * nr_corpuri, 1);
         }

@@ -78,7 +78,7 @@ matrice derivata(sistem &S, const matrice &stare_curenta, float t)      //facuta
 
     // 4. Calculam acceleratiile folosind ecuatia de miscare.
     // q_ddot = A^-1 * (Q + J^T * Lambda)
-    int nr = S.nr_corpuri;
+    int nr = S.corpuri.size();
     matrice acc(3 * nr, 1);
     matrice A_inv = S.A.inverse();
     matrice J_T = S.J_F ^ "T";
@@ -119,7 +119,7 @@ float calculeazaEnergiaTotala(sistem &S, float g) {
     float energie = 0.0f;
     
     // Parcurgem toate corpurile (presupunand ca le ai intr-un vector S.corpuri)
-    for (int i = 0; i < S.nr_corpuri; i++) {
+    for (int i = 0; i < S.corpuri.size(); i++) {
         rigid& c = S.corpuri[i];
         
         // Ignoram peretii si corpurile statice (masa infinita)

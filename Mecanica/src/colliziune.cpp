@@ -132,8 +132,82 @@ intersectie intersectareScaraMica(sistem &S, int corpA, int corpB)
         return inter;
     }
 
-    if(tipA == DREPTUNGHI && tipB == CERC){
-        
+    if ((tipA == DREPTUNGHI && tipB == CERC) || (tipA == CERC && tipB == DREPTUNGHI))
+    {
+        // Stabilim exact cine e cercul si cine e dreptunghiul
+        int idRect = (tipA == DREPTUNGHI) ? corpA : corpB;
+        int idCirc = (tipA == CERC) ? corpA : corpB;
+
+        float R = S.corpuri[idCirc].collider.dimensiune1;
+        float hw = S.corpuri[idRect].collider.dimensiune1 / 2.0f;
+        float hh = S.corpuri[idRect].collider.dimensiune2 / 2.0f;
+
+        // Vectorul de la dreptunghi la cerc (in coordonate globale)
+        float cx = S.corpuri[idCirc].x - S.corpuri[idRect].x;
+        float cy = S.corpuri[idCirc].y - S.corpuri[idRect].y;
+        float phi = S.corpuri[idRect].phi;
+
+        // 1. Rotim centrul cercului in sistemul local al dreptunghiului (rotatie inversa)
+        float cos_phi = std::cos(phi);
+        float sin_phi = std::sin(phi);
+        float localX = cx * cos_phi + cy * sin_phi;
+        float localY = -cx * sin_phi + cy * cos_phi;
+
+        // 2. Gasim cel mai apropiat punct de pe dreptunghi (clamping)
+        float closestX = std::max(-hw, std::min(hw, localX));
+        float closestY = std::max(-hh, std::min(hh, localY));
+
+        // 3. Calculam distanta de la acel punct la centrul cercului
+        float dx = localX - closestX;
+        float dy = localY - closestY;
+        float distSq = dx * dx + dy * dy;
+
+        // Daca e mai mica decat raza la patrat, avem coliziune!
+        if (distSq < R * R)
+        {
+            float dist = std::sqrt(distSq);
+            float localNx, localNy;
+
+            // Caz special: centrul cercului a patruns complet in interiorul dreptunghiului
+            if (dist == 0.0f) 
+            {
+                float dLeft = localX - (-hw);
+                float dRight = hw - localX;
+                float dBottom = localY - (-hh);
+                float dTop = hh - localY;
+
+                float minDist = dLeft;
+                localNx = -1.0f; localNy = 0.0f;
+
+                if (dRight < minDist) { minDist = dRight; localNx = 1.0f; localNy = 0.0f; }
+                if (dTop < minDist)   { minDist = dTop;   localNx = 0.0f; localNy = 1.0f; }
+                if (dBottom < minDist){ minDist = dBottom;localNx = 0.0f; localNy = -1.0f; }
+
+                inter.adancimee = R + minDist;
+            }
+            else
+            {
+                // Coliziune normala (pe margine)
+                inter.adancimee = R - dist;
+                localNx = dx / dist;
+                localNy = dy / dist;
+            }
+
+            // 4. Rotim normala inapoi in sistemul global
+            float globalNx = localNx * cos_phi - localNy * sin_phi;
+            float globalNy = localNx * sin_phi + localNy * cos_phi;
+
+            // 5. Conventie: Normala trebuie sa arate mereu de la A spre B
+            if (tipA == CERC) {
+                globalNx = -globalNx;
+                globalNy = -globalNy;
+            }
+
+            inter.seLovesc = true;
+            inter.normala.x = globalNx;
+            inter.normala.y = globalNy;
+            return inter;
+        }
     }
 
     if (tipA == PUNCT)
@@ -293,10 +367,18 @@ void ciocnire(sistem &S, int corpA, int corpB, intersectie inter)
     rigid &A = S.corpuri[corpA];
     rigid &B = S.corpuri[corpB];
 
+    int tipA = A.collider.tip;
+    int tipB = B.collider.tip;
+
     // Normala de la SAT arata mereu de la A spre B
     Vec2 normala_A = inter.normala;
     Vec2 normala_B = {-inter.normala.x, -inter.normala.y};
 
+    PuncteContact contacte;
+    contacte.nrPuncte = 0;
+
+    if(tipA == DREPTUNGHI && tipB == DREPTUNGHI)
+    {
     // 1. Gasim cele mai bune fete pentru ambele corpuri
     Latura fataA = gasesteFataSuport(S, corpA, normala_A);
     Latura fataB = gasesteFataSuport(S, corpB, normala_B);
@@ -321,11 +403,37 @@ void ciocnire(sistem &S, int corpA, int corpB, intersectie inter)
     }
 
     // 3. Acum extragem punctele. Decuparea va functiona intotdeauna perfect!
-    PuncteContact contacte = extrageManifold(laturaReferinta, laturaIncidenta);
-
+    contacte = extrageManifold(laturaReferinta, laturaIncidenta);
+    }
+    else if (tipA == CERC && tipB == CERC) 
+    {
+        // Doua cercuri se ating mereu intr-un singur punct pe linia centrelor
+        contacte.nrPuncte = 1;
+        contacte.adancimi[0] = inter.adancimee;
+        // Punctul de contact se afla pe marginea lui A, inspre B
+        contacte.puncte[0].x = A.x + normala_A.x * A.collider.dimensiune1;
+        contacte.puncte[0].y = A.y + normala_A.y * A.collider.dimensiune1;
+    }
+    else 
+    {
+        // Coliziune mixta: CERC - DREPTUNGHI
+        contacte.nrPuncte = 1;
+        contacte.adancimi[0] = inter.adancimee;
+        
+        if (tipA == CERC) {
+            // A este cercul. Punctul de pe el este pe directia normalei (spre B)
+            contacte.puncte[0].x = A.x + normala_A.x * A.collider.dimensiune1;
+            contacte.puncte[0].y = A.y + normala_A.y * A.collider.dimensiune1;
+        } else {
+            // B este cercul. Punctul de pe el este in directie opusa normalei globale (spre A)
+            contacte.puncte[0].x = B.x - normala_A.x * B.collider.dimensiune1;
+            contacte.puncte[0].y = B.y - normala_A.y * B.collider.dimensiune1;
+        }
+    }
     // Daca totusi nu exista contact (frecare/margini limitrofe), evitam aplicarea impulsului
     if (contacte.nrPuncte == 0)
         return;
+
     // Inversul maselor si inertiilor (pentru obiecte statice se considera 0)
     float invM_A = (A.M > 1e10f) ? 0.0f : 1.0f / A.M;
     float invM_B = (B.M > 1e10f) ? 0.0f : 1.0f / B.M;
@@ -337,32 +445,7 @@ void ciocnire(sistem &S, int corpA, int corpB, intersectie inter)
         return;
 
     // ==============================================================
-    // 2. CORECTIA DE POZITIE (Pentru a nu se scufunda corpurile)
-    // ==============================================================
-    float adancime_maxima = 0.0f;
-    for (int i = 0; i < contacte.nrPuncte; i++)
-    {
-        if (contacte.adancimi[i] > adancime_maxima)
-        {
-            adancime_maxima = contacte.adancimi[i];
-        }
-    }
-
-    const float joc = 0.01f;             // are rol in stabilizare, "jocul" admisibil pentru ca corpurile sa fie considerate una peste altele, ca sa nu tremure la simulare
-    const float procent_corectie = 0.2f; // cat de mult sa scoata afara corpurile unul din altul, daca il lasam la 1.0f, e posibil sa introduca acceleratii mari in cazuri cu mai multe corpuri
-
-    float corectie = std::max(adancime_maxima - joc, 0.0f) * procent_corectie;
-    float mutare_A = corectie * (invM_A / sumaMaseInverse);
-    float mutare_B = corectie * (invM_B / sumaMaseInverse);
-
-    // Mutam centrele de masa pe directia normalei
-    A.x -= inter.normala.x * mutare_A;
-    A.y -= inter.normala.y * mutare_A;
-    B.x += inter.normala.x * mutare_B;
-    B.y += inter.normala.y * mutare_B;
-
-    // ==============================================================
-    // 3. CALCULUL PERCUTIEI 'P'
+    // 2. CALCULUL PERCUTIEI 'P'
     // ==============================================================
     float k = A.material.restituire * B.material.restituire; // Preluam coeficientul din sistem
 
@@ -371,35 +454,31 @@ void ciocnire(sistem &S, int corpA, int corpB, intersectie inter)
 
     for (int i = 0; i < contacte.nrPuncte; i++)
     {
-        // Coordonatele relative ale punctului de contact fata de centrul de masa
-        // Acestea sunt x_A, y_A si x_B, y_B din demonstratia ta matematica
         float x_A = contacte.puncte[i].x - A.x;
         float y_A = contacte.puncte[i].y - A.y;
         float x_B = contacte.puncte[i].x - B.x;
         float y_B = contacte.puncte[i].y - B.y;
 
-        // Termenii de moment: (x * n_y - y * n_x)
         float termen_rot_A = (x_A * n_y - y_A * n_x);
         float termen_rot_B = (x_B * n_y - y_B * n_x);
 
-        // Proiectiile vitezelor pe normala (v_CA,n' si v_CB,n')
         float v_CA_n = A.v_x * n_x + A.v_y * n_y + A.omega * termen_rot_A;
         float v_CB_n = B.v_x * n_x + B.v_y * n_y + B.omega * termen_rot_B;
 
-        // Diferenta vitezelor pe normala
         float v_rel_n = v_CB_n - v_CA_n;
 
-        // Daca se indeparteaza deja, sarim peste percutie
-        if (v_rel_n > 0.0f)
-            continue;
+        // ELIMINAT: Am sters "if (v_rel_n > 0.0f) continue;" pentru a lasa corectia sa functioneze
 
-        // Calculul numitorului ecuatiei (masa efectiva pe normala)
         float numitor = invM_A + invM_B + (termen_rot_A * termen_rot_A) * invI_A + (termen_rot_B * termen_rot_B) * invI_B;
 
-        // Calculul final al percutiei P
-        float P = -(1.0f + k) * v_rel_n;
-        P /= (numitor * (float)contacte.nrPuncte); // Impartim daca avem mai multe puncte de contact
+        // NOU: Introducem corectia de penetrare ca un bias de viteza (Baumgarte pentru contacte)
+        float v_bias = 20.0f * std::max(contacte.adancimi[i] - 0.005f, 0.0f);
 
+        // Adaugam v_bias direct in formula percutiei P
+        float P = -(1.0f + k) * v_rel_n + v_bias;
+        P /= (numitor * (float)contacte.nrPuncte);
+
+        // Taiem percutiile negative ca poligoanele sa nu se "lipeasca" intre ele cand se despart
         if (P < 0.0f) P = 0.0f;
 
         // Aplicarea percutiei P direct pe viteze
@@ -410,6 +489,8 @@ void ciocnire(sistem &S, int corpA, int corpB, intersectie inter)
         B.v_x += P * n_x * invM_B;
         B.v_y += P * n_y * invM_B;
         B.omega += P * termen_rot_B * invI_B;
+        
+        // ... RESTUL FUNCTIEI (frecarea etc.) RAMANE ABSOLUT LA FEL
 
         // ==============================================================
         // 4. CALCULUL FRECARIE DE ALUNECARE
@@ -472,26 +553,100 @@ void ciocnire(sistem &S, int corpA, int corpB, intersectie inter)
         }
 
         A.omega -= P_ung_final *invI_A;
-        B.omega -= P_ung_final *invI_B;
+        B.omega += P_ung_final *invI_B;
         
         }
+    }
+
+S.incarcaStare();
+}
+
+void percutiiDeLegatura(sistem &S){                   //rezolva sistemul (J * A^-1 * J^T) Lambda_perc = - J * q*punct
+    
+    if(S.p == 0) return;
+
+    matrice Lambda_perc(S.p, 1);
+    matrice M(S.p,S.p);
+    matrice L(S.p,S.p);
+
+    matrice J_T = S.J_F ^ "T";
+
+    M =  S.J_F * S.A_inv * J_T;                   // matricea din partea stanga a sistemului
+
+    for (int i = 0; i < S.p; i++)                           // adaugam o valoare nesemenificativa pe diagolana matricei, pentru a ne asigura ca este pozitiv definita, nu semidefinita
+        M(i,i) += 1e-7f;
+
+    for(int i = 0; i < S.p; i++){                           // calculam descompunerea Cholesky
+        for(int j = 0; j <= i; j++){ 
+            float suma = 0.0f;
+            for(int k = 0; k < j; k++){
+                suma += L(i, k) * L(j, k);
+            }
+
+            if(i == j){
+                float val = M(i, i) - suma;
+                L(i, i) = (val > 0.0f) ? std::sqrt(val) : 1e-6f;        // daca valoarea este ngativa, vom pune o valoare infinitezimala, nu zero, pentru a evita impartirea la 0
+            } else {
+                L(i, j) = (M(i, j) - suma) / L(j, j); 
+            }
+        }
+    }
+
+    int nr_corpuri = S.corpuri.size();
+    matrice q(nr_corpuri*3,1);
+
+    for(int i = 0; i < nr_corpuri; i++){
+        q(i*3 + 0 ,0) = S.corpuri[i].v_x;
+        q(i*3 + 1 ,0) = S.corpuri[i].v_y;
+        q(i*3 + 2 ,0) = S.corpuri[i].omega;
+    }
+
+    matrice y(S.p,1);
+    matrice B(S.p,1);
+    B = - S.J_F * q;   //matricea din partea dreapta a sistemului
+
+    for(int i = 0; i < S.p; i++){                   //calculeaza prima parte a sistemului L * ( L_T * Lambda) =  B , notand L_T * Lambda cu y
+        float suma = 0.0f;
+        for(int j = 0; j < i; j++){
+            suma += L(i,j)* y(j,0);
+        }
+        y(i,0) = (B(i,0) - suma) / L(i,i);
+    }
+
+    for(int i = S.p - 1; i >= 0; i--){
+        float suma = 0.0f;
+        for(int j = i + 1 ; j < S.p; j++){
+            suma += L(j,i)* Lambda_perc(j,0);          // L(j,i) este L^T(i,j)
+        } 
+        Lambda_perc(i,0) = (y(i,0) - suma) / L(i,i);
+    }
+
+    matrice Delta_q = S.A_inv * J_T *Lambda_perc;
+
+    for(int i = 0; i < nr_corpuri; i++) {
+        if (S.corpuri[i].M > 1e10f) continue; // Corpurile fixe nu se misca
+
+        S.corpuri[i].v_x   += Delta_q(i * 3 + 0, 0);
+        S.corpuri[i].v_y   += Delta_q(i * 3 + 1, 0);
+        S.corpuri[i].omega += Delta_q(i * 3 + 2, 0);
     }
 }
 
 void verificarCiocniri(sistem &S)
 {
     S.corpuriSelectate.clear();
+    bool aFostCiocnire = 0;
 
-    for (int i = 0; i < S.nr_corpuri; i++)
+    for (int i = 0; i < S.corpuri.size(); i++)
     {
         S.corpuri[i].seteazaBoundingBox();
     }
 
-    for (int i = 0; i < S.nr_corpuri; i++)
+    for (int i = 0; i < S.corpuri.size(); i++)
     {
         S.corpuri[i].collider.selectat = 0;                       //la fiecare frame resetam starea de "selectat" al obiectelor
     
-        for (int j = i + 1; j < S.nr_corpuri; j++)
+        for (int j = i + 1; j < S.corpuri.size(); j++)
         {
 
             if (S.corpuri[i].M > 1e10f && S.corpuri[j].M > 1e10f) // daca luam doi pereti, nu incercam sa calculam ciocnirea dintre ei
@@ -510,10 +665,15 @@ void verificarCiocniri(sistem &S)
                         S.corpuri[i].collider.selectat = 1;
                         S.corpuriSelectate.push_back(i);
                     }
-                    else
+                    else{
                         ciocnire(S, i, j, inter);
+                        aFostCiocnire = true;
+                    }
                 }
             }
         }
     }
+
+    if(aFostCiocnire)
+        percutiiDeLegatura(S);
 }

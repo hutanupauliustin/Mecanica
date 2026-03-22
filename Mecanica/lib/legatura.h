@@ -9,7 +9,6 @@ public:
     int contorCorpA;
     int contorCorpB;
 
-
     legatura();
 
     legatura(int a, int b) : contorCorpA(a), contorCorpB(b) {}

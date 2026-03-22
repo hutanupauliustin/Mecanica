@@ -103,7 +103,7 @@ void updateVerticesData(sistem &S, float* vertices){
     int stride = 10;
 
     // 1. Corpuri
-    for(int i = 0; i < S.nr_corpuri; i++){
+    for(int i = 0; i < S.corpuri.size(); i++){
         int idx = i * stride;
         vertices[idx + 0] = S.corpuri[i].x;
         vertices[idx + 1] = S.corpuri[i].y;
@@ -124,8 +124,8 @@ void updateVerticesData(sistem &S, float* vertices){
     }
 
     // 2. Legaturi 
-    int offset = S.nr_corpuri * stride;
-    for(int i = 0; i <  S.nr_legaturi;i++){
+    int offset = S.corpuri.size() * stride;
+    for(int i = 0; i <  S.legaturi.size();i++){
         int idx = offset + i * stride;
         vertices[idx + 0] = S.legaturi[i]->getAbscisa(S.stare);
         vertices[idx + 1] = S.legaturi[i]->getOrdonata(S.stare); 
@@ -144,7 +144,7 @@ void updateVerticesData(sistem &S, float* vertices){
 
     //3. Arcuri
 
-    offset = (S.nr_corpuri + S.nr_legaturi)*stride;
+    offset = (S.corpuri.size() + S.legaturi.size())*stride;
     for(int i = 0; i <  S.arcuri.size();i++){
         int idx = offset + i * stride;
 
@@ -289,7 +289,7 @@ void initBuffers(unsigned int &VAO, unsigned int &VBO) {
 void drawSystem(sistem &S, unsigned int VAO, unsigned int VBO, unsigned int shaderProgram, float* Buffer) {
     // 1. Actualizam datele in RAM
     updateVerticesData(S, Buffer);
-    int totalPoints = S.nr_corpuri + S.nr_legaturi + S.arcuri.size();
+    int totalPoints = S.corpuri.size() + S.legaturi.size() + S.arcuri.size();
 
     // 2. Trimitem datele la GPU
     glBindBuffer(GL_ARRAY_BUFFER, VBO);

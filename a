@@ -1,7 +1,6 @@
 1. Explicatie SAT in teorie
 2. Explicatie matematica frecarilor in teorie
 3. Adaugarea coliziuni disc-disc si disc-dreptunghi
-3. Adaugarea percutiilor de legatura, pentru a permite mentinerea legaturilor si cand au loc ciocniri
 4. Implementarea legaturilor unilaterale 
 5. Adaugarea interfatei grafice
 6. adaugă corpuri de tip triungh
