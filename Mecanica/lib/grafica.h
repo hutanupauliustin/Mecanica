@@ -18,6 +18,6 @@ void drawSystem(sistem &S, unsigned int VAO, unsigned int VBO, unsigned int shad
 void setupGUI(GLFWwindow* window);
 void startFrameGUI();
 void renderPanouDeControl(float &dt, bool &running_flag, bool &arata_energie_flag, float t, float energie);
-void renderPanouDeAdaugatCorpuriloat(sistem &S);
+void renderPanouDeAdaugatCorpuri(sistem &S);
 void endFrameGUI();
 void cleanupGUI();

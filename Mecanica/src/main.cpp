@@ -159,6 +159,9 @@ int main() {
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            // Asiguram memorie GPU pentru corpurile care tocmai s-au adaugat din meniu
+            vertexBuffer.resize(10 * (S.corpuri.size() + S.legaturi.size() + S.arcuri.size()));
+
             drawSystem(S, VAO, VBO, shaderProgram, vertexBuffer.data());
 
             // 5. Randare ImGui (peste scena de fizica)
@@ -167,6 +170,7 @@ int main() {
                 energie = calculeazaEnergiaTotala(S, S.g);
             }
             renderPanouDeControl(dt, running_flag, arata_energie_flag, t, energie);
+            renderPanouDeAdaugatCorpuri(S);
             endFrameGUI();
 
             glfwSwapBuffers(window);
