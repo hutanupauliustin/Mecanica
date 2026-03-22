@@ -125,7 +125,7 @@ int main() {
 
         // Buffer local pentru coordonate
         // 10 valori (x, y, phi, w, h, type, red, green, blue, alpha) * (nr_corpuri + nr_legaturi)
-        std::vector<float> vertexBuffer(10 * (S.corpuri.size() + S.legaturi.size() + S.arcuri.size()));
+        std::vector<float> vertexBuffer(11 * (S.corpuri.size() + S.legaturi.size() + S.arcuri.size()));
 
         // Variabile de timp
         float t = 0.0f, dt = 0.001f;
@@ -141,6 +141,11 @@ int main() {
 
             // 2. Pre-Generare GUI (Colecteaza evenimentele OS)
             startFrameGUI();
+                if(S.mod_curent == EDITARE){
+                    running_flag = 0;
+                } else {
+                    running_flag = 1;
+                }
 
             // 3. Fizica 
             // std::cout << "Pas fizica..." << std::endl; 
@@ -151,8 +156,23 @@ int main() {
                     verificarCiocniri(S);   //lucreaza pe variabilele din obiecte
                     S.incarcaStare();       //muta datele din obiecte in matricea de stare
 
+                    bool eroare_matematica = false;
+                    for (int c = 0; c < S.corpuri.size(); c++) {
+                        if (S.corpuri[c].activ && (std::isnan(S.corpuri[c].x) || std::isnan(S.corpuri[c].y))) {
+                            eroare_matematica = true; break;
+                        }
+                    }
+                    if (eroare_matematica) {
+                        std::cout << "\n[EROARE FATALA] S-a detectat 'NaN' in fizica! (Forte infinite). Sistemul a fost salvat de la Crash!" << std::endl;
+                        running_flag = false;
+                        break; 
+                    }
+
                     t += dt;
                 }
+            } else {
+                S.incarcaStare();
+                verificarCiocniri(S);
             }
            
             // 4. Randare OpenGL Lume
@@ -160,7 +180,7 @@ int main() {
             glClear(GL_COLOR_BUFFER_BIT);
 
             // Asiguram memorie GPU pentru corpurile care tocmai s-au adaugat din meniu
-            vertexBuffer.resize(10 * (S.corpuri.size() + S.legaturi.size() + S.arcuri.size()));
+            vertexBuffer.resize(11 * (S.corpuri.size() + S.legaturi.size() + S.arcuri.size()));
 
             drawSystem(S, VAO, VBO, shaderProgram, vertexBuffer.data());
 
@@ -177,17 +197,23 @@ int main() {
             glfwPollEvents();
 
             if(running_flag) frameCount++;
-            if(frameCount % 100 == 0 && running_flag == 1){
-                 std::cout << "Cadre randate: " << frameCount << " Timp simulat: " << t <<" | dt current: " << dt <<std::endl;
-                 if(arata_energie_flag){
-                    energie = calculeazaEnergiaTotala(S, S.g);
-                    std::cout << "Energie: " << energie / 1000.0f <<" KJ " <<std::endl;
-                 }
-            }
+             // [DEBUG] Afisam starea sistemului regulat (aproximativ 1 data pe secunda)
+                if (frameCount % 60 == 0) { 
+                    std::cout << "\n[Fizica] Cadru " << frameCount << " | Timp: " << t << " | Corpuri in sistem: " << S.corpuri.size() << std::endl;
+                    for (size_t c = 0; c < S.corpuri.size(); c++) {
+                        if(S.corpuri[c].activ == 0) continue; // Sarim peste cele sterse
+                        std::cout << "  -> Corp " << c 
+                                  << " | Pos: (" << S.corpuri[c].x << ", " << S.corpuri[c].y << ")"
+                                  << " | Viteza: (" << S.corpuri[c].v_x << ", " << S.corpuri[c].v_y << ")"
+                                  << " | Masa: " << S.corpuri[c].M << std::endl;
+                    }
+                }
         }
         
         // Curatam GUI inainte sa inchidem programul
         cleanupGUI();
+        glDeleteVertexArrays(1, &VAO);
+        glDeleteBuffers(1, &VBO);
         glfwTerminate();
     }
     return 0;

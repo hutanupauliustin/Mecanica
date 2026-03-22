@@ -4,19 +4,21 @@
 #include "input.h"
 #include "grafica.h"
 
-// --- 1. VERTEX SHADER: Primeste datele si le da mai departe la Geometry Shader ---
+// --- 1. VERTEX SHADER ---
 const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec2 aPos;\n"
-    "layout (location = 1) in float aPhi;\n"  // Unghiul de rotatie
-    "layout (location = 2) in vec2 aSize;\n"  // Dimensiuni (width, height)
-    "layout (location = 3) in float aType;\n" // Tipul formei: 0=Invizibil,1=Cerc, 2=Dreptunghi, 3=Triunghi
-    "layout (location = 4) in vec4 aColor;\n" // Culoarea"
+    "layout (location = 1) in float aPhi;\n"  
+    "layout (location = 2) in vec2 aSize;\n"  
+    "layout (location = 3) in float aType;\n" 
+    "layout (location = 4) in vec4 aColor;\n" 
+    "layout (location = 5) in float aSelected;\n" // Flag-ul pentru selecție
 
     "out VS_OUT {\n"
     "    float phi;\n"
     "    vec2 size;\n"
     "    float type;\n"
-    "   vec4 color;\n"
+    "    vec4 color;\n"
+    "    float isSelected;\n"
     "} vs_out;\n"
     
     "void main()\n"
@@ -26,9 +28,10 @@ const char *vertexShaderSource = "#version 330 core\n"
     "   vs_out.size = aSize;\n"
     "   vs_out.type = aType;\n"
     "   vs_out.color = aColor;\n"
+    "   vs_out.isSelected = aSelected;\n" // Am pus punctul si virgula lipsa
     "}\0";
 
-// --- 2. GEOMETRY SHADER: Transforma punctele in forme geometrice ---  // scris de AI
+// --- 2. GEOMETRY SHADER ---  
 const char *geometryShaderSource = "#version 330 core\n"
     "layout (points) in;\n"
     "layout (triangle_strip, max_vertices = 4) out;\n"
@@ -38,15 +41,18 @@ const char *geometryShaderSource = "#version 330 core\n"
     "    vec2 size;\n"
     "    float type;\n"
     "    vec4 color;\n"
+    "    float isSelected;\n"
     "} gs_in[];\n"
 
-    "out vec3 TexCoord;\n" // x, y locale si z = l_0
+    "out vec3 TexCoord;\n" 
     "out float ShapeType;\n"
     "out vec4 fColor;\n"
+    "out float fSelected;\n" // Dam mai departe spre Fragment Shader
 
     "uniform float scale;\n"
     "uniform vec2 cameraOffset;\n"
     "uniform float aspect_ratio;\n"
+    
     "void main() {\n"
     "    if(gs_in[0].type < 0.5) return;\n"
     "    float phi = gs_in[0].phi;\n"
@@ -55,21 +61,29 @@ const char *geometryShaderSource = "#version 330 core\n"
     "    vec2 center = gl_in[0].gl_Position.xy - cameraOffset;\n"
     "    ShapeType = gs_in[0].type;\n"
     "    fColor = gs_in[0].color;\n"
+    "    fSelected = gs_in[0].isSelected;\n"
+    
+    // Extindem geometria cu 20% daca e un corp (nu arc) si e selectat
+    "    float expand = (fSelected > 0.5 && ShapeType < 3.5) ? 1.2 : 1.0;\n"
+    
     "    vec2 halfSize;\n"
     "    if(ShapeType > 3.5) halfSize = vec2(gs_in[0].size.x / 2.0, 0.15);\n"
-    "    else halfSize = gs_in[0].size / 2.0;\n"
+    "    else halfSize = (gs_in[0].size / 2.0) * expand;\n" // Aplicam expansiunea pe X si Y
+    
     "    vec2 offsets[4];\n"
     "    offsets[0] = vec2(-halfSize.x, -halfSize.y);\n"
     "    offsets[1] = vec2( halfSize.x, -halfSize.y);\n"
     "    offsets[2] = vec2(-halfSize.x,  halfSize.y);\n"
     "    offsets[3] = vec2( halfSize.x,  halfSize.y);\n"
-    "    vec2 uvs[4];\n"
-    "    uvs[0] = vec2(-1.0, -1.0); uvs[1] = vec2(1.0, -1.0);\n"
-    "    uvs[2] = vec2(-1.0, 1.0);  uvs[3] = vec2(1.0, 1.0);\n"
+    
+    "    vec2 uvs[4];\n" // UV-urile se scaleaza si ele pentru a pastra d=1 la marginea reala
+    "    uvs[0] = vec2(-1.0, -1.0) * expand; uvs[1] = vec2(1.0, -1.0) * expand;\n"
+    "    uvs[2] = vec2(-1.0, 1.0) * expand;  uvs[3] = vec2(1.0, 1.0) * expand;\n"
+    
     "    for(int i=0; i<4; i++) {\n"
     "        vec2 pos = center + rot * offsets[i];\n"
     "        gl_Position = vec4((pos.x * scale )/ aspect_ratio ,pos.y * scale, 0.0, 1.0);\n"
-    "        TexCoord = vec3(uvs[i], gs_in[0].size.y);\n" // size.y este l_0
+    "        TexCoord = vec3(uvs[i], gs_in[0].size.y);\n"
     "        EmitVertex();\n"
     "    }\n"
     "    EndPrimitive();\n"
@@ -81,72 +95,115 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "in vec3 TexCoord;\n"
     "in float ShapeType;\n"
     "in vec4 fColor;\n"
+    "in float fSelected;\n"
+    
     "void main() {\n"
-    // Cerc: folosim x si y din TexCoord (primele doua componente)
-    "    if(ShapeType < 1.5 && dot(TexCoord.xy, TexCoord.xy) > 1.0) discard;\n"
-    "    FragColor = fColor;\n"
-    "    if(ShapeType > 3.5) {\n"
+    "    vec3 finalGlow = vec3(0.0);\n"
+    
+    "    if(ShapeType < 1.5) {\n" // CERC
+    "        float d = dot(TexCoord.xy, TexCoord.xy);\n"
+    "        if(fSelected > 0.5) {\n"
+    "            if (d > 1.44) discard;\n" // 1.2^2 = 1.44
+    "            float glow = clamp((1.44 - d) / 0.44, 0.0, 1.0);\n"
+    "            finalGlow = vec3(1.0) * pow(glow, 2.0) * 0.4;\n"
+    "        } else if (d > 1.0) discard;\n"
+    "    }\n"
+    "    else if (ShapeType < 3.5) {\n" // DREPTUNGHI
+    "        float d = max(abs(TexCoord.x), abs(TexCoord.y));\n"
+    "        if(fSelected > 0.5) {\n"
+    "            if (d > 1.2) discard;\n"
+    "            float glow = clamp((1.2 - d) / 0.2, 0.0, 1.0);\n"
+    "            finalGlow = vec3(1.0) * pow(glow, 2.0) * 0.4;\n"
+    "        } else if (d > 1.0) discard;\n"
+    "    }\n"
+    "    else if (ShapeType > 3.5) {\n" // ARCURI (Codul tau fain cu unda sinus)
     "        float l_0 = TexCoord.z;\n"
     "        float spirePerMetru = 8.0;\n"
     "        float spire = l_0 * spirePerMetru;\n"
     "        float unda = sin(TexCoord.x * 3.1415 * spire);\n"
-    // Atenuare cu parabola (inmultire, nu adunare)
     "        unda *= (1.0 - TexCoord.x * TexCoord.x);\n"
-    // Verificam distanta pixelului pe Y local (TexCoord.y) fata de unda
     "        if(abs(TexCoord.y - unda) > 0.35) discard;\n"
     "    }\n"
+    
+    "    FragColor = vec4(fColor.rgb + finalGlow, fColor.a);\n"
     "}\0";
 
 void updateVerticesData(sistem &S, float* vertices){
-    // Structura datelor per punct: [x, y, phi, width, height, type, culoareR, culoareG, culoareB, culaoreAlpha] (10 float-uri)
-    // type : 1 -- cerc | 2 -- dreptunghi | 3-- triunghi | 4 --arc | 5 -- X
-    int stride = 10;
+    // 11 float-uri: [x, y, phi, width, height, type, r, g, b, a, selectat]
+    int stride = 11;
 
     // 1. Corpuri
     for(int i = 0; i < S.corpuri.size(); i++){
         int idx = i * stride;
+        if(S.corpuri[i].activ == 0){
+            for(int k=0; k<11; k++) vertices[idx + k] = 0;
+            continue;
+        }
+
         vertices[idx + 0] = S.corpuri[i].x;
         vertices[idx + 1] = S.corpuri[i].y;
         vertices[idx + 2] = S.corpuri[i].phi;
 
         if(S.corpuri[i].collider.tip == CERC){
-            vertices[idx + 3] = S.corpuri[i].collider.dimensiune1 * 2.0f; // Shaderul asteapta Diametru, dar noi stocam Raza
+            vertices[idx + 3] = S.corpuri[i].collider.dimensiune1 * 2.0f; 
             vertices[idx + 4] = S.corpuri[i].collider.dimensiune2 * 2.0f;
         } else {
             vertices[idx + 3] = S.corpuri[i].collider.dimensiune1;
             vertices[idx + 4] = S.corpuri[i].collider.dimensiune2;
         }
+
+        float alpha = S.corpuri[i].collider.culoare.a;
+        if (S.mod_curent == 1 && S.corpuri[i].collider.cadru != S.cadru_activ && S.corpuri[i].collider.obiectVirtual == 0) {
+            alpha *= 0.2f; 
+        }
+
         vertices[idx + 5] = (float)S.corpuri[i].collider.tip;
         vertices[idx + 6] = (float)S.corpuri[i].collider.culoare.r;
         vertices[idx + 7] = (float)S.corpuri[i].collider.culoare.g;
         vertices[idx + 8] = (float)S.corpuri[i].collider.culoare.b;
-        vertices[idx + 9] = S.corpuri[i].collider.selectat ? ((float)S.corpuri[i].collider.culoare.a / 2) :(float)S.corpuri[i].collider.culoare.a;
+        vertices[idx + 9] = alpha;
+        
+        // Atributul 11!
+        vertices[idx + 10] = S.corpuri[i].collider.selectat ? 1.0f : 0.0f;
     }
 
     // 2. Legaturi 
     int offset = S.corpuri.size() * stride;
     for(int i = 0; i <  S.legaturi.size();i++){
         int idx = offset + i * stride;
+
+        if(S.legaturi[i]->activ == 0){
+            for(int k=0; k<11; k++) vertices[idx + k] = 0;
+            continue;
+        }
+
         vertices[idx + 0] = S.legaturi[i]->getAbscisa(S.stare);
         vertices[idx + 1] = S.legaturi[i]->getOrdonata(S.stare); 
         float widht, height, phi;
         int type;
-        S.legaturi[i]->getGraphics(S.stare,type, widht, height, phi);  // le schimba prin referinta
-        vertices[idx + 2] = phi; // Phi
-        vertices[idx + 3] = widht; // Width (Diametru)
-        vertices[idx + 4] = height; // Height
-        vertices[idx + 5] = type; // Type 1 = Cerc
+        S.legaturi[i]->getGraphics(S.stare,type, widht, height, phi); 
+        vertices[idx + 2] = phi; 
+        vertices[idx + 3] = widht; 
+        vertices[idx + 4] = height; 
+        vertices[idx + 5] = type; 
         vertices[idx + 6] = 1.0f;
         vertices[idx + 7] = 1.0f;
         vertices[idx + 8] = 1.0f;
         vertices[idx + 9] = 1.0f;
+        
+        // Atributul 11 (O legatura nu straluceste)
+        vertices[idx + 10] = 0.0f; 
     }
 
     //3. Arcuri
-
     offset = (S.corpuri.size() + S.legaturi.size())*stride;
     for(int i = 0; i <  S.arcuri.size();i++){
         int idx = offset + i * stride;
+
+        if(S.arcuri[i].activ == 0){
+            for(int k=0; k<11; k++) vertices[idx + k] = 0;
+            continue;
+        }
 
         float x1, y1, x2, y2;
         S.corpuri[S.arcuri[i].contorCorpA].coordPunctPeCorp(x1, y1, S.arcuri[i].l_xA, S.arcuri[i].l_yA);
@@ -161,20 +218,19 @@ void updateVerticesData(sistem &S, float* vertices){
         vertices[idx + 0] = (x1 + x2 )/ 2.0f;
         vertices[idx + 1] = (y1 + y2 )/ 2.0f;
         vertices[idx + 2] = phi;
-
         vertices[idx + 3] = lungime_curenta; 
         vertices[idx + 4] = lungime_repaus;       
         vertices[idx + 5] = 4.0f;
-
         vertices[idx + 6] = 1.0f;
         vertices[idx + 7] = 0.62f;
         vertices[idx + 8] = 0.0f;
         vertices[idx + 9] = 1.0f;
-    }
-       
+        
+        // Atributul 11 (Nici arcul nu straluceste)
+        vertices[idx + 10] = 0.0f;
+    }       
 }
 
-// Modificam functia pentru a returna fereastra si a seta programul shader prin referinta
 GLFWwindow* openGLWindow(unsigned int &shaderProgram){
 
     glfwInit();
@@ -190,8 +246,8 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram){
         return NULL;
     }
 
-    glfwMakeContextCurrent(window);                                 //specifica placii video ca lucram cu fereastra creata
-    glfwSwapInterval(1); // Activeaza V-Sync (limiteaza la 60 FPS) pentru a nu rula simularea prea repede
+    glfwMakeContextCurrent(window);                                 
+    glfwSwapInterval(1); 
     glfwSetScrollCallback(window, scroll_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -201,16 +257,16 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram){
         return NULL;
     }    
 
-    unsigned int vertexShader;  //ID pentru shader
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);  // ii spune placii video sa lase spatiu pt shader
+    unsigned int vertexShader;  
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);  
 
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);     //trimite blocul de text in memoria placii video
-    glCompileShader(vertexShader);                                  //ii spune placii video sa compileze textul ca fiind cod 
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);     
+    glCompileShader(vertexShader);                                  
 
     int  success;
     char infoLog[512];
     
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);       //iv - integer vector
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);       
     if(!success)
     {
         glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
@@ -229,16 +285,16 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram){
     }
 
     unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);               // placa video ii da un ID shader-ului
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);    // trimite textul placii video, ca sa il compileze
-    glCompileShader(fragmentShader);                                   // ii spune placii video sa ruleze shader-ul (codul)
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);               
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);    
+    glCompileShader(fragmentShader);                                   
 
     shaderProgram = glCreateProgram();
 
     glAttachShader(shaderProgram, vertexShader);    
     glAttachShader(shaderProgram, geometryShader);
     glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);                                     //program este un obiect care are rolul de a lega shaderele intre ele 
+    glLinkProgram(shaderProgram);                                     
 
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if(!success) {
@@ -250,21 +306,20 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram){
     glDeleteShader(geometryShader);
     glDeleteShader(fragmentShader); 
 
-    glEnable(GL_BLEND);                 //permite sa modificam opacitatea
+    glEnable(GL_BLEND);                 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     return window;
 }
 
 void initBuffers(unsigned int &VAO, unsigned int &VBO) {
-    glGenVertexArrays(1, &VAO);   // ii spune placii video sa le creeze
+    glGenVertexArrays(1, &VAO);  
     glGenBuffers(1, &VBO);   
     
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO); 
     
-    // Avem acum 6 float-uri per vertex: x, y, phi, w, h, type
-    int stride = 10 * sizeof(float);
+    GLsizei stride = 11 * sizeof(float);
 
     // 1. Pozitie (vec2)
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, (void*)0);
@@ -278,43 +333,37 @@ void initBuffers(unsigned int &VAO, unsigned int &VBO) {
     // 4. Type (float)
     glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
     glEnableVertexAttribArray(3);
-    // 5. culoare (vec4)
+    // 5. Culoare (vec4)
     glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(4);
+    // 6. isSelected (float) - CORECTAT AICI (Locatia 5, offset 10)
+    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, stride, (void*)(10 * sizeof(float)));
+    glEnableVertexAttribArray(5);
     
     glBindVertexArray(0);
 }
 
-
 void drawSystem(sistem &S, unsigned int VAO, unsigned int VBO, unsigned int shaderProgram, float* Buffer) {
-    // 1. Actualizam datele in RAM
     updateVerticesData(S, Buffer);
     int totalPoints = S.corpuri.size() + S.legaturi.size() + S.arcuri.size();
 
-    // 2. Trimitem datele la GPU
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, totalPoints * 10 * sizeof(float), Buffer, GL_DYNAMIC_DRAW);
+    // CORECTAT: Inmultim cu 11 (stride-ul real), nu cu 10
+    glBufferData(GL_ARRAY_BUFFER, totalPoints * 11 * sizeof(float), Buffer, GL_DYNAMIC_DRAW);
     
-    // 3. Desenam
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    glPointSize(1.0f); // Desenam puncte mari sa se vada
+    glPointSize(1.0f); 
 
-    // Setam factorul de scalare
     int scaleVertexLoc = glGetUniformLocation(shaderProgram, "scale");
     glUniform1f(scaleVertexLoc, 1.0f / zoomScale);
 
-    // Coordonatele camerei
     int camOffsetLoc = glGetUniformLocation(shaderProgram, "cameraOffset");
     glUniform2f(camOffsetLoc, cameraX, cameraY);
 
     int aspectLoc = glGetUniformLocation(shaderProgram, "aspect_ratio");
     glUniform1f(aspectLoc, aspect_ratio);
 
-    // 1. Desenam Corpurile (Roz) - de la index 0, atatea cate corpuri sunt
     glDrawArrays(GL_POINTS, 0, totalPoints);
-
     glBindVertexArray(0);
-
-
 }

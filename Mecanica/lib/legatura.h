@@ -8,6 +8,7 @@ class legatura
 public:
     int contorCorpA;
     int contorCorpB;
+    bool activ = 1;
 
     legatura();
 

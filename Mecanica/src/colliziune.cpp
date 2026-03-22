@@ -51,7 +51,7 @@ intersectie intersectareScaraMica(sistem &S, int corpA, int corpB)
     intersectie inter;
     inter.seLovesc = false;
 
-    if (S.corpuri[corpA].collider.layer != S.corpuri[corpB].collider.layer && (S.corpuri[corpA].collider.obiectVirtual ==0 && S.corpuri[corpB].collider.obiectVirtual == 0))    //conditia de a se afla pe acelasi layer nu se aplica pentru corpurile virtuale
+    if (S.corpuri[corpA].collider.cadru != S.corpuri[corpB].collider.cadru && (S.corpuri[corpA].collider.obiectVirtual ==0 && S.corpuri[corpB].collider.obiectVirtual == 0))    //conditia de a se afla pe acelasi cadru nu se aplica pentru corpurile virtuale
         return inter;    
 
     if ((tipA == tipB) && (tipA == CERC))
@@ -666,8 +666,10 @@ void verificarCiocniri(sistem &S)
                         S.corpuriSelectate.push_back(i);
                     }
                     else{
-                        ciocnire(S, i, j, inter);
-                        aFostCiocnire = true;
+                        if (S.mod_curent == 0) { 
+                            ciocnire(S, i, j, inter);
+                            aFostCiocnire = true;
+                        }
                     }
                 }
             }

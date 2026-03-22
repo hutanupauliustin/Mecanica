@@ -107,38 +107,67 @@ void processInput(GLFWwindow *window, float &dt, bool &running_flag, sistem &S) 
     mx_anterior = mx;
     my_anterior = my;
 
-    // Variabila care tine minte cate arcuri am agatat de mouse in click-ul curent
+    // Variabile statice pentru dragging si arcuri
     static int arcuriPuseDeMouse = 0; 
+    static int corp_dragged_id = -1;
+    static float offset_x = 0.0f;
+    static float offset_y = 0.0f;
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
         
-        // 1. Tragem DOAR daca nu tragem deja de ceva (arcuriPuseDeMouse == 0)
-        // si daca avem corpuri sub mouse.
-        if (arcuriPuseDeMouse == 0 && S.corpuriSelectate.size() > 0) {
+        if (S.mod_curent == 1) {
+            // --- MOD EDITARE: Mutare directa (fara arcuri) ---
+            if (corp_dragged_id == -1 && S.corpuriSelectate.size() > 0) {
+                int id = S.corpuriSelectate[0]; // Luam corpul de sub mouse
+                if (id > 1) { // Excludem Lumea (0) si Mouse-ul virtual (1)
+                    corp_dragged_id = id;
+                    offset_x = S.corpuri[id].x - mouseX;
+                    offset_y = S.corpuri[id].y - mouseY;
+                }
+            }
             
-            for(int i = 0; i < S.corpuriSelectate.size(); i++) {
-                int id_corp = S.corpuriSelectate[i];
-
-                arc trage_spre_mouse = arc::Creaza(S.corpuri[S.id_corp_mouse], S.corpuri[id_corp], 
-                                                   S.corpuri[S.id_corp_mouse].x, S.corpuri[S.id_corp_mouse].y,
-                                                   S.corpuri[id_corp].x, S.corpuri[id_corp].y,
-                                                   5000.0f, 20.0f, 0.1f); // Am pus lungimea de repaus 0.1f ca sa se lipeasca de cursor, cu putina toleranta
-                S.adaugaArcuri(trage_spre_mouse);
+            // Daca avem un corp prins, ii suprascriem pozitia si oprim inertiile
+            if (corp_dragged_id != -1) {
+                S.corpuri[corp_dragged_id].x = mouseX + offset_x;
+                S.corpuri[corp_dragged_id].y = mouseY + offset_y;
+                S.corpuri[corp_dragged_id].v_x = 0.0f;
+                S.corpuri[corp_dragged_id].v_y = 0.0f;
+                S.corpuri[corp_dragged_id].omega = 0.0f;
                 
-                arcuriPuseDeMouse++; // Numaram cate am adaugat
+                // Actualizam matricea direct ca fizica sa nu-l arunce inapoi
+                S.stare(corp_dragged_id * 3, 0) = S.corpuri[corp_dragged_id].x;
+                S.stare(corp_dragged_id * 3 + 1, 0) = S.corpuri[corp_dragged_id].y;
+            }
+        } 
+        else {
+            // --- MOD INTERACTIUNE: Tragere cu arcuri ---
+            if (arcuriPuseDeMouse == 0 && S.corpuriSelectate.size() > 0) {
+                for(int i = 0; i < S.corpuriSelectate.size(); i++) {
+                    int id_corp = S.corpuriSelectate[i];
+                    if (id_corp > 1) {
+                        arc trage_spre_mouse = arc::Creaza(S.corpuri[S.id_corp_mouse], S.corpuri[id_corp], 
+                                                           mouseX, mouseY, 
+                                                           mouseX, mouseY, 
+                                                           800.0f, 60.0f, 0.0f);
+                        S.adaugaArcuri(trage_spre_mouse);
+                        arcuriPuseDeMouse++; 
+                    }
+                }
             }
         }
     } 
     else {
-        // 2. Click-ul a fost eliberat. Avem arcuri de sters?
+        // --- CLICK ELIBERAT ---
+        corp_dragged_id = -1; // Resetam mutarea directa
+        
         if (arcuriPuseDeMouse > 0) {
-            
-            // Stergem fix atatea arcuri cate am pus (ele stau mereu la coada vectorului)
-            for (int i = 0; i < arcuriPuseDeMouse; i++) {
-                S.arcuri.pop_back();
+            int stersi = 0;
+            for (int i = S.arcuri.size() - 1; i >= 0 && stersi < arcuriPuseDeMouse; i--) {
+                if (S.arcuri[i].activ && S.arcuri[i].contorCorpA == S.id_corp_mouse) {
+                    S.eliminaArc(i);
+                    stersi++;
+                }
             }
-            
-            // Resetam sistemul pentru urmatorul click
             arcuriPuseDeMouse = 0;
         }
     }

@@ -42,7 +42,7 @@ struct geometrie{
     bool obiectStatic = 0;
     bool obiectVirtual = 0;
     bool selectat = 0;
-    int layer = 0;
+    int cadru = 0;
 
     float coeficientAerodinamic = 0;
 };

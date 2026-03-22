@@ -7,7 +7,8 @@ class arc{
 
     int contorCorpA;
     int contorCorpB;
-    
+    bool activ = 1;
+
     float l_xA, l_yA;
     float l_xB, l_yB;
 

@@ -29,6 +29,9 @@ public:
     int id_corp_lume;
     int id_corp_mouse;
 
+    int mod_curent = 0;
+    int cadru_activ = 0;
+
     std::vector<int> corpuriSelectate;    
 
     sistem();
@@ -56,4 +59,10 @@ public:
     void seteazaMatriceInertie();
 
     void seteazaForteExterne();
+
+    void eliminaCorp(int index);
+    
+    void eliminaLegatura(int index);
+
+    void eliminaArc(int index);
 };

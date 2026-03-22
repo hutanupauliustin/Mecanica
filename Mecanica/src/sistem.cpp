@@ -42,20 +42,81 @@
 
 
     void sistem::adaugaCorpuri(rigid &r){
+        for(int i = 0; i < corpuri.size(); i++){
+            if(corpuri[i].activ == 0){
+                r.index = i;
+                corpuri[i] = r; // Suprascriem corpul vechi
+                return;         // Iesim din functie
+            }
+        }
+        // Daca nu am gasit niciun loc liber, adaugam la capat
         r.index = corpuri.size();
         corpuri.push_back(r);
     }
 
     void sistem::adaugaLegaturi(legatura *l)
     {
+        for(int i = 0; i < legaturi.size(); i++){
+            if(legaturi[i]->activ == 0){
+                delete legaturi[i]; // Eliberam memoria vechii legaturi
+                legaturi[i] = l;    // Inlocuim cu legatura noua
+                p += l->getNumarEcuatii();
+                return;             // Iesim din functie
+            }
+        }
+        // Daca nu am gasit niciun loc liber, adaugam la capat
         legaturi.push_back(l);
         p += l->getNumarEcuatii();
     }
 
     void sistem::adaugaArcuri(arc &a)
     {
+        for(int i = 0; i < arcuri.size(); i++){
+            if(arcuri[i].activ == 0){
+                arcuri[i] = a; // Suprascriem arcul vechi
+                return;        // Iesim din functie
+            }
+        }
+        // Daca nu am gasit niciun loc liber, adaugam la capat
         arcuri.push_back(a);
     }
+
+    void sistem::eliminaCorp(int index){
+        if(index <= 1 || index >= corpuri.size()) return; // Protejam Lumea (0) si Mouse-ul virtual (1)
+        
+        corpuri[index].activ = 0;
+        
+        // Stergem legaturile atasate de acest corp
+        for(int i = 0; i < legaturi.size(); i++){
+            if(legaturi[i]->activ && (legaturi[i]->contorCorpA == index || legaturi[i]->contorCorpB == index)){
+                eliminaLegatura(i);
+            }
+        }
+        
+        // Stergem arcurile atasate de acest corp
+        for(int i = 0; i < arcuri.size(); i++){
+            if(arcuri[i].activ && (arcuri[i].contorCorpA == index || arcuri[i].contorCorpB == index)){
+                eliminaArc(i);
+            }
+        }
+        
+        incarcaStare();
+        seteazaMatriceInertie();
+    }
+
+    void sistem::eliminaLegatura(int index){
+        if(index < 0 || index >= legaturi.size()) return;
+        if(legaturi[index]->activ == 1) {
+            legaturi[index]->activ = 0;
+            p -= legaturi[index]->getNumarEcuatii(); // Reducem imediat dimensiunea sistemului matriceal
+        }
+    }
+
+    void sistem::eliminaArc(int index){
+        if(index < 0 || index >= arcuri.size()) return;
+        arcuri[index].activ = 0;
+    }
+
 
     void sistem::incarcaStare(){
 
@@ -131,6 +192,7 @@
 
         for (int i = 0; i < legaturi.size(); i++)
         {
+            if(legaturi[i]->activ == 0) continue; // Sarim peste cele sterse!
 
             legaturi[i]->calculeazaJacobian(J_F, rand_constrangere, stare);
             legaturi[i]->calculeazaJpunctQpunct(JdotQ, rand_constrangere, stare, nr_corpuri);
@@ -169,6 +231,7 @@ void sistem::seteazaConstrangeri()
 
         for (int i = 0; i < legaturi.size(); i++)
         {
+            if(legaturi[i]->activ == 0) continue; // Sarim peste cele sterse!
 
             legaturi[i]->calculeazaConstrangere(F, rand_constrangere, stare);
             legaturi[i]->calculeazaConstrangereDerivate(Fpunct, rand_constrangere, stare, nr_corpuri);
@@ -220,6 +283,7 @@ void sistem::seteazaConstrangeri()
 
         // 2. Adaugam fortele elastice 
         for (int i = 0; i < arcuri.size(); i++) {
+            if(arcuri[i].activ == 0) continue; // Sarim peste cele sterse!
             arcuri[i].aplicaFortaElastica(this->corpuri[arcuri[i].contorCorpA], this->corpuri[arcuri[i].contorCorpB]);
         }
 

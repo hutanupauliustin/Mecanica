@@ -74,6 +74,10 @@
 
     // 7. Accesare elemente
     float* matrice::at(int i, int j) const {
+        if (i < 0 || i >= linii || j < 0 || j >= coloane){
+            throw std::runtime_error("[EROARE MATRICE] Accesare elemente inexistente din matrice!");
+            return 0;
+        }
         if (valori == nullptr) throw std::runtime_error("[EROARE MATRICE] Accesare matrice neinitializata!");
         return valori + i * coloane + j;
     }

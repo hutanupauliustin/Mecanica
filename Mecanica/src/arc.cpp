@@ -56,8 +56,14 @@ arc::arc(){
 
         float l = std::sqrt( (x2-x1) * (x2-x1) + (y2-y1) * (y2-y1));
 
-        float directie_x = (x2-x1) / l;               
-        float directie_y = (y2-y1) / l;
+        float directie_x = 0.0f;
+        float directie_y = 0.0f;
+        if (l > 0.0001f) {
+            directie_x = (x2-x1) / l;               
+            directie_y = (y2-y1) / l;
+        } else {
+            l = 0.0001f; // Prevenim impartirea la 0 cand corpurile sunt suprapuse perfect (previne NaN Crash)
+        }
 
         float viteza_rel = (v_x2 - v_x1) * directie_x + (v_y2 - v_y1) * directie_y;
 

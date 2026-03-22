@@ -9,10 +9,9 @@ void calculeazaMultiplicatori(sistem &S, float t){                   //rezolva s
                          
     S.Lambda = matrice(S.p, 1);
 
-    matrice M(S.p,S.p);
     matrice L(S.p,S.p);
 
-    M =  S.J_F * S.A_inv * (S.J_F ^ "T");                   // matricea din partea stanga a sistemului
+    matrice M =  S.J_F * S.A_inv * (S.J_F ^ "T");                   // matricea din partea stanga a sistemului
 
     for (int i = 0; i < S.p; i++)                           // adaugam o valoare nesemenificativa pe diagolana matricei, pentru a ne asigura ca este pozitiv definita, nu semidefinita
         M(i,i) += 1e-7f;
@@ -34,9 +33,7 @@ void calculeazaMultiplicatori(sistem &S, float t){                   //rezolva s
     }
 
     matrice y(S.p,1);
-    matrice B(S.p,1);
-
-    B = - S.J_F * S.A_inv * S.Q - S.JdotQ - S.k_d * S.Fpunct - S.k_s * S.F;   //matricea din partea dreapta a sistemului
+    matrice B = - S.J_F * S.A_inv * S.Q - S.JdotQ - S.k_d * S.Fpunct - S.k_s * S.F;   //matricea din partea dreapta a sistemului
 
     for(int i = 0; i < S.p; i++){                   //calculeaza prima parte a sistemului L * ( L_T * Lambda) =  B , notand L_T * Lambda cu y
         float suma = 0.0f;
