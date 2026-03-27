@@ -9,6 +9,70 @@ float cameraX = 0.0f;
 float cameraY = 0.0f;
 float aspect_ratio = 800.0f / 600.0f;
 
+void mutaCorp(sistem &S, int idCorp, float mx, float my, int offsetX, int offsetY){   
+
+    S.corpuri[idCorp].x = mx + offsetX;
+    S.corpuri[idCorp].y = my + offsetY;
+
+}
+
+
+int gasesteCorpSubMouse(sistem &S, float mouseX, float mouseY){
+    int celMaiAproape_id = -1;
+    float min_distanta = 999999.9f;
+
+    for (int k = S.corpuri.size() - 1; k >= 1; k--) { 
+        if (!S.corpuri[k].activ) continue;
+        if (S.corpuri[k].collider.obiectVirtual) continue; // Nu vrem să selectăm fantomele
+        
+        // Ignorăm corpul A deja selectat, pentru a putea găsi corpul B aflat sub el
+        if (S.mod_curent == MOD_PLASARE_LEGATURA_1 && S.legatura_corp_A == k) continue;
+
+        // În modul Editare, putem impune să selectăm doar corpurile din layerul activ
+        if (S.mod_curent == MOD_EDITARE && S.corpuri[k].collider.cadru != S.cadru_activ) continue;
+
+        rigid &target = S.corpuri[k];
+        float dx = mouseX - target.x;
+        float dy = mouseY - target.y;
+        
+        float localX = dx * std::cos(target.phi) + dy * std::sin(target.phi);
+        float localY = -dx * std::sin(target.phi) + dy * std::cos(target.phi);
+
+        bool lovit = false;
+        float cur_dist = 999999.0f;
+
+        if (target.collider.tip == DREPTUNGHI) {
+            float hw = target.collider.dimensiune1 / 2.0f;
+            float hh = target.collider.dimensiune2 / 2.0f;
+            // Adăugăm un halo subtil doar în modul editare
+            float halo = (S.mod_curent == 1) ? std::max(0.15f, std::min(hw, hh) * 0.5f) : 0.0f;
+
+            if (std::abs(localX) <= hw + halo && std::abs(localY) <= hh + halo) {
+                lovit = true;
+                cur_dist = std::sqrt(dx*dx + dy*dy);
+            }
+        } else if (target.collider.tip == CERC) {
+            float R = target.collider.dimensiune1;
+            float halo = (S.mod_curent == 1) ? std::max(0.15f, R * 0.3f) : 0.0f;
+            float dist = std::sqrt(dx*dx + dy*dy);
+            
+            if (dist <= R + halo) {
+                lovit = true;
+                cur_dist = dist;
+            }
+        }
+
+        if (lovit) {
+            if (celMaiAproape_id == -1 || cur_dist < min_distanta - 0.1f) {
+                min_distanta = cur_dist;
+                celMaiAproape_id = k;
+            }
+        }
+    }
+
+    return celMaiAproape_id;
+}
+
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     // yoffset este +1 când dai scroll în sus (zoom in) și -1 când dai scroll în jos (zoom out)
@@ -88,89 +152,36 @@ void processInput(GLFWwindow *window, float &dt, bool &running_flag, sistem &S) 
     float mouseX = ndcX * zoomScale*aspect_ratio + cameraX;
     float mouseY = ndcY * zoomScale + cameraY;      //transforma coordonatele mouselui din pixeli in "metri"
 
-    S.corpuri[S.id_corp_mouse].x = mouseX;
-    S.corpuri[S.id_corp_mouse].y = mouseY;
+    // Trimitem mouse-ul real catre GUI
+    S.mouse_x = mouseX;
+    S.mouse_y = mouseY;
 
-    S.stare(S.id_corp_mouse*3,0) = mouseX;
-    S.stare(S.id_corp_mouse*3 + 1,0) = mouseY;
+    for (int i = 0; i < S.corpuri.size(); i++) { S.corpuri[i].collider.selectat = 0; }
+    S.corpuriSelectate.clear();
 
-
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {            // pentru a ne muta prin cadru
-        double deltaX = mx - mx_anterior;
-        double deltaY = my - my_anterior;
-        
-        // Transformam pixelii parcursi de mouse in unitati fizice
-        cameraX -= (float)(deltaX / width) * 2.0f * zoomScale;
-        cameraY += (float)(deltaY / height) * 2.0f * zoomScale; // += pentru ca Y-ul de la mouse e invers
+    int id_sub_mouse = gasesteCorpSubMouse(S, mouseX, mouseY);
+    if (id_sub_mouse != -1) {
+        S.corpuri[id_sub_mouse].collider.selectat = 1;
+        S.corpuriSelectate.push_back(id_sub_mouse);
     }
 
-    mx_anterior = mx;
-    my_anterior = my;
+    if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
+        switch(S.mod_curent){
+            case MOD_RULARE :               //interactiune cu corpuri prin spring-uri cu un deadzone pentru a evita miscare haotica
+                                arc a;
+                                S.adaugaArcuri(a);
+            case MOD_EDITARE:               //mutarea corpurilor direct
+                                float offsetx =  S.corpuri[id_sub_mouse].x - mx;
+                                float offsety =  S.corpuri[id_sub_mouse].y - my;
+                                mutaCorp(S,id_sub_mouse,mouseX,mouseY,offsetx, offsety);
+                                break;
 
-    // Variabile statice pentru dragging si arcuri
-    static int arcuriPuseDeMouse = 0; 
-    static int corp_dragged_id = -1;
-    static float offset_x = 0.0f;
-    static float offset_y = 0.0f;
-
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+            case MOD_PLASARE_CORP:          //creaza o fantoma peste mouse care arata ca corpul pe care il pune
+            case MOD_PLASARE_LEGATURA_1:    //creaza o fantoma peste mouse cu legatura pe care vrem sa o punem, si asteapta sa apasam pe un corp care va fii primul corp din legatura
+            case MOD_PLASARE_LEGATURA_2:    //tine lipit de mouse fantoma legaturii si fantoma corpului 1, si asteapta sa selectam un al doilea corp ca sa completam legatura 
+            break;
         
-        if (S.mod_curent == 1) {
-            // --- MOD EDITARE: Mutare directa (fara arcuri) ---
-            if (corp_dragged_id == -1 && S.corpuriSelectate.size() > 0) {
-                int id = S.corpuriSelectate[0]; // Luam corpul de sub mouse
-                if (id > 1) { // Excludem Lumea (0) si Mouse-ul virtual (1)
-                    corp_dragged_id = id;
-                    offset_x = S.corpuri[id].x - mouseX;
-                    offset_y = S.corpuri[id].y - mouseY;
-                }
-            }
-            
-            // Daca avem un corp prins, ii suprascriem pozitia si oprim inertiile
-            if (corp_dragged_id != -1) {
-                S.corpuri[corp_dragged_id].x = mouseX + offset_x;
-                S.corpuri[corp_dragged_id].y = mouseY + offset_y;
-                S.corpuri[corp_dragged_id].v_x = 0.0f;
-                S.corpuri[corp_dragged_id].v_y = 0.0f;
-                S.corpuri[corp_dragged_id].omega = 0.0f;
-                
-                // Actualizam matricea direct ca fizica sa nu-l arunce inapoi
-                S.stare(corp_dragged_id * 3, 0) = S.corpuri[corp_dragged_id].x;
-                S.stare(corp_dragged_id * 3 + 1, 0) = S.corpuri[corp_dragged_id].y;
-            }
-        } 
-        else {
-            // --- MOD INTERACTIUNE: Tragere cu arcuri ---
-            if (arcuriPuseDeMouse == 0 && S.corpuriSelectate.size() > 0) {
-                for(int i = 0; i < S.corpuriSelectate.size(); i++) {
-                    int id_corp = S.corpuriSelectate[i];
-                    if (id_corp > 1) {
-                        arc trage_spre_mouse = arc::Creaza(S.corpuri[S.id_corp_mouse], S.corpuri[id_corp], 
-                                                           mouseX, mouseY, 
-                                                           mouseX, mouseY, 
-                                                           800.0f, 60.0f, 0.0f);
-                        S.adaugaArcuri(trage_spre_mouse);
-                        arcuriPuseDeMouse++; 
-                    }
-                }
-            }
-        }
-    } 
-    else {
-        // --- CLICK ELIBERAT ---
-        corp_dragged_id = -1; // Resetam mutarea directa
         
-        if (arcuriPuseDeMouse > 0) {
-            int stersi = 0;
-            for (int i = S.arcuri.size() - 1; i >= 0 && stersi < arcuriPuseDeMouse; i--) {
-                if (S.arcuri[i].activ && S.arcuri[i].contorCorpA == S.id_corp_mouse) {
-                    S.eliminaArc(i);
-                    stersi++;
-                }
-            }
-            arcuriPuseDeMouse = 0;
         }
     }
-
-
 }

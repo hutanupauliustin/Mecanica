@@ -2,6 +2,10 @@
 #include <cmath>
 #include <vector>
 
+    float inertie_minima = 0.00001f;
+    float viteza_maxima = 500.0f;
+    float viteza_unghiulara_maxima = 200.0f;
+
     sistem::sistem()
     {                                       // A - matricea de inertie
                     // Lambda - vectorul multiplicatorilor lui Lagrange
@@ -15,12 +19,6 @@
         rigid lume = rigid::Fix(0.0f, 0.0f);
         adaugaCorpuri(lume);
         id_corp_lume = 0;
-
-        rigid mouse = rigid::Bara(0.0f, 0.0f, 0.05f, 0.05f, 1e12f);
-        mouse.collider.obiectVirtual = true;
-        adaugaCorpuri(mouse);
-        id_corp_mouse = 1;
-
     }
 
     sistem::~sistem()
@@ -82,7 +80,7 @@
     }
 
     void sistem::eliminaCorp(int index){
-        if(index <= 1 || index >= corpuri.size()) return; // Protejam Lumea (0) si Mouse-ul virtual (1)
+        if(index <= 0 || index >= corpuri.size()) return; // Protejam Lumea (0)
         
         corpuri[index].activ = 0;
         
@@ -259,9 +257,13 @@ void sistem::seteazaConstrangeri()
             A(3 * i + 1, 3 * i + 1) = 0; 
             A(3 * i + 2, 3 * i + 2) = 0; 
             }else{
-            A(3 * i,     3 * i)     = corpuri[i].M; 
-            A(3 * i + 1, 3 * i + 1) = corpuri[i].M; 
-            A(3 * i + 2, 3 * i + 2) = corpuri[i].J; 
+            
+            float valoare_masa = corpuri[i].M;
+            float valoare_moment_inertie = corpuri[i].J;
+
+            A(3 * i,     3 * i)     = valoare_masa >  inertie_minima ? valoare_masa : inertie_minima;
+            A(3 * i + 1, 3 * i + 1) = valoare_masa >  inertie_minima ? valoare_masa : inertie_minima;
+            A(3 * i + 2, 3 * i + 2) = valoare_moment_inertie >  inertie_minima ? valoare_moment_inertie : inertie_minima;
             }
         }   
         
@@ -289,8 +291,26 @@ void sistem::seteazaConstrangeri()
 
         // 3. Incarcam totul in matricea sistemului
         for (int i = 0; i < nr_corpuri; i++) {
-            Q(3 * i, 0) = corpuri[i].f_x;
-            Q(3 * i + 1, 0) = corpuri[i].f_y;
-            Q(3 * i + 2, 0) = corpuri[i].moment;
+            Q(3 * i, 0) = corpuri[i].tau.f_x;
+            Q(3 * i + 1, 0) = corpuri[i].tau.f_y;
+            Q(3 * i + 2, 0) = corpuri[i].tau.moment;
+        }
+    }
+
+    void sistem::plafonareViteze(){
+       for(int i = 1; i < corpuri.size(); i++){
+            if(std::isnan(corpuri[i].v_x) || std::isnan(corpuri[i].v_y) || std::isnan(corpuri[i].x)) {
+                corpuri[i].v_x = 0.0f; corpuri[i].v_y = 0.0f; corpuri[i].omega = 0.0f;
+                corpuri[i].x = 0.0f; corpuri[i].y = 0.0f; corpuri[i].phi = 0.0f;
+            } else {
+                if(corpuri[i].v_x > viteza_maxima) corpuri[i].v_x = viteza_maxima;
+                else if(corpuri[i].v_x < -viteza_maxima) corpuri[i].v_x = -viteza_maxima;
+                
+                if(corpuri[i].v_y > viteza_maxima) corpuri[i].v_y = viteza_maxima;
+                else if(corpuri[i].v_y < -viteza_maxima) corpuri[i].v_y = -viteza_maxima;
+                
+                if(corpuri[i].omega > viteza_unghiulara_maxima) corpuri[i].omega = viteza_unghiulara_maxima;
+                else if(corpuri[i].omega < -viteza_unghiulara_maxima) corpuri[i].omega = -viteza_unghiulara_maxima;
+            }
         }
     }

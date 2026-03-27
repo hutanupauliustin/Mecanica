@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <vector>
 
 enum formaGeometrica{
     PUNCT,
@@ -47,6 +48,28 @@ struct geometrie{
     float coeficientAerodinamic = 0;
 };
 
+struct FantomaUI {
+    bool activa = false;
+    float x = 0.0f;
+    float y = 0.0f;
+    float phi = 0.0f;
+    int tip_forma; // 0 = Punct, 1 = Cerc, 2 = Dreptunghi
+    float dimensiune1;
+    float dimensiune2;
+    culoare col;
+};
+
+struct torsor{
+        float f_x = 0,f_y = 0;
+        float moment = 0;
+};
+
+struct fortaExterna{
+    float u_x,u_y;      //coordonatele versorului suport
+    float x,y;          //coordonatele punctului de aplicare in coordonate globale
+    float modul;
+};
+
 class rigid
 {
 public:
@@ -55,16 +78,23 @@ public:
     
     float x, y, phi;
     float v_x, v_y, omega; // coordonatele centrului de greautea, si unghiul facut de sistemul de referinta propriu fata de cel universal
-    float f_x, f_y, moment;
+    torsor tau;
     float M, J;
     
     geometrie collider;
     material material;
+
+    std::vector<fortaExterna> forte;
+
     
     rigid();
     rigid (float x_initial, float y_initial, float phi_initial, float masa, float momentInertie);
     
+    void adauagaForte(float modul_forta, float x_aplicare, float y_aplicare, float u_x, float u_y);
+
     void aflaForteProprii(float g);
+
+    void reducereTorsor();
 
     void coordPunctPeCorp(float &punct_x, float &punct_y, float d_x, float d_y);                //d_x si d_y sunt coordonatele punctului fata de sistemul de referinta mobil al corpului
 

@@ -1,5 +1,7 @@
 #include "colliziune.h"
 
+ float percutie_maxima = 5000.0f;
+
 bool intersectareScaraLarga(sistem &S, int corpA, int corpB)
 { // verifica doar daca cutiile in care sunt bagate corpurile se intersecteaza
   // doar daca cutiile corpurile se supran exista posibilitatea ca ele sa se intersecteze cu adevarat, caz in care facem o verificare mai exacta
@@ -56,13 +58,20 @@ intersectie intersectareScaraMica(sistem &S, int corpA, int corpB)
 
     if ((tipA == tipB) && (tipA == CERC))
     { // daca verificam intersectia dintre doua cercuri trebuie doar sa vedem daca se suprapun razele
+        
         float dist = std::sqrt((x_A - x_B) * (x_A - x_B) + (y_A - y_B) * (y_A - y_B));
         float suma_raze = S.corpuri[corpA].collider.dimensiune1 + S.corpuri[corpB].collider.dimensiune1;
 
-        inter.adancimee = dist - suma_raze;
+        inter.adancimee = suma_raze - dist;
         inter.seLovesc = (inter.adancimee >= 0);
-        inter.normala.x = (x_A - x_B) / dist;
-        inter.normala.y = (y_A - y_B) / dist;
+
+        if (dist > 0.0001f) {
+            inter.normala.x = (x_A - x_B) / dist;
+            inter.normala.y = (y_A - y_B) / dist;
+        } else {
+            inter.normala.x = 1.0f; 
+            inter.normala.y = 0.0f;
+        }
 
         return inter;
     }
@@ -618,7 +627,11 @@ void percutiiDeLegatura(sistem &S){                   //rezolva sistemul (J * A^
         for(int j = i + 1 ; j < S.p; j++){
             suma += L(j,i)* Lambda_perc(j,0);          // L(j,i) este L^T(i,j)
         } 
-        Lambda_perc(i,0) = (y(i,0) - suma) / L(i,i);
+        float valoare = (y(i,0) - suma) / L(i,i);
+        if (valoare > percutie_maxima) valoare = percutie_maxima;
+        else if (valoare < -percutie_maxima) valoare = -percutie_maxima;
+
+        Lambda_perc(i,0) = valoare;
     }
 
     matrice Delta_q = S.A_inv * J_T *Lambda_perc;
@@ -626,9 +639,17 @@ void percutiiDeLegatura(sistem &S){                   //rezolva sistemul (J * A^
     for(int i = 0; i < nr_corpuri; i++) {
         if (S.corpuri[i].M > 1e10f) continue; // Corpurile fixe nu se misca
 
-        S.corpuri[i].v_x   += Delta_q(i * 3 + 0, 0);
-        S.corpuri[i].v_y   += Delta_q(i * 3 + 1, 0);
-        S.corpuri[i].omega += Delta_q(i * 3 + 2, 0);
+        float dv_x = Delta_q(i * 3 + 0, 0);
+        float dv_y = Delta_q(i * 3 + 1, 0);
+        float d_omega = Delta_q(i * 3 + 2, 0);
+
+        if(dv_x > 100.0f) dv_x = 100.0f; else if(dv_x < -100.0f) dv_x = -100.0f;
+        if(dv_y > 100.0f) dv_y = 100.0f; else if(dv_y < -100.0f) dv_y = -100.0f;
+        if(d_omega > 50.0f) d_omega = 50.0f; else if(d_omega < -50.0f) d_omega = -50.0f;
+
+        S.corpuri[i].v_x   += dv_x;
+        S.corpuri[i].v_y   += dv_y;
+        S.corpuri[i].omega += d_omega;
     }
 }
 
@@ -644,38 +665,24 @@ void verificarCiocniri(sistem &S)
 
     for (int i = 0; i < S.corpuri.size(); i++)
     {
-        S.corpuri[i].collider.selectat = 0;                       //la fiecare frame resetam starea de "selectat" al obiectelor
-    
         for (int j = i + 1; j < S.corpuri.size(); j++)
         {
 
             if (S.corpuri[i].M > 1e10f && S.corpuri[j].M > 1e10f) // daca luam doi pereti, nu incercam sa calculam ciocnirea dintre ei
                 continue;
+            if (S.corpuri[i].collider.obiectVirtual || S.corpuri[j].collider.obiectVirtual) 
+                continue;
 
-            if (intersectareScaraLarga(S, i, j))
-            {
+            if (intersectareScaraLarga(S, i, j)) {
                 intersectie inter = intersectareScaraMica(S, i, j);
-                if (inter.seLovesc)
-                {
-                    if(S.corpuri[i].collider.obiectVirtual == 1){
-                        S.corpuri[j].collider.selectat = 1;
-                        S.corpuriSelectate.push_back(j);
-                    }
-                    else if(S.corpuri[j].collider.obiectVirtual == 1){
-                        S.corpuri[i].collider.selectat = 1;
-                        S.corpuriSelectate.push_back(i);
-                    }
-                    else{
-                        if (S.mod_curent == 0) { 
-                            ciocnire(S, i, j, inter);
-                            aFostCiocnire = true;
-                        }
-                    }
+                if (inter.seLovesc) {
+                    ciocnire(S, i, j, inter);
+                    aFostCiocnire = true;
                 }
-            }
         }
     }
 
     if(aFostCiocnire)
         percutiiDeLegatura(S);
+}
 }

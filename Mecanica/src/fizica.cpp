@@ -3,6 +3,8 @@
 #include "colliziune.h"
 #include "fizica.h"
 
+float forta_maxima = 10000.0f;
+
 //rezolva sisteme olonoame scleronome, cu legaturi bilaterale
 
 void calculeazaMultiplicatori(sistem &S, float t){                   //rezolva sistemul (J * A^-1 * J^T) Lambda = - JpunctQpunct - J * A^-1 * Q - k_s*F - k_d*Fpunct 
@@ -48,7 +50,11 @@ void calculeazaMultiplicatori(sistem &S, float t){                   //rezolva s
         for(int j = i + 1 ; j < S.p; j++){
             suma += L(j,i)* S.Lambda(j,0);          // L(j,i) este L^T(i,j)
         } 
-        S.Lambda(i,0) = (y(i,0) - suma) / L(i,i);
+        float valoare = (y(i,0) - suma) / L(i,i);
+        if (valoare > forta_maxima) valoare = forta_maxima;
+        else if (valoare < -forta_maxima) valoare = -forta_maxima;
+
+        S.Lambda(i,0) = valoare;
         }
 }
     
@@ -107,7 +113,7 @@ matrice RK4(sistem &S, float dt, float t) {
     k4 = derivata(S, S.stare + k3, t + dt) * dt;
 
     stare_noua = S.stare + (k1 + k2 * 2.0f + k3 * 2.0f + k4) * (1.0f / 6.0f);
-
+    
     return stare_noua;
 }
 

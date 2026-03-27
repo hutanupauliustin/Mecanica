@@ -2051,8 +2051,10 @@ CMakeFiles/simulator.dir/src/glad.c.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica
   C:/Users/Paul/Desktop/Mecanica/Mecanica/includes/glad/glad.h
 
 CMakeFiles/simulator.dir/src/grafica.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/grafica.cpp \
+  C:/Strawberry/c/include/c++/13.2.0/algorithm \
   C:/Strawberry/c/include/c++/13.2.0/backward/binders.h \
   C:/Strawberry/c/include/c++/13.2.0/bit \
+  C:/Strawberry/c/include/c++/13.2.0/bits/algorithmfwd.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/alloc_traits.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/allocator.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/basic_ios.h \
@@ -2094,20 +2096,24 @@ CMakeFiles/simulator.dir/src/grafica.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mec
   C:/Strawberry/c/include/c++/13.2.0/bits/requires_hosted.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/specfun.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/std_abs.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/stl_algo.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/stl_algobase.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/stl_bvector.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/stl_construct.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/stl_function.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/stl_heap.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/stl_iterator.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/stl_iterator_base_funcs.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/stl_iterator_base_types.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/stl_pair.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/stl_tempbuf.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/stl_uninitialized.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/stl_vector.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/streambuf.tcc \
   C:/Strawberry/c/include/c++/13.2.0/bits/streambuf_iterator.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/string_view.tcc \
   C:/Strawberry/c/include/c++/13.2.0/bits/stringfwd.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/uniform_int_dist.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/uses_allocator.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/uses_allocator_args.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/utility.h \
@@ -2137,6 +2143,8 @@ CMakeFiles/simulator.dir/src/grafica.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mec
   C:/Strawberry/c/include/c++/13.2.0/limits \
   C:/Strawberry/c/include/c++/13.2.0/new \
   C:/Strawberry/c/include/c++/13.2.0/ostream \
+  C:/Strawberry/c/include/c++/13.2.0/pstl/execution_defs.h \
+  C:/Strawberry/c/include/c++/13.2.0/pstl/glue_algorithm_defs.h \
   C:/Strawberry/c/include/c++/13.2.0/pstl/pstl_config.h \
   C:/Strawberry/c/include/c++/13.2.0/stdexcept \
   C:/Strawberry/c/include/c++/13.2.0/stdlib.h \
@@ -3339,6 +3347,12 @@ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/input.h:
 
 C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/grafica.h:
 
+C:/Strawberry/c/include/c++/13.2.0/bits/stl_tempbuf.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/stl_algo.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/algorithmfwd.h:
+
 C:/Users/Paul/Desktop/Mecanica/Mecanica/src/grafica.cpp:
 
 C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/matrice.h:
@@ -3350,6 +3364,8 @@ C:/Strawberry/c/x86_64-w64-mingw32/include/wchar.h:
 C:/Strawberry/c/x86_64-w64-mingw32/include/time.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/sys/types.h:
+
+C:/Strawberry/c/include/c++/13.2.0/pstl/execution_defs.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/sys/timeb.h:
 
@@ -3418,6 +3434,8 @@ C:/Strawberry/c/include/c++/13.2.0/bits/streambuf.tcc:
 C:/Strawberry/c/include/c++/13.2.0/cwctype:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/stl_vector.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/uniform_int_dist.h:
 
 C:/Users/Paul/Desktop/Mecanica/Mecanica/includes/glad/glad.h:
 
@@ -3531,6 +3549,8 @@ C:/Strawberry/c/x86_64-w64-mingw32/include/mmiscapi2.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/mmiscapi.h:
 
+C:/Strawberry/c/include/c++/13.2.0/algorithm:
+
 C:/Strawberry/c/x86_64-w64-mingw32/include/inaddr.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/dpapi.h:
@@ -3636,6 +3656,8 @@ C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/enqcmdintrin.h:
 C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc/imgui_demo.cpp:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/cldemoteintrin.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/stl_heap.h:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/cetintrin.h:
 
@@ -3904,6 +3926,8 @@ C:/Strawberry/c/x86_64-w64-mingw32/include/mcx.h:
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/xsaveintrin.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bit:
+
+C:/Strawberry/c/include/c++/13.2.0/pstl/glue_algorithm_defs.h:
 
 C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/c++config.h:
 

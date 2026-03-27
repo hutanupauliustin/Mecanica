@@ -5,11 +5,6 @@
 #include "sistem.h"
 #include "input.h"
 
-enum{
-    INTERACTIONARE = 0,
-    EDITARE
-};
-
 void updateVerticesData(sistem &S, float* vertices);
 
 GLFWwindow* openGLWindow(unsigned int &shaderProgram);

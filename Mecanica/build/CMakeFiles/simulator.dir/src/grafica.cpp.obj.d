@@ -147,6 +147,19 @@ CMakeFiles/simulator.dir/src/grafica.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/bits/ostream.tcc \
  C:/Strawberry/c/include/c++/13.2.0/istream \
  C:/Strawberry/c/include/c++/13.2.0/bits/istream.tcc \
+ C:/Strawberry/c/include/c++/13.2.0/vector \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_uninitialized.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_vector.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_bvector.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/vector.tcc \
+ C:/Strawberry/c/include/c++/13.2.0/algorithm \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_algo.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/algorithmfwd.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_heap.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/uniform_int_dist.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_tempbuf.h \
+ C:/Strawberry/c/include/c++/13.2.0/pstl/glue_algorithm_defs.h \
+ C:/Strawberry/c/include/c++/13.2.0/pstl/execution_defs.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/input.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/sistem.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/matrice.h \
@@ -169,9 +182,4 @@ CMakeFiles/simulator.dir/src/grafica.cpp.obj: \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/legatura.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/rigid.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/arc.h \
- C:/Strawberry/c/include/c++/13.2.0/vector \
- C:/Strawberry/c/include/c++/13.2.0/bits/stl_uninitialized.h \
- C:/Strawberry/c/include/c++/13.2.0/bits/stl_vector.h \
- C:/Strawberry/c/include/c++/13.2.0/bits/stl_bvector.h \
- C:/Strawberry/c/include/c++/13.2.0/bits/vector.tcc \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/grafica.h

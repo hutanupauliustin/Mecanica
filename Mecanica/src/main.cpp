@@ -141,7 +141,7 @@ int main() {
 
             // 2. Pre-Generare GUI (Colecteaza evenimentele OS)
             startFrameGUI();
-                if(S.mod_curent == EDITARE){
+                if(S.mod_curent == MOD_EDITARE){
                     running_flag = 0;
                 } else {
                     running_flag = 1;
@@ -153,6 +153,7 @@ int main() {
                 for(int i = 0; i < 20; i++) {   //facem calculele de mai multe ori intre cadre, pentru ca nu avem nevoie de mai mult de 60 de cadre pe secunda
                     S.stare = RK4(S, dt, t);
                     S.seteazaStare();       //muta datele din matrice, in obiecte
+                    S.plafonareViteze();
                     verificarCiocniri(S);   //lucreaza pe variabilele din obiecte
                     S.incarcaStare();       //muta datele din obiecte in matricea de stare
 
@@ -180,7 +181,7 @@ int main() {
             glClear(GL_COLOR_BUFFER_BIT);
 
             // Asiguram memorie GPU pentru corpurile care tocmai s-au adaugat din meniu
-            vertexBuffer.resize(11 * (S.corpuri.size() + S.legaturi.size() + S.arcuri.size()));
+            vertexBuffer.resize(11 * (S.corpuri.size() + S.legaturi.size() + S.arcuri.size() + S.elementeUI.size()));
 
             drawSystem(S, VAO, VBO, shaderProgram, vertexBuffer.data());
 

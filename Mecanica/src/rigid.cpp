@@ -1,7 +1,7 @@
 #include "cmath"
 #include "rigid.h"
-    
-    rigid::rigid() :  x(0), y(0), phi(0), v_x(0), v_y(0), omega(0), M(1), J(1), f_x(0), f_y(0){
+
+    rigid::rigid() :  x(0), y(0), phi(0), v_x(0), v_y(0), omega(0), M(1), J(1){
         collider.tip = PUNCT;
         collider.dimensiune1 = 1.0f;
         collider.dimensiune2 = 1.0f;
@@ -10,24 +10,41 @@
     }
 
     rigid::rigid (float x_initial, float y_initial, float phi_initial, float masa, float momentInertie)
-        :  x(x_initial), y(y_initial), phi(phi_initial), M(masa), J(momentInertie), v_x(0), v_y(0), omega(0), f_x(0), f_y(0), moment(0){}
+        :  x(x_initial), y(y_initial), phi(phi_initial), M(masa), J(momentInertie), v_x(0), v_y(0), omega(0){}
+
+    void rigid::adauagaForte(float modul_forta, float x_aplicare, float y_aplicare, float u_x, float u_y ){
+        fortaExterna F;
+        F.modul = modul_forta;
+        F.u_x = u_x;
+        F.u_y = u_y;
+        F.x = x_aplicare;
+        F.y = y_aplicare;
+        forte.push_back(F);
+    }
 
     void rigid::aflaForteProprii(float g)
     {
         // Daca masa este foarte mare (infinita), consideram corpul fix si nu ii aplicam greutate
         // pentru a evita erori matematice (Infinity * ceva = NaN)
         if(M > 1e10f) {
-            f_x = 0;
-            f_y = 0;
-            moment =0;
+            ;
         } else {
-            f_x = 0;
-            f_y = -g * M; 
+            
 
             float drag = collider.coeficientAerodinamic;
-            f_x -= drag * v_x;
-            f_y -= drag * v_y;
-            moment -= drag * omega * 0.5f;
+            tau.f_x -= drag * v_x;
+            tau.f_y -= drag * v_y;
+            tau.moment -= drag * omega * 0.5f;
+        }
+    }
+
+    void rigid::reducereTorsor(){
+        
+        for(int i = 0; i < this->forte.size(); i++){
+            fortaExterna F = this->forte[i];
+            this->tau.f_x += F.modul * F.u_x;
+            this->tau.f_y += F.modul * F.u_y;
+            this->tau.moment += F.x * F.modul * F.u_y - F.y *F.modul * F.u_x;
         }
     }
 

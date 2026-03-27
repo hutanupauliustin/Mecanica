@@ -66,7 +66,7 @@ const char *geometryShaderSource = "#version 330 core\n"
     "    fSelected = gs_in[0].isSelected;\n"
     
     // Extindem geometria cu 20% daca e un corp (nu arc) si e selectat
-    "    float expand = (fSelected > 0.5 && ShapeType < 3.5) ? 1.05 : 1.0;\n"
+    "    float expand = (fSelected > 0.5 && ShapeType < 3.5) ? 1.02 : 1.0;\n"
     
     "    vec2 halfSize;\n"
     "    if(ShapeType > 3.5) halfSize = vec2(gs_in[0].size.x / 2.0, 0.15);\n"
@@ -138,9 +138,7 @@ void updateVerticesData(sistem &S, float* vertices){
     // Gasim ordinea corecta pentru corpuri (Painter's Algorithm)
     std::vector<int> ordine_corpuri;
     for (int i = 0; i < S.corpuri.size(); i++) {
-        if (i != S.id_corp_mouse) { // Excludem mouse-ul pentru a-l desena separat la final
-            ordine_corpuri.push_back(i);
-        }
+        ordine_corpuri.push_back(i);
     }
 
     std::sort(ordine_corpuri.begin(), ordine_corpuri.end(), [&S](int a, int b) {
@@ -250,35 +248,34 @@ void updateVerticesData(sistem &S, float* vertices){
         
         pct_curent++;
     }
-    
-    // 5. Randam Mouse-ul fix la final pentru a acoperi totul
-    {
-        int i = S.id_corp_mouse;
-        int idx = pct_curent * stride; 
 
-        if(S.corpuri[i].activ != 0){
-            vertices[idx + 0] = S.corpuri[i].x;
-            vertices[idx + 1] = S.corpuri[i].y;
-            vertices[idx + 2] = S.corpuri[i].phi;
+    //5 Entitati de UI
+    for(int i = 0; i < S.elementeUI.size(); i++){
 
-            if(S.corpuri[i].collider.tip == CERC){
-                vertices[idx + 3] = S.corpuri[i].collider.dimensiune1 * 2.0f; 
-                vertices[idx + 4] = S.corpuri[i].collider.dimensiune2 * 2.0f;
+        int idx = pct_curent * stride;
+
+        vertices[idx + 0] = S.elementeUI[i].x;
+            vertices[idx + 1] = S.elementeUI[i].y;
+            vertices[idx + 2] = S.elementeUI[i].phi;
+
+            if(S.elementeUI[i].tip == CERC){
+                vertices[idx + 3] = S.elementeUI[i].dim1 * 2.0f; 
+                vertices[idx + 4] = S.elementeUI[i].dim2 * 2.0f;
             } else {
-                vertices[idx + 3] = S.corpuri[i].collider.dimensiune1;
-                vertices[idx + 4] = S.corpuri[i].collider.dimensiune2;
+                vertices[idx + 3] = S.elementeUI[i].dim1;
+                vertices[idx + 4] = S.elementeUI[i].dim2;
             }
 
-            vertices[idx + 5] = (float)S.corpuri[i].collider.tip;
-            vertices[idx + 6] = (float)S.corpuri[i].collider.culoare.r;
-            vertices[idx + 7] = (float)S.corpuri[i].collider.culoare.g;
-            vertices[idx + 8] = (float)S.corpuri[i].collider.culoare.b;
-            vertices[idx + 9] = S.corpuri[i].collider.culoare.a;
-            vertices[idx + 10] = S.corpuri[i].collider.selectat ? 1.0f : 0.0f;
-            
+            vertices[idx + 5] = (float)S.elementeUI[i].tip;
+            vertices[idx + 6] = (float)S.elementeUI[i].col.r;
+            vertices[idx + 7] = (float)S.elementeUI[i].col.g;
+            vertices[idx + 8] = (float)S.elementeUI[i].col.b;
+            vertices[idx + 9] = S.elementeUI[i].col.a;
+            vertices[idx + 10] = 1;
+
             pct_curent++;
-        }
     }
+   
 }
 
 
@@ -396,7 +393,7 @@ void initBuffers(unsigned int &VAO, unsigned int &VBO) {
 
 void drawSystem(sistem &S, unsigned int VAO, unsigned int VBO, unsigned int shaderProgram, float* Buffer) {
     updateVerticesData(S, Buffer);
-    int totalPoints = S.corpuri.size() + S.legaturi.size() + S.arcuri.size();
+    int totalPoints = S.corpuri.size() + S.legaturi.size() + S.arcuri.size() + S.elementeUI.size();
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // CORECTAT: Inmultim cu 11 (stride-ul real), nu cu 10
