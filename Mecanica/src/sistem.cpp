@@ -133,11 +133,11 @@
                 stare(i * 3 + 1 + 3 * nr_corpuri, 0) = 0;
                 stare(i * 3 + 2 + 3 * nr_corpuri, 0) = 0;
             }else{
-                stare(i * 3, 0) = corpuri[i].x;
-                stare(i * 3 + 1, 0) = corpuri[i].y;
+                stare(i * 3, 0) = corpuri[i].pozitie.x;
+                stare(i * 3 + 1, 0) = corpuri[i].pozitie.y;
                 stare(i * 3 + 2, 0) = corpuri[i].phi;
-                stare(i * 3 + 3 * nr_corpuri, 0) = corpuri[i].v_x;
-                stare(i * 3 + 1 + 3 * nr_corpuri, 0) = corpuri[i].v_y;
+                stare(i * 3 + 3 * nr_corpuri, 0) = corpuri[i].viteza.x;
+                stare(i * 3 + 1 + 3 * nr_corpuri, 0) = corpuri[i].viteza.y;
                 stare(i * 3 + 2 + 3 * nr_corpuri, 0) = corpuri[i].omega;
             }
         }
@@ -149,11 +149,11 @@
 
         for (int i = 0; i < nr_corpuri; i++)
         {
-            corpuri[i].x = stare(i * 3, 0);
-            corpuri[i].y = stare(i * 3 + 1, 0);
+            corpuri[i].pozitie.x = stare(i * 3, 0);
+            corpuri[i].pozitie.y = stare(i * 3 + 1, 0);
             corpuri[i].phi = stare(i * 3 + 2, 0);
-            corpuri[i].v_x = stare(i * 3 + 3 * nr_corpuri, 0);
-            corpuri[i].v_y = stare(i * 3 + 1 + 3 * nr_corpuri, 0);
+            corpuri[i].viteza.x = stare(i * 3 + 3 * nr_corpuri, 0);
+            corpuri[i].viteza.y = stare(i * 3 + 1 + 3 * nr_corpuri, 0);
             corpuri[i].omega = stare(i * 3 + 2 + 3 * nr_corpuri, 0);
         }
     }
@@ -291,23 +291,23 @@ void sistem::seteazaConstrangeri()
 
         // 3. Incarcam totul in matricea sistemului
         for (int i = 0; i < nr_corpuri; i++) {
-            Q(3 * i, 0) = corpuri[i].tau.f_x;
-            Q(3 * i + 1, 0) = corpuri[i].tau.f_y;
+            Q(3 * i, 0) = corpuri[i].tau.forta.x;
+            Q(3 * i + 1, 0) = corpuri[i].tau.forta.y;
             Q(3 * i + 2, 0) = corpuri[i].tau.moment;
         }
     }
 
     void sistem::plafonareViteze(){
        for(int i = 1; i < corpuri.size(); i++){
-            if(std::isnan(corpuri[i].v_x) || std::isnan(corpuri[i].v_y) || std::isnan(corpuri[i].x)) {
-                corpuri[i].v_x = 0.0f; corpuri[i].v_y = 0.0f; corpuri[i].omega = 0.0f;
-                corpuri[i].x = 0.0f; corpuri[i].y = 0.0f; corpuri[i].phi = 0.0f;
+            if(std::isnan(corpuri[i].viteza.x) || std::isnan(corpuri[i].viteza.y) || std::isnan(corpuri[i].pozitie.x)) {
+                corpuri[i].viteza.x = 0.0f; corpuri[i].viteza.y = 0.0f; corpuri[i].omega = 0.0f;
+                corpuri[i].pozitie.x = 0.0f; corpuri[i].pozitie.y = 0.0f; corpuri[i].phi = 0.0f;
             } else {
-                if(corpuri[i].v_x > viteza_maxima) corpuri[i].v_x = viteza_maxima;
-                else if(corpuri[i].v_x < -viteza_maxima) corpuri[i].v_x = -viteza_maxima;
+                if(corpuri[i].viteza.x > viteza_maxima) corpuri[i].viteza.x = viteza_maxima;
+                else if(corpuri[i].viteza.x < -viteza_maxima) corpuri[i].viteza.x = -viteza_maxima;
                 
-                if(corpuri[i].v_y > viteza_maxima) corpuri[i].v_y = viteza_maxima;
-                else if(corpuri[i].v_y < -viteza_maxima) corpuri[i].v_y = -viteza_maxima;
+                if(corpuri[i].viteza.y > viteza_maxima) corpuri[i].viteza.y = viteza_maxima;
+                else if(corpuri[i].viteza.y < -viteza_maxima) corpuri[i].viteza.y = -viteza_maxima;
                 
                 if(corpuri[i].omega > viteza_unghiulara_maxima) corpuri[i].omega = viteza_unghiulara_maxima;
                 else if(corpuri[i].omega < -viteza_unghiulara_maxima) corpuri[i].omega = -viteza_unghiulara_maxima;

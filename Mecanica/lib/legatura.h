@@ -6,11 +6,11 @@
 class legatura
 {
 public:
+    
     int contorCorpA;
     int contorCorpB;
-    bool activ = 1;
-
-    legatura();
+    bool activ = false;
+    legatura() = default;
 
     legatura(int a, int b) : contorCorpA(a), contorCorpB(b) {}
 
@@ -21,24 +21,22 @@ public:
     virtual void calculeazaConstrangereDerivate(matrice &F, int rand_start, const matrice &stare, int n) = 0;
     virtual void calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) = 0;
     virtual void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) = 0;
-    virtual float getAbscisa(matrice &stare) = 0;
-    virtual float getOrdonata(matrice &stare) = 0;
+    virtual vec2 getPozitie(std::vector<rigid> &corpuri) = 0;
     virtual void getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) = 0;
 };
 
 class articulatie : public legatura
 {
 private:
-    float l_xA, l_yA;
-    float l_xB, l_yB;
+    vec2 l_A;         //pozitiile pe A si pe B, in coodronatele lor locale
+    vec2 l_B;
 
 public:
     articulatie(int a, int b, float lxa, float lya, float lxb, float lyb);
 
     int getNumarEcuatii() const override;
 
-    float getAbscisa(matrice &stare) override;
-    float getOrdonata(matrice &stare) override;
+    vec2 getPozitie(std::vector<rigid> &corpuri) override;
 
     virtual void getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) override;
 
@@ -56,8 +54,8 @@ public:
 class incastrare : public legatura
 {
 private:
-    float l_xA, l_yA;
-    float l_xB, l_yB;
+    vec2 l_A;
+    vec2 l_B;
     float phi_0;
 
 public:
@@ -65,8 +63,7 @@ public:
 
     int getNumarEcuatii() const override;
 
-    float getAbscisa(matrice &stare) override;
-    float getOrdonata(matrice &stare) override;
+    vec2 getPozitie(std::vector<rigid> &corpuri) override;
 
     virtual void getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi);
 

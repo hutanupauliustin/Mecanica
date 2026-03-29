@@ -162,12 +162,12 @@ CMakeFiles/simulator.dir/src/main.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/tr1/riemann_zeta.tcc \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/legatura.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/rigid.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/arc.h \
  C:/Strawberry/c/include/c++/13.2.0/vector \
  C:/Strawberry/c/include/c++/13.2.0/bits/stl_uninitialized.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/stl_vector.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/stl_bvector.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/vector.tcc \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/arc.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/grafica.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/includes/glad/glad.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/includes/KHR/khrplatform.h \
@@ -175,5 +175,8 @@ CMakeFiles/simulator.dir/src/main.cpp.obj: \
  C:/Strawberry/c/x86_64-w64-mingw32/include/stdint.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/includes/GLFW/glfw3.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/input.h \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/editor.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/fizica.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/colliziune.h
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/colliziune.h \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/gui.h \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/scena.h

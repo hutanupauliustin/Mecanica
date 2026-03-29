@@ -344,6 +344,30 @@ src/colliziune.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/colliziune.cpp.s
 .PHONY : src/colliziune.cpp.s
 
+src/editor.obj: src/editor.cpp.obj
+.PHONY : src/editor.obj
+
+# target to build an object file
+src/editor.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/editor.cpp.obj
+.PHONY : src/editor.cpp.obj
+
+src/editor.i: src/editor.cpp.i
+.PHONY : src/editor.i
+
+# target to preprocess a source file
+src/editor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/editor.cpp.i
+.PHONY : src/editor.cpp.i
+
+src/editor.s: src/editor.cpp.s
+.PHONY : src/editor.s
+
+# target to generate assembly for a file
+src/editor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/editor.cpp.s
+.PHONY : src/editor.cpp.s
+
 src/fizica.obj: src/fizica.cpp.obj
 .PHONY : src/fizica.obj
 
@@ -560,6 +584,30 @@ src/rigid.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/rigid.cpp.s
 .PHONY : src/rigid.cpp.s
 
+src/scena.obj: src/scena.cpp.obj
+.PHONY : src/scena.obj
+
+# target to build an object file
+src/scena.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/scena.cpp.obj
+.PHONY : src/scena.cpp.obj
+
+src/scena.i: src/scena.cpp.i
+.PHONY : src/scena.i
+
+# target to preprocess a source file
+src/scena.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/scena.cpp.i
+.PHONY : src/scena.cpp.i
+
+src/scena.s: src/scena.cpp.s
+.PHONY : src/scena.s
+
+# target to generate assembly for a file
+src/scena.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/scena.cpp.s
+.PHONY : src/scena.cpp.s
+
 src/sistem.obj: src/sistem.cpp.obj
 .PHONY : src/sistem.obj
 
@@ -620,6 +668,9 @@ help:
 	@echo ... src/colliziune.obj
 	@echo ... src/colliziune.i
 	@echo ... src/colliziune.s
+	@echo ... src/editor.obj
+	@echo ... src/editor.i
+	@echo ... src/editor.s
 	@echo ... src/fizica.obj
 	@echo ... src/fizica.i
 	@echo ... src/fizica.s
@@ -647,6 +698,9 @@ help:
 	@echo ... src/rigid.obj
 	@echo ... src/rigid.i
 	@echo ... src/rigid.s
+	@echo ... src/scena.obj
+	@echo ... src/scena.i
+	@echo ... src/scena.s
 	@echo ... src/sistem.obj
 	@echo ... src/sistem.i
 	@echo ... src/sistem.s

@@ -4,19 +4,12 @@
 #include <iostream>
 #include "sistem.h"
 #include "input.h"
-
-void updateVerticesData(sistem &S, float* vertices);
+#include "editor.h"
 
 GLFWwindow* openGLWindow(unsigned int &shaderProgram);
 
 void initBuffers(unsigned int &VAO, unsigned int &VBO);
 
-void drawSystem(sistem &S, unsigned int VAO, unsigned int VBO, unsigned int shaderProgram, float* Buffer);
+void updateVerticesData(sistem &S, editor &E, float* vertices);
 
-// Functii GUI
-void setupGUI(GLFWwindow* window);
-void startFrameGUI();
-void renderPanouDeControl(float &dt, bool &running_flag, bool &arata_energie_flag, float t, float energie);
-void renderPanouDeAdaugatCorpuri(sistem &S);
-void endFrameGUI();
-void cleanupGUI();
+void drawSystem(sistem &S, editor &E, unsigned int VAO, unsigned int VBO, unsigned int shaderProgram, float* Buffer);

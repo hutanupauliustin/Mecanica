@@ -18,6 +18,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc/imgui_widgets.cpp" "CMakeFiles/simulator.dir/ImGuiSrc/imgui_widgets.cpp.obj" "gcc" "CMakeFiles/simulator.dir/ImGuiSrc/imgui_widgets.cpp.obj.d"
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/arc.cpp" "CMakeFiles/simulator.dir/src/arc.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/arc.cpp.obj.d"
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/colliziune.cpp" "CMakeFiles/simulator.dir/src/colliziune.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/colliziune.cpp.obj.d"
+  "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/editor.cpp" "CMakeFiles/simulator.dir/src/editor.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/editor.cpp.obj.d"
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/fizica.cpp" "CMakeFiles/simulator.dir/src/fizica.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/fizica.cpp.obj.d"
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/grafica.cpp" "CMakeFiles/simulator.dir/src/grafica.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/grafica.cpp.obj.d"
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/gui.cpp" "CMakeFiles/simulator.dir/src/gui.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/gui.cpp.obj.d"
@@ -26,6 +27,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/main.cpp" "CMakeFiles/simulator.dir/src/main.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/main.cpp.obj.d"
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/matrice.cpp" "CMakeFiles/simulator.dir/src/matrice.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/matrice.cpp.obj.d"
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/rigid.cpp" "CMakeFiles/simulator.dir/src/rigid.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/rigid.cpp.obj.d"
+  "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/scena.cpp" "CMakeFiles/simulator.dir/src/scena.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/scena.cpp.obj.d"
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/sistem.cpp" "CMakeFiles/simulator.dir/src/sistem.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/sistem.cpp.obj.d"
   )
 

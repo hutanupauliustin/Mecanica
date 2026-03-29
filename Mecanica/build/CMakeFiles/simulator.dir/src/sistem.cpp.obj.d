@@ -162,9 +162,9 @@ CMakeFiles/simulator.dir/src/sistem.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/tr1/riemann_zeta.tcc \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/legatura.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/rigid.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/arc.h \
  C:/Strawberry/c/include/c++/13.2.0/vector \
  C:/Strawberry/c/include/c++/13.2.0/bits/stl_uninitialized.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/stl_vector.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/stl_bvector.h \
- C:/Strawberry/c/include/c++/13.2.0/bits/vector.tcc
+ C:/Strawberry/c/include/c++/13.2.0/bits/vector.tcc \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/arc.h

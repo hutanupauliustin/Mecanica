@@ -60,6 +60,35 @@ CMakeFiles/simulator.dir/src/legatura.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/tr1/riemann_zeta.tcc \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/legatura.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/rigid.h \
+ C:/Strawberry/c/include/c++/13.2.0/vector \
+ C:/Strawberry/c/include/c++/13.2.0/bits/allocator.h \
+ C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/c++allocator.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/new_allocator.h \
+ C:/Strawberry/c/include/c++/13.2.0/new \
+ C:/Strawberry/c/include/c++/13.2.0/bits/exception.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/memoryfwd.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_construct.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_uninitialized.h \
+ C:/Strawberry/c/include/c++/13.2.0/ext/alloc_traits.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/alloc_traits.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_vector.h \
+ C:/Strawberry/c/include/c++/13.2.0/initializer_list \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_bvector.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/functional_hash.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/hash_bytes.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/refwrap.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/invoke.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_function.h \
+ C:/Strawberry/c/include/c++/13.2.0/backward/binders.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/range_access.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/vector.tcc \
+ C:/Strawberry/c/include/c++/13.2.0/bits/memory_resource.h \
+ C:/Strawberry/c/include/c++/13.2.0/cstddef \
+ C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stddef.h \
+ C:/Strawberry/c/x86_64-w64-mingw32/include/stddef.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/uses_allocator.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/uses_allocator_args.h \
+ C:/Strawberry/c/include/c++/13.2.0/tuple \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/matrice.h \
  C:/Strawberry/c/include/c++/13.2.0/cstdlib \
  C:/Strawberry/c/include/c++/13.2.0/iostream \
@@ -67,7 +96,6 @@ CMakeFiles/simulator.dir/src/legatura.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/ios \
  C:/Strawberry/c/include/c++/13.2.0/iosfwd \
  C:/Strawberry/c/include/c++/13.2.0/bits/stringfwd.h \
- C:/Strawberry/c/include/c++/13.2.0/bits/memoryfwd.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/postypes.h \
  C:/Strawberry/c/include/c++/13.2.0/cwchar \
  C:/Strawberry/c/x86_64-w64-mingw32/include/wchar.h \
@@ -77,14 +105,9 @@ CMakeFiles/simulator.dir/src/legatura.cpp.obj: \
  C:/Strawberry/c/x86_64-w64-mingw32/include/swprintf.inl \
  C:/Strawberry/c/x86_64-w64-mingw32/include/sec_api/wchar_s.h \
  C:/Strawberry/c/include/c++/13.2.0/exception \
- C:/Strawberry/c/include/c++/13.2.0/bits/exception.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/exception_ptr.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/cxxabi_init_exception.h \
- C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stddef.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/stddef.h \
  C:/Strawberry/c/include/c++/13.2.0/typeinfo \
- C:/Strawberry/c/include/c++/13.2.0/bits/hash_bytes.h \
- C:/Strawberry/c/include/c++/13.2.0/new \
  C:/Strawberry/c/include/c++/13.2.0/bits/nested_exception.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/char_traits.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/localefwd.h \
@@ -115,34 +138,16 @@ CMakeFiles/simulator.dir/src/legatura.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/atomic_word.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/locale_classes.h \
  C:/Strawberry/c/include/c++/13.2.0/string \
- C:/Strawberry/c/include/c++/13.2.0/bits/allocator.h \
- C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/c++allocator.h \
- C:/Strawberry/c/include/c++/13.2.0/bits/new_allocator.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/ostream_insert.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/cxxabi_forced.h \
- C:/Strawberry/c/include/c++/13.2.0/bits/stl_function.h \
- C:/Strawberry/c/include/c++/13.2.0/backward/binders.h \
- C:/Strawberry/c/include/c++/13.2.0/bits/refwrap.h \
- C:/Strawberry/c/include/c++/13.2.0/bits/invoke.h \
- C:/Strawberry/c/include/c++/13.2.0/bits/range_access.h \
- C:/Strawberry/c/include/c++/13.2.0/initializer_list \
  C:/Strawberry/c/include/c++/13.2.0/bits/basic_string.h \
- C:/Strawberry/c/include/c++/13.2.0/ext/alloc_traits.h \
- C:/Strawberry/c/include/c++/13.2.0/bits/alloc_traits.h \
- C:/Strawberry/c/include/c++/13.2.0/bits/stl_construct.h \
  C:/Strawberry/c/include/c++/13.2.0/string_view \
- C:/Strawberry/c/include/c++/13.2.0/bits/functional_hash.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/string_view.tcc \
  C:/Strawberry/c/include/c++/13.2.0/ext/string_conversions.h \
  C:/Strawberry/c/include/c++/13.2.0/cstdio \
  C:/Strawberry/c/include/c++/13.2.0/cerrno \
  C:/Strawberry/c/include/c++/13.2.0/bits/charconv.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/basic_string.tcc \
- C:/Strawberry/c/include/c++/13.2.0/bits/memory_resource.h \
- C:/Strawberry/c/include/c++/13.2.0/cstddef \
- C:/Strawberry/c/include/c++/13.2.0/bits/uses_allocator.h \
- C:/Strawberry/c/include/c++/13.2.0/bits/uses_allocator_args.h \
- C:/Strawberry/c/include/c++/13.2.0/tuple \
  C:/Strawberry/c/include/c++/13.2.0/bits/locale_classes.tcc \
  C:/Strawberry/c/include/c++/13.2.0/system_error \
  C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/error_constants.h \

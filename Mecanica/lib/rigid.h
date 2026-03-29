@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 #include <vector>
+#include "matrice.h"
 
 enum formaGeometrica{
     PUNCT,
@@ -49,7 +50,7 @@ struct geometrie{
 };
 
 struct FantomaUI {
-    bool activa = false;
+    bool activ = false;
     float x = 0.0f;
     float y = 0.0f;
     float phi = 0.0f;
@@ -60,13 +61,13 @@ struct FantomaUI {
 };
 
 struct torsor{
-        float f_x = 0,f_y = 0;
+        vec2 forta;
         float moment = 0;
 };
 
 struct fortaExterna{
-    float u_x,u_y;      //coordonatele versorului suport
-    float x,y;          //coordonatele punctului de aplicare in coordonate globale
+    vec2 u;                         //coordonatele versorului suport
+    vec2 punct_aplicatie;           //coordonatele punctului de aplicare in coordonate globale
     float modul;
 };
 
@@ -76,8 +77,10 @@ public:
     int index = 0; // Indexul corpului in vectorul sistemului
     bool activ = 1;
     
-    float x, y, phi;
-    float v_x, v_y, omega; // coordonatele centrului de greautea, si unghiul facut de sistemul de referinta propriu fata de cel universal
+    vec2 pozitie;
+    float  phi;
+    vec2 viteza;
+    float omega; // coordonatele centrului de greautea, si unghiul facut de sistemul de referinta propriu fata de cel universal
     torsor tau;
     float M, J;
     
@@ -96,17 +99,17 @@ public:
 
     void reducereTorsor();
 
-    void coordPunctPeCorp(float &punct_x, float &punct_y, float d_x, float d_y);                //d_x si d_y sunt coordonatele punctului fata de sistemul de referinta mobil al corpului
+    vec2 localToGlobal(vec2 punctLocal);
+    
+    vec2 globalToLocal(vec2 punctGlobal);
 
-    void vitezaPunctPeCorp(float &punct_v_x, float &punct_v_y, float d_x, float d_y);
+    vec2 vitezaAbsolutaPunct(vec2 punctLocal);
 
     void seteazaBoundingBox();                  // "deseneaza" o cutie dreptunghiulara cu laturile paralele cu axele OX si OY ale sistemului, care sa cuprinda intreg rigidul
     
-    // Creeaza o Bara (Dreptunghiulara)
     static rigid Bara( float x, float y, float Lungime, float Grosime, float Masa);
 
     static rigid Disc( float x, float y, float Raza, float Masa);
 
-    // Creeaza un punct fix (Lumea)
     static rigid Fix( float x, float y);
 };

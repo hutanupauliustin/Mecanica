@@ -4,31 +4,16 @@
 
 
     articulatie::articulatie(int a, int b, float lxa, float lya, float lxb, float lyb)
-        : legatura(a, b), l_xA(lxa), l_yA(lya), l_xB(lxb), l_yB(lyb) {}
+        : legatura(a, b), l_A(lxa,lya), l_B(lxb, lyb){}
 
     int articulatie::getNumarEcuatii() const 
     {
         return 2;
     }
 
-    float articulatie::getAbscisa(matrice &stare) {
-        
-        int idxA = contorCorpA * 3;
-        float xA = stare(idxA + 0, 0);
-        float yA = stare(idxA + 1, 0);
-        float phiA = stare(idxA + 2, 0);
-
-        return xA + this->l_xA * std::cos(phiA) - this->l_yA * std::sin(phiA);
-    }
-
-    float articulatie::getOrdonata(matrice &stare) {
-        
-        int idxA = contorCorpA * 3;
-        float xA = stare(idxA + 0, 0);
-        float yA = stare(idxA + 1, 0);
-        float phiA = stare(idxA + 2, 0);
-
-        return yA + this->l_xA * std::sin(phiA) + this->l_yA * std::cos(phiA);
+    vec2 articulatie::getPozitie(std::vector<rigid> &corpuri){
+    
+        return corpuri[contorCorpA].localToGlobal(l_A);
     }
 
     void articulatie::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) {
@@ -55,8 +40,8 @@
         float sinB = std::sin(phiB);
         float cosB = std::cos(phiB);
 
-        F(rand_start, 0) = xA + this->l_xA * cosA - this->l_yA * sinA - (xB + this->l_xB *cosB - this->l_yB * sinB);
-        F(rand_start + 1, 0) = yA + this->l_xA * sinA + this->l_yA * cosA - (yB + this->l_xB * sinB + this->l_yB * cosB);
+        F(rand_start, 0) = xA + this->l_A.x * cosA - this->l_A.y * sinA - (xB + this->l_B.x *cosB - this->l_B.y * sinB);
+        F(rand_start + 1, 0) = yA + this->l_A.x * sinA + this->l_A.y * cosA - (yB + this->l_B.x * sinB + this->l_B.y * cosB);
 
     }
 
@@ -87,8 +72,8 @@
         float sinB = std::sin(phiB);
         float cosB = std::cos(phiB);
 
-        Fpunct(rand_start, 0) = vxA - phiPunctA* this->l_xA * sinA - phiPunctA*this->l_yA * cosA - (vxB - phiPunctB* this->l_xB *sinB - phiPunctB*this->l_yB * cosB);
-        Fpunct(rand_start + 1, 0) = vyA + phiPunctA*this->l_xA * cosA - phiPunctA*this->l_yA * sinA - (vyB + phiPunctB*this->l_xB * cosB - phiPunctB*this->l_yB * sinB);
+        Fpunct(rand_start, 0) = vxA - phiPunctA* this->l_A.x * sinA - phiPunctA*this->l_A.y * cosA - (vxB - phiPunctB* this->l_B.x *sinB - phiPunctB*this->l_B.y * cosB);
+        Fpunct(rand_start + 1, 0) = vyA + phiPunctA*this->l_A.x * cosA - phiPunctA*this->l_A.y * sinA - (vyB + phiPunctB*this->l_B.x * cosB - phiPunctB*this->l_B.y * sinB);
 
     }
 
@@ -108,20 +93,20 @@
     // randul lui f_p+1 -- constrangerea pe OX
     J_F(rand_start, idxA + 0) = 1.0f;                       // coloana x_A
     J_F(rand_start, idxA + 1) = 0.0f;                       // coloana y_A
-    J_F(rand_start, idxA + 2) = -l_xA * sinA - l_yA * cosA; // coloana phi_A
+    J_F(rand_start, idxA + 2) = -l_A.x * sinA - l_A.y * cosA; // coloana phi_A
 
     J_F(rand_start, idxB + 0) = -1.0f;                      // coloana x_B
     J_F(rand_start, idxB + 1) = 0.0f;                       // coloana y_B
-    J_F(rand_start, idxB + 2) = l_xB * sinB + l_yB * cosB;  // coloana phi_B
+    J_F(rand_start, idxB + 2) = l_B.x * sinB + l_B.y * cosB;  // coloana phi_B
 
     // randul lui f_p+2 -- constrangerea pe OY
     J_F(rand_start + 1, idxA + 0) = 0.0f;                      // coloana x_A
     J_F(rand_start + 1, idxA + 1) = 1.0f;                      // coloana y_A
-    J_F(rand_start + 1, idxA + 2) = l_xA * cosA - l_yA * sinA; // coloana phi_A
+    J_F(rand_start + 1, idxA + 2) = l_A.x * cosA - l_A.y * sinA; // coloana phi_A
 
     J_F(rand_start + 1, idxB + 0) = 0.0f;                      // coloana x_B
     J_F(rand_start + 1, idxB + 1) = -1.0f;                     // coloana y_B
-    J_F(rand_start + 1, idxB + 2) = -l_xB * cosB + l_yB * sinB; // coloana phi_B
+    J_F(rand_start + 1, idxB + 2) = -l_B.x * cosB + l_B.y * sinB; // coloana phi_B
 }
 
     void articulatie::calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) {
@@ -145,64 +130,50 @@
         // Termenii -J_dot * q_dot
         
         // Componenta X
-        float termA_X = -l_xA * (phiPunctA * phiPunctA) * cosA + l_yA * (phiPunctA * phiPunctA) * sinA;
-        float termB_X = l_xB * (phiPunctB * phiPunctB) * cosB - l_yB * (phiPunctB * phiPunctB) * sinB;
+        float termA_X = -l_A.x * (phiPunctA * phiPunctA) * cosA + l_A.y * (phiPunctA * phiPunctA) * sinA;
+        float termB_X = l_B.x * (phiPunctB * phiPunctB) * cosB - l_B.y * (phiPunctB * phiPunctB) * sinB;
         
         JdotQ(rand_start, 0) = termA_X + termB_X; 
         
         // Componenta Y
-        float termA_Y = -l_xA * (phiPunctA * phiPunctA) * sinA - l_yA * (phiPunctA * phiPunctA) * cosA;
-        float termB_Y = l_xB * (phiPunctB * phiPunctB) * sinB + l_yB * (phiPunctB * phiPunctB) * cosB;
+        float termA_Y = -l_A.x * (phiPunctA * phiPunctA) * sinA - l_A.y * (phiPunctA * phiPunctA) * cosA;
+        float termB_Y = l_B.x * (phiPunctB * phiPunctB) * sinB + l_B.y * (phiPunctB * phiPunctB) * cosB;
         
         JdotQ(rand_start + 1, 0) = termA_Y + termB_Y;
     }  
 
     // --- FACTORY METHOD ---
-    // Permite definirea articulatiei folosind coordonate GLOBALE (mult mai usor de vizualizat)
+    // Permite definirea articulatiei folosind coordonate GLOBALE 
     articulatie* articulatie::Creaza(rigid& A, rigid& B, float globalX, float globalY) {
         // Calculam vectorul de la centrul corpului la punctul de legatura (in coordonate globale)
-        float dxA = globalX - A.x;
-        float dyA = globalY - A.y;
+        float dxA = globalX - A.pozitie.x;
+        float dyA = globalY - A.pozitie.y;
         
-        float dxB = globalX - B.x;
-        float dyB = globalY - B.y;
+        float dxB = globalX - B.pozitie.x;
+        float dyB = globalY - B.pozitie.y;
 
-        float l_xA = dxA * std::cos(A.phi) + dyA * std::sin(A.phi);
-        float l_yA = -dxA * std::sin(A.phi) + dyA * std::cos(A.phi);
+        float local_lAx = dxA * std::cos(A.phi) + dyA * std::sin(A.phi);
+        float local_lAy = -dxA * std::sin(A.phi) + dyA * std::cos(A.phi);
 
-        float l_xB = dxB * std::cos(B.phi) + dyB * std::sin(B.phi);
-        float l_yB = -dxB * std::sin(B.phi) + dyB * std::cos(B.phi);
+        float local_lBx = dxB * std::cos(B.phi) + dyB * std::sin(B.phi);
+        float local_lBy = -dxB * std::sin(B.phi) + dyB * std::cos(B.phi);
 
-        return new articulatie(A.index, B.index, l_xA, l_yA, l_xB, l_yB);
+        return new articulatie(A.index, B.index, local_lAx, local_lAy, local_lBx, local_lBy);
     }
 
     incastrare::incastrare(int a, int b, float lxa, float lya, float lxb, float lyb, float unghiInitial)
-        : legatura(a, b), l_xA(lxa), l_yA(lya), l_xB(lxb), l_yB(lyb), phi_0(unghiInitial) {}
+        : legatura(a, b), l_A(lxa, lya), l_B(lxb, lyb), phi_0(unghiInitial) {}
 
     int incastrare::getNumarEcuatii() const 
     {
         return 3;
     }
 
-    float incastrare::getAbscisa(matrice &stare) {
-        
-        int idxA = contorCorpA * 3;
-        float xA = stare(idxA + 0, 0);
-        float yA = stare(idxA + 1, 0);
-        float phiA = stare(idxA + 2, 0);
-
-        return xA + this->l_xA * std::cos(phiA) - this->l_yA * std::sin(phiA);
+    vec2 incastrare::getPozitie(std::vector<rigid> &corpuri){
+    
+        return corpuri[contorCorpA].localToGlobal(l_A);
     }
 
-    float incastrare::getOrdonata(matrice &stare) {
-        
-        int idxA = contorCorpA * 3;
-        float xA = stare(idxA + 0, 0);
-        float yA = stare(idxA + 1, 0);
-        float phiA = stare(idxA + 2, 0);
-
-        return yA + this->l_xA * std::sin(phiA) + this->l_yA * std::cos(phiA);
-    }
 
          void incastrare::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) {
         int idxA = contorCorpA * 3;
@@ -231,8 +202,8 @@
         float sinB = std::sin(phiB);
         float cosB = std::cos(phiB);
 
-        F(rand_start, 0) = xA + this->l_xA * cosA - this->l_yA * sinA - (xB + this->l_xB *cosB - this->l_yB * sinB);
-        F(rand_start + 1, 0) = yA + this->l_xA * sinA + this->l_yA * cosA - (yB + this->l_xB * sinB + this->l_yB * cosB);
+        F(rand_start, 0) = xA + this->l_A.x * cosA - this->l_A.y * sinA - (xB + this->l_B.x *cosB - this->l_B.y * sinB);
+        F(rand_start + 1, 0) = yA + this->l_A.x * sinA + this->l_A.y * cosA - (yB + this->l_B.x * sinB + this->l_B.y * cosB);
         F(rand_start + 2, 0) = phiA - phiB - phi_0;
 
 
@@ -265,8 +236,8 @@
         float sinB = std::sin(phiB);
         float cosB = std::cos(phiB);
 
-        Fpunct(rand_start, 0) = vxA - phiPunctA* this->l_xA * sinA - phiPunctA*this->l_yA * cosA - (vxB - phiPunctB* this->l_xB *sinB - phiPunctB*this->l_yB * cosB);
-        Fpunct(rand_start + 1, 0) = vyA + phiPunctA*this->l_xA * cosA - phiPunctA*this->l_yA * sinA - (vyB + phiPunctB*this->l_xB * cosB - phiPunctB*this->l_yB * sinB);
+        Fpunct(rand_start, 0) = vxA - phiPunctA* this->l_A.x * sinA - phiPunctA*this->l_A.y * cosA - (vxB - phiPunctB* this->l_B.x *sinB - phiPunctB*this->l_B.y * cosB);
+        Fpunct(rand_start + 1, 0) = vyA + phiPunctA*this->l_A.x * cosA - phiPunctA*this->l_A.y * sinA - (vyB + phiPunctB*this->l_B.x * cosB - phiPunctB*this->l_B.y * sinB);
         Fpunct(rand_start + 2, 0) = phiPunctA - phiPunctB;
 
     }
@@ -287,21 +258,21 @@
 
         J_F(rand_start, indexA + 0) = 1.0f;                       // indexA + 0 este x_A
         J_F(rand_start, indexA + 1) = 0.0f;                       // indexA + 1 este y_A
-        J_F(rand_start, indexA + 2) = -l_xA * sinA - l_yA * cosA; // indexA + 2 este phi_A
+        J_F(rand_start, indexA + 2) = -l_A.x * sinA - l_A.y * cosA; // indexA + 2 este phi_A
 
         J_F(rand_start, indexB + 0) = -1.0f;
         J_F(rand_start, indexB + 1) = 0.0f;
-        J_F(rand_start, indexB + 2) = l_xB * sinB + l_yB * cosB;
+        J_F(rand_start, indexB + 2) = l_B.x * sinB + l_B.y * cosB;
 
         // randul lui f_p+2 -- constrangerea pe OY
 
         J_F(rand_start + 1, indexA + 0) = 0.0f;                      // indexA + 0 este x_A
         J_F(rand_start + 1, indexA + 1) = 1.0f;                      // indexA + 1 este y_A
-        J_F(rand_start + 1, indexA + 2) = l_xA * cosA - l_yA * sinA; // indexA + 2 este phi_A
+        J_F(rand_start + 1, indexA + 2) = l_A.x * cosA - l_A.y * sinA; // indexA + 2 este phi_A
 
         J_F(rand_start + 1, indexB + 0) = 0.0f;
         J_F(rand_start + 1, indexB + 1) = -1.0f;
-        J_F(rand_start + 1, indexB + 2) = -l_xB * cosB + l_yB * sinB;
+        J_F(rand_start + 1, indexB + 2) = -l_B.x * cosB + l_B.y * sinB;
 
         // randul lui f_p+3 -- constrangerea fata de Phi
 
@@ -329,13 +300,13 @@
         float sinB = std::sin(phiB); float cosB = std::cos(phiB);
 
         // Componenta X (Identic ca la articulatie)
-        float termA_X = -l_xA * (phiPunctA * phiPunctA) * cosA + l_yA * (phiPunctA * phiPunctA) * sinA;
-        float termB_X = l_xB * (phiPunctB * phiPunctB) * cosB - l_yB * (phiPunctB * phiPunctB) * sinB;
+        float termA_X = -l_A.x * (phiPunctA * phiPunctA) * cosA + l_A.y * (phiPunctA * phiPunctA) * sinA;
+        float termB_X = l_B.x * (phiPunctB * phiPunctB) * cosB - l_B.y * (phiPunctB * phiPunctB) * sinB;
         JdotQ(rand_start, 0) = termA_X + termB_X; 
         
         // Componenta Y (Identic ca la articulatie)
-        float termA_Y = -l_xA * (phiPunctA * phiPunctA) * sinA - l_yA * (phiPunctA * phiPunctA) * cosA;
-        float termB_Y = l_xB * (phiPunctB * phiPunctB) * sinB + l_yB * (phiPunctB * phiPunctB) * cosB;
+        float termA_Y = -l_A.x * (phiPunctA * phiPunctA) * sinA - l_A.y * (phiPunctA * phiPunctA) * cosA;
+        float termB_Y = l_B.x * (phiPunctB * phiPunctB) * sinB + l_B.y * (phiPunctB * phiPunctB) * cosB;
         JdotQ(rand_start + 1, 0) = termA_Y + termB_Y;
 
         // Componenta pe unghi (E zero)
@@ -343,19 +314,19 @@
     }
 
     incastrare* incastrare:: Creaza(rigid& A, rigid& B, float globalX, float globalY) {
-        float dxA = globalX - A.x;
-        float dyA = globalY - A.y;
-        float dxB = globalX - B.x;
-        float dyB = globalY - B.y;
+        float dxA = globalX - A.pozitie.x;
+        float dyA = globalY - A.pozitie.y;
+        float dxB = globalX - B.pozitie.x;
+        float dyB = globalY - B.pozitie.y;
 
-        float l_xA = dxA * std::cos(A.phi) + dyA * std::sin(A.phi);
-        float l_yA = -dxA * std::sin(A.phi) + dyA * std::cos(A.phi);
+        float local_lAx = dxA * std::cos(A.phi) + dyA * std::sin(A.phi);
+        float local_lAy = -dxA * std::sin(A.phi) + dyA * std::cos(A.phi);
 
-        float l_xB = dxB * std::cos(B.phi) + dyB * std::sin(B.phi);
-        float l_yB = -dxB * std::sin(B.phi) + dyB * std::cos(B.phi);
+        float local_lBx = dxB * std::cos(B.phi) + dyB * std::sin(B.phi);
+        float local_lBy = -dxB * std::sin(B.phi) + dyB * std::cos(B.phi);
 
         // 2. Calculam diferenta de unghi initiala
         float phi0 = A.phi - B.phi;
 
-        return new incastrare(A.index, B.index, l_xA, l_yA, l_xB, l_yB, phi0);
+        return new incastrare(A.index, B.index, local_lAx, local_lAy, local_lBx, local_lBy, phi0);
     }

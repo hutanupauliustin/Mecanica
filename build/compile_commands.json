@@ -1,15 +1,15 @@
 [
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\arc.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\arc.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\arc.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\arc.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\main.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\main.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\main.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\main.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\colliziune.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\colliziune.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\colliziune.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\colliziune.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\sistem.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\sistem.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\sistem.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\sistem.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
@@ -19,15 +19,9 @@
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -o CMakeFiles\\simulator.dir\\src\\glad.c.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\glad.c",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\glad.c",
-  "output": "CMakeFiles\\simulator.dir\\src\\glad.c.obj"
-},
-{
-  "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\grafica.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\grafica.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\grafica.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\grafica.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\input.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\input.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\input.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\input.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
@@ -37,27 +31,27 @@
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\input.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\input.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\input.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\input.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\grafica.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\grafica.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\grafica.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\grafica.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\legatura.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\legatura.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\legatura.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\legatura.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\colliziune.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\colliziune.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\colliziune.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\colliziune.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\main.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\main.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\main.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\main.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\editor.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\editor.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\editor.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\editor.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\matrice.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\matrice.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\matrice.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\matrice.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\scena.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\scena.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\scena.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\scena.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
@@ -67,9 +61,27 @@
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\sistem.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\sistem.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\sistem.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\sistem.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\arc.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\arc.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\arc.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\arc.cpp.obj"
+},
+{
+  "directory": "C:/Users/Paul/Desktop/Mecanica/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\legatura.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\legatura.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\legatura.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\legatura.cpp.obj"
+},
+{
+  "directory": "C:/Users/Paul/Desktop/Mecanica/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\matrice.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\matrice.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\matrice.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\matrice.cpp.obj"
+},
+{
+  "directory": "C:/Users/Paul/Desktop/Mecanica/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -o CMakeFiles\\simulator.dir\\src\\glad.c.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\glad.c",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\glad.c",
+  "output": "CMakeFiles\\simulator.dir\\src\\glad.c.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",

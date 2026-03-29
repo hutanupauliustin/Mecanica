@@ -8,10 +8,26 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Colectam automat toate fisierele sursa (.cpp si .c)
-file(GLOB PROJECT_SOURCES "src/*.cpp" "src/*.c")
+set(PROJECT_SOURCES
+    src/main.cpp
+    src/sistem.cpp
+    src/fizica.cpp
+    src/input.cpp
+    src/gui.cpp
+    src/grafica.cpp
+    src/colliziune.cpp
+    src/editor.cpp
+    src/scena.cpp
+    src/rigid.cpp
+    src/arc.cpp
+    src/legatura.cpp
+    src/matrice.cpp
+    src/glad.c
+)
+
 file(GLOB IMGUI_SOURCES "ImGuiSrc/*.cpp")
 
-# Cream executabilul final din toate sursele
+# Cream executabilul final
 add_executable(simulator ${PROJECT_SOURCES} ${IMGUI_SOURCES})
 
 # Ii spunem compilatorului unde sa caute fisierele header (.h)

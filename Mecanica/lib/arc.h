@@ -9,8 +9,8 @@ class arc{
     int contorCorpB;
     bool activ = 1;
 
-    float l_xA, l_yA;
-    float l_xB, l_yB;
+    vec2 l_A;
+    vec2 l_B;
 
     float lungime_0;
     float k,d;  // k--constanta elastica d--constanda de dampening

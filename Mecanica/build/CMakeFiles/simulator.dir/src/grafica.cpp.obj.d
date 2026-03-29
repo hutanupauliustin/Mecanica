@@ -182,4 +182,5 @@ CMakeFiles/simulator.dir/src/grafica.cpp.obj: \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/legatura.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/rigid.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/arc.h \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/editor.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/grafica.h

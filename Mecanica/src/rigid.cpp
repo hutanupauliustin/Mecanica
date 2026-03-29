@@ -1,7 +1,7 @@
 #include "cmath"
 #include "rigid.h"
 
-    rigid::rigid() :  x(0), y(0), phi(0), v_x(0), v_y(0), omega(0), M(1), J(1){
+rigid::rigid() : pozitie(0.0f, 0.0f), phi(0.0f), viteza(0.0f, 0.0f), omega(0.0f), M(1.0f), J(1.0f) {
         collider.tip = PUNCT;
         collider.dimensiune1 = 1.0f;
         collider.dimensiune2 = 1.0f;
@@ -10,30 +10,64 @@
     }
 
     rigid::rigid (float x_initial, float y_initial, float phi_initial, float masa, float momentInertie)
-        :  x(x_initial), y(y_initial), phi(phi_initial), M(masa), J(momentInertie), v_x(0), v_y(0), omega(0){}
-
+        : pozitie(x_initial, y_initial), phi(phi_initial), M(masa), J(momentInertie), viteza(0.0f, 0.0f), omega(0.0f) {}
+        
     void rigid::adauagaForte(float modul_forta, float x_aplicare, float y_aplicare, float u_x, float u_y ){
         fortaExterna F;
         F.modul = modul_forta;
-        F.u_x = u_x;
-        F.u_y = u_y;
-        F.x = x_aplicare;
-        F.y = y_aplicare;
+        F.u = vec2(u_x, u_y);
+        F.punct_aplicatie = vec2(x_aplicare, y_aplicare);
         forte.push_back(F);
+    }
+
+    vec2 rigid::localToGlobal(vec2 punctLocal) {
+        float cos_phi = std::cos(phi);
+        float sin_phi = std::sin(phi);
+        
+        vec2 punctRotit(
+            punctLocal.x * cos_phi - punctLocal.y * sin_phi,
+            punctLocal.x * sin_phi + punctLocal.y * cos_phi
+        );
+        
+        return pozitie + punctRotit;
+    }
+
+    vec2 rigid::vitezaAbsolutaPunct(vec2 punctLocal) {
+        vec2 v_rotatie(
+            -punctLocal.y * omega,
+             punctLocal.x * omega
+        );
+        return viteza + v_rotatie;
+    }
+
+    vec2 rigid::globalToLocal(vec2 punctGlobal) {
+        vec2 d = punctGlobal - pozitie;
+        float cos_phi = std::cos(phi);
+        float sin_phi = std::sin(phi);
+        
+        return vec2(
+            d.x * cos_phi + d.y * sin_phi,
+            -d.x * sin_phi + d.y * cos_phi
+        );
     }
 
     void rigid::aflaForteProprii(float g)
     {
+        tau.forta.x = 0;
+        tau.forta.y = 0;
+        tau.moment = 0;
+
         // Daca masa este foarte mare (infinita), consideram corpul fix si nu ii aplicam greutate
         // pentru a evita erori matematice (Infinity * ceva = NaN)
         if(M > 1e10f) {
             ;
         } else {
             
+            tau.forta.y -= M*g;
 
             float drag = collider.coeficientAerodinamic;
-            tau.f_x -= drag * v_x;
-            tau.f_y -= drag * v_y;
+            tau.forta.x -= drag * viteza.x;
+            tau.forta.y -= drag * viteza.y;
             tau.moment -= drag * omega * 0.5f;
         }
     }
@@ -42,21 +76,16 @@
         
         for(int i = 0; i < this->forte.size(); i++){
             fortaExterna F = this->forte[i];
-            this->tau.f_x += F.modul * F.u_x;
-            this->tau.f_y += F.modul * F.u_y;
-            this->tau.moment += F.x * F.modul * F.u_y - F.y *F.modul * F.u_x;
+            vec2 vector_forta = F.u * F.modul;
+            vec2 r = F.punct_aplicatie - pozitie;
+
+            this->tau.forta += vector_forta;
+            this->tau.moment += r.vectorial(vector_forta);
         }
+
+        forte.clear();
     }
 
-    void rigid::coordPunctPeCorp(float &punct_x, float &punct_y, float d_x, float d_y){                //d_x si d_y sunt coordonatele punctului fata de sistemul de referinta mobil al corpului
-        punct_x = x + d_x* cos(phi) - d_y * sin(phi);
-        punct_y = y + d_x* sin(phi) + d_y * cos(phi);
-    }
-
-    void rigid::vitezaPunctPeCorp(float &punct_v_x, float &punct_v_y, float d_x, float d_y){
-        punct_v_x = v_x  - d_y * omega;
-        punct_v_y = v_y  + d_x * omega;
-    }
     
     void rigid::seteazaBoundingBox(){                  // "deseneaza" o cutie dreptunghiulara cu laturile paralele cu axele OX si OY ale sistemului, care sa cuprinda intreg rigidul
         
@@ -85,7 +114,7 @@
     rigid rigid::Bara( float x, float y, float Lungime, float Grosime, float Masa) {
         rigid r;
         r.index = 0;
-        r.x = x; r.y = y;
+        r.pozitie = vec2(x, y);
         r.collider.dimensiune1 = Lungime; 
         r.collider.dimensiune2 = Grosime;
         r.M = Masa;
@@ -98,7 +127,7 @@
     rigid rigid::Disc( float x, float y, float Raza, float Masa) {
         rigid r;
         r.index = 0;
-        r.x = x; r.y = y;
+        r.pozitie = vec2(x, y);
         r.collider.dimensiune1 = Raza;
         r.collider.dimensiune2 = Raza;
         r.M = Masa;
@@ -112,7 +141,7 @@
     rigid rigid::Fix( float x, float y) {
         rigid r;
         r.index = 0;
-        r.x = x; r.y = y;
+        r.pozitie = vec2(x, y);
         r.M = 1e12f; // Masa infinita
         r.J = 1e12f;
         r.collider.dimensiune1 = 0.0f;

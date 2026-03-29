@@ -1,24 +1,8 @@
-CMakeFiles/simulator.dir/src/gui.cpp.obj: \
- C:\Users\Paul\Desktop\Mecanica\Mecanica\src\gui.cpp \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib/imgui.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib/imconfig.h \
- C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/float.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/float.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/crtdefs.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/corecrt.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/_mingw.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/_mingw_mac.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/_mingw_secapi.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/vadefs.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h \
- C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stdarg.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/stdarg.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/_mingw_stdarg.h \
- C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stddef.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/stddef.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/string.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/sec_api/string_s.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/assert.h \
+CMakeFiles/simulator.dir/src/editor.cpp.obj: \
+ C:\Users\Paul\Desktop\Mecanica\Mecanica\src\editor.cpp \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/editor.h \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/sistem.h \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/matrice.h \
  C:/Strawberry/c/include/c++/13.2.0/stdlib.h \
  C:/Strawberry/c/include/c++/13.2.0/cstdlib \
  C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/c++config.h \
@@ -26,22 +10,22 @@ CMakeFiles/simulator.dir/src/gui.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/cpu_defines.h \
  C:/Strawberry/c/include/c++/13.2.0/pstl/pstl_config.h \
  C:/Strawberry/c/x86_64-w64-mingw32/include/stdlib.h \
+ C:/Strawberry/c/x86_64-w64-mingw32/include/corecrt.h \
+ C:/Strawberry/c/x86_64-w64-mingw32/include/_mingw.h \
+ C:/Strawberry/c/x86_64-w64-mingw32/include/_mingw_mac.h \
+ C:/Strawberry/c/x86_64-w64-mingw32/include/_mingw_secapi.h \
+ C:/Strawberry/c/x86_64-w64-mingw32/include/vadefs.h \
+ C:/Strawberry/c/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h \
  C:/Strawberry/c/x86_64-w64-mingw32/include/corecrt_wstdlib.h \
  C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/limits.h \
  C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/syslimits.h \
  C:/Strawberry/c/x86_64-w64-mingw32/include/limits.h \
+ C:/Strawberry/c/x86_64-w64-mingw32/include/crtdefs.h \
  C:/Strawberry/c/x86_64-w64-mingw32/include/sec_api/stdlib_s.h \
  C:/Strawberry/c/x86_64-w64-mingw32/include/malloc.h \
  C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/mm_malloc.h \
  C:/Strawberry/c/x86_64-w64-mingw32/include/errno.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/std_abs.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib/imgui_impl_glfw.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib/imgui_impl_opengl3.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/includes/glad/glad.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/includes/KHR/khrplatform.h \
- C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stdint.h \
- C:/Strawberry/c/x86_64-w64-mingw32/include/stdint.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/includes/GLFW/glfw3.h \
  C:/Strawberry/c/include/c++/13.2.0/iostream \
  C:/Strawberry/c/include/c++/13.2.0/bits/requires_hosted.h \
  C:/Strawberry/c/include/c++/13.2.0/ostream \
@@ -62,6 +46,8 @@ CMakeFiles/simulator.dir/src/gui.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/bits/exception_ptr.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/exception_defines.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/cxxabi_init_exception.h \
+ C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stddef.h \
+ C:/Strawberry/c/x86_64-w64-mingw32/include/stddef.h \
  C:/Strawberry/c/include/c++/13.2.0/typeinfo \
  C:/Strawberry/c/include/c++/13.2.0/bits/hash_bytes.h \
  C:/Strawberry/c/include/c++/13.2.0/new \
@@ -159,9 +145,6 @@ CMakeFiles/simulator.dir/src/gui.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/bits/ostream.tcc \
  C:/Strawberry/c/include/c++/13.2.0/istream \
  C:/Strawberry/c/include/c++/13.2.0/bits/istream.tcc \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/grafica.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/sistem.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/matrice.h \
  C:/Strawberry/c/include/c++/13.2.0/cmath \
  C:/Strawberry/c/x86_64-w64-mingw32/include/math.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/specfun.h \
@@ -186,5 +169,11 @@ CMakeFiles/simulator.dir/src/gui.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/bits/stl_bvector.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/vector.tcc \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/arc.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/input.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/editor.h
+ C:/Strawberry/c/include/c++/13.2.0/algorithm \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_algo.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/algorithmfwd.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_heap.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/uniform_int_dist.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_tempbuf.h \
+ C:/Strawberry/c/include/c++/13.2.0/pstl/glue_algorithm_defs.h \
+ C:/Strawberry/c/include/c++/13.2.0/pstl/execution_defs.h

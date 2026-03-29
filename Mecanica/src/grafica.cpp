@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "input.h"
 #include "grafica.h"
+#include "editor.h"
 
 // --- 1. VERTEX SHADER ---
 const char *vertexShaderSource = "#version 330 core\n"
@@ -130,7 +131,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "    FragColor = vec4(fColor.rgb + finalGlow, fColor.a);\n"
     "}\0";
 
-void updateVerticesData(sistem &S, float* vertices){
+void updateVerticesData(sistem &S, editor &E, float* vertices){
     // 11 float-uri: [x, y, phi, width, height, type, r, g, b, a, selectat]
     int stride = 11;
     int pct_curent = 0; // Contor global pentru pozitia in buffer
@@ -156,8 +157,8 @@ void updateVerticesData(sistem &S, float* vertices){
             continue;
         }
 
-        vertices[idx + 0] = S.corpuri[i].x;
-        vertices[idx + 1] = S.corpuri[i].y;
+        vertices[idx + 0] = S.corpuri[i].pozitie.x;
+        vertices[idx + 1] = S.corpuri[i].pozitie.y;
         vertices[idx + 2] = S.corpuri[i].phi;
 
         if(S.corpuri[i].collider.tip == CERC){
@@ -169,7 +170,7 @@ void updateVerticesData(sistem &S, float* vertices){
         }
 
         float alpha = S.corpuri[i].collider.culoare.a;
-        if (S.mod_curent == 1 && S.corpuri[i].collider.cadru != S.cadru_activ && S.corpuri[i].collider.obiectVirtual == 0) {
+        if (E.mod_curent == 1 && S.corpuri[i].collider.cadru != E.cadru_activ && S.corpuri[i].collider.obiectVirtual == 0) {
             alpha *= 0.2f; 
         }
 
@@ -194,8 +195,10 @@ void updateVerticesData(sistem &S, float* vertices){
             continue;
         }
 
-        vertices[idx + 0] = S.legaturi[i]->getAbscisa(S.stare);
-        vertices[idx + 1] = S.legaturi[i]->getOrdonata(S.stare); 
+        vec2 poz = S.legaturi[i]->getPozitie(S.corpuri);
+
+        vertices[idx + 0] = poz.x;
+        vertices[idx + 1] = poz.y;
         float widht, height, phi;
         int type;
         S.legaturi[i]->getGraphics(S.stare,type, widht, height, phi); 
@@ -223,18 +226,16 @@ void updateVerticesData(sistem &S, float* vertices){
             continue;
         }
 
-        float x1, y1, x2, y2;
-        S.corpuri[S.arcuri[i].contorCorpA].coordPunctPeCorp(x1, y1, S.arcuri[i].l_xA, S.arcuri[i].l_yA);
-        S.corpuri[S.arcuri[i].contorCorpB].coordPunctPeCorp(x2, y2, S.arcuri[i].l_xB, S.arcuri[i].l_yB);
-
-        float dx = x2 - x1;
-        float dy = y2 - y1;
-        float phi = std::atan2(y2 - y1, x2 - x1);
-        float lungime_curenta = std::sqrt(dx * dx + dy * dy);
+        vec2 p1 = S.corpuri[S.arcuri[i].contorCorpA].localToGlobal(S.arcuri[i].l_A);
+        vec2 p2 = S.corpuri[S.arcuri[i].contorCorpB].localToGlobal(S.arcuri[i].l_B);
+        
+        vec2 diferenta = p2 - p1;
+        float phi = std::atan2(diferenta.y , diferenta.x);
+        float lungime_curenta = diferenta.modul();
         float lungime_repaus = S.arcuri[i].lungime_0;
 
-        vertices[idx + 0] = (x1 + x2 )/ 2.0f;
-        vertices[idx + 1] = (y1 + y2 )/ 2.0f;
+        vertices[idx + 0] = (p1.x + p2.x )/ 2.0f;
+        vertices[idx + 1] = (p1.y + p2.y )/ 2.0f;
         vertices[idx + 2] = phi;
         vertices[idx + 3] = lungime_curenta; 
         vertices[idx + 4] = lungime_repaus;       
@@ -249,31 +250,38 @@ void updateVerticesData(sistem &S, float* vertices){
         pct_curent++;
     }
 
-    //5 Entitati de UI
-    for(int i = 0; i < S.elementeUI.size(); i++){
+    //4 Entitati de UI
+    for(int i = 0; i < E.elementeUI.size(); i++){
 
         int idx = pct_curent * stride;
 
-        vertices[idx + 0] = S.elementeUI[i].x;
-            vertices[idx + 1] = S.elementeUI[i].y;
-            vertices[idx + 2] = S.elementeUI[i].phi;
+        if (!E.elementeUI[i].activa) {
+        // Daca fantoma e oprita, punem 0 pe toata linia
+        for(int k=0; k<11; k++) vertices[idx + k] = 0;
+        pct_curent++;
+        continue;
+        }
 
-            if(S.elementeUI[i].tip == CERC){
-                vertices[idx + 3] = S.elementeUI[i].dim1 * 2.0f; 
-                vertices[idx + 4] = S.elementeUI[i].dim2 * 2.0f;
-            } else {
-                vertices[idx + 3] = S.elementeUI[i].dim1;
-                vertices[idx + 4] = S.elementeUI[i].dim2;
-            }
+        vertices[idx + 0] = E.elementeUI[i].x;
+        vertices[idx + 1] = E.elementeUI[i].y;
+        vertices[idx + 2] = E.elementeUI[i].phi;
 
-            vertices[idx + 5] = (float)S.elementeUI[i].tip;
-            vertices[idx + 6] = (float)S.elementeUI[i].col.r;
-            vertices[idx + 7] = (float)S.elementeUI[i].col.g;
-            vertices[idx + 8] = (float)S.elementeUI[i].col.b;
-            vertices[idx + 9] = S.elementeUI[i].col.a;
-            vertices[idx + 10] = 1;
+       if(E.elementeUI[i].tip == CERC){
+            vertices[idx + 3] = E.elementeUI[i].dim1 * 2.0f; 
+            vertices[idx + 4] = E.elementeUI[i].dim2 * 2.0f;
+        } else {
+            vertices[idx + 3] = E.elementeUI[i].dim1;
+            vertices[idx + 4] = E.elementeUI[i].dim2;
+        }
 
-            pct_curent++;
+        vertices[idx + 5] = (float)E.elementeUI[i].tip;
+        vertices[idx + 6] = (float)E.elementeUI[i].col.r;
+        vertices[idx + 7] = (float)E.elementeUI[i].col.g;
+        vertices[idx + 8] = (float)E.elementeUI[i].col.b;
+        vertices[idx + 9] = E.elementeUI[i].col.a;
+        vertices[idx + 10] = 1;
+
+        pct_curent++;
     }
    
 }
@@ -391,9 +399,9 @@ void initBuffers(unsigned int &VAO, unsigned int &VBO) {
     glBindVertexArray(0);
 }
 
-void drawSystem(sistem &S, unsigned int VAO, unsigned int VBO, unsigned int shaderProgram, float* Buffer) {
-    updateVerticesData(S, Buffer);
-    int totalPoints = S.corpuri.size() + S.legaturi.size() + S.arcuri.size() + S.elementeUI.size();
+void drawSystem(sistem &S, editor &E, unsigned int VAO, unsigned int VBO, unsigned int shaderProgram, float* Buffer) {
+    updateVerticesData(S, E, Buffer);
+    int totalPoints = S.corpuri.size() + S.legaturi.size() + S.arcuri.size() + E.elementeUI.size();
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // CORECTAT: Inmultim cu 11 (stride-ul real), nu cu 10

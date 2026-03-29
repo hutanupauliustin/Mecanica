@@ -128,11 +128,11 @@ float calculeazaEnergiaTotala(sistem &S, float g) {
         // Ignoram peretii si corpurile statice (masa infinita)
         if (c.M > 1e10f) continue; 
 
-        float viteza_la_patrat = (c.v_x * c.v_x) + (c.v_y * c.v_y);
+        float viteza_la_patrat = (c.viteza.x * c.viteza.x) + (c.viteza.y * c.viteza.y);
         
         float e_cinetica = 0.5f * c.M * viteza_la_patrat;
         float e_rotatie = 0.5f * c.J * (c.omega * c.omega);
-        float e_potentiala = c.M * g * (c.y + 10); // 'g' trebuie sa fie o valoare pozitiva aici (ex: 9.81)
+        float e_potentiala = c.M * g * (c.pozitie.y + 10); // 'g' trebuie sa fie o valoare pozitiva aici (ex: 9.81)
 
         energie += (e_cinetica + e_rotatie + e_potentiala);
     }
