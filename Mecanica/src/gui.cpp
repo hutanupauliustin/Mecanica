@@ -25,21 +25,30 @@ void startFrameGUI(){
     ImGui::NewFrame();
 }
 
-void renderPanouDeControl(float &dt, bool &running_flag, bool &arata_energie_flag,  bool &arata_forte_flag, float t, float energie) {
+/*void renderPanouDeControl(sistem &S, editor &E, float &dt, float t, float energie) {
     ImGui::Begin("Panou de Control Mecanica");
+    
     ImGui::Text("Timp simulat: %.3f secunde", t);
     ImGui::Separator();
-    ImGui::Checkbox("Ruleaza simularea", &running_flag);
     ImGui::SliderFloat("Pas de timp (dt)", &dt, 0.0001f, 0.01f, "%.4f");
-    ImGui::Checkbox("Afiseaza energie", &arata_energie_flag);
-    ImGui::Checkbox("Arata Forte", &arata_forte_flag);
-    if (arata_energie_flag) {
+    
+    ImGui::Checkbox("Afiseaza energie", &(E.flag.arata_energie)); ImGui::SameLine();
+    ImGui::Checkbox("Arata Forte", &(E.flag.arata_forte));
+    if (E.flag.arata_energie) {
         ImGui::TextColored(ImVec4(0.4f, 1.0f, 0.4f, 1.0f), "Energie: %.3f KJ", energie / 1000.0f);
     }
-    ImGui::End();
-}
 
-void renderPanouDeAdaugatCorpuri(sistem &S, editor &E) {
+    ImGui::Text("Mod De Afisare :");
+    ImGui::RadioButton("Standard", &E.mod_vizualizare, 0);  ImGui::SameLine();
+    ImGui::RadioButton("Viteze", &E.mod_vizualizare, 1);  ImGui::SameLine();
+    ImGui::RadioButton("Acceleratii", &E.mod_vizualizare, 2);
+    
+    ImGui::Separator();
+    
+    if(ImGui::Button( E.mod_curent != MOD_PLASARE_CORP ? "Adauga Corp" : "Renunta la Corp")){
+        E.mod_curent = E.mod_curent != MOD_PLASARE_CORP ? MOD_PLASARE_CORP : MOD_EDITARE;
+    }
+    
     if (E.elementeUI.size() < 2) {
         E.elementeUI.resize(2);
     }
@@ -52,6 +61,32 @@ void renderPanouDeAdaugatCorpuri(sistem &S, editor &E) {
     static int forma_selectata = 0; 
     ImGuiIO& io = ImGui::GetIO();
 
+    if(E.mod_curent == MOD_PLASARE_CORP){
+        ImGui::InputInt("Layer Activ", &E.cadru_activ);
+            if (E.cadru_activ < 0) E.cadru_activ = 0;
+
+        ImGui::InputFloat("Masa", &masa);
+            if (masa <= 0.01f) masa = 0.01f;
+
+        ImGui::Text("Setari Forma:");
+            const char* tipuri_forme[] = { "Cerc", "Dreptunghi" };
+        ImGui::Combo("Tip", &forma_selectata, tipuri_forme, IM_ARRAYSIZE(tipuri_forme));
+        if (forma_selectata == 0) { 
+                ImGui::InputFloat("Raza", &dimensiuni[0]); 
+        } else { 
+                ImGui::InputFloat2("Dimensiuni (L, h)", dimensiuni); 
+        }
+
+        if (ImGui::Button("Pregateste Forma")) {
+            fantoma_corp.activa = true;
+            fantoma_corp.tip = (forma_selectata == 0) ? 1 : 2;
+            fantoma_corp.dim1 = dimensiuni[0]; 
+            fantoma_corp.dim2 = dimensiuni[1];
+            if (forma_selectata == 0) fantoma_corp.col = {0.3f, 0.9f, 0.3f, 0.5f};
+            else fantoma_corp.col = {0.9f, 0.3f, 0.9f, 0.5f};
+        }
+    
+    }
     if (fantoma_corp.activa) {
         fantoma_corp.x = E.mouse_x;
         fantoma_corp.y = E.mouse_y;
@@ -117,10 +152,182 @@ void renderPanouDeAdaugatCorpuri(sistem &S, editor &E) {
         
         if (panou_blocat) ImGui::EndDisabled();
     }
-    ImGui::End();
-}
+    ImGui::End(); 
+    }
+}*/
 
-void renderInspector(sistem &S, editor &E) {
+void renderPanouDeControl(sistem &S, editor &E, float &dt, float t, float energie) {
+    ImGuiIO& io = ImGui::GetIO(); // O luam la inceput pentru a o avea disponibila peste tot
+    
+    ImGui::Begin("Panou de Control Mecanica");
+    
+    // --- 1. SETARI GENERALE & PLAY/PAUSE ---
+    ImGui::Text("Timp simulat: %.3f secunde", t);
+    
+    // Buton dinamic care schimba starea simularii
+    if (E.mod_curent == 0) {
+        if (ImGui::Button("PAUZA (Treci in modul Editare)", ImVec2(-1, 30))) {
+            E.mod_curent = 1; 
+        }
+    } else {
+        if (ImGui::Button("PLAY (Porneste simularea)", ImVec2(-1, 30))) {
+            E.mod_curent = 0;
+        }
+    }
+    
+    ImGui::Separator();
+    ImGui::SliderFloat("Pas de timp (dt)", &dt, 0.0001f, 0.01f, "%.4f");
+    
+    ImGui::Checkbox("Afiseaza energie", &(E.flag.arata_energie));
+    if (E.flag.arata_energie) {
+        ImGui::TextColored(ImVec4(0.4f, 1.0f, 0.4f, 1.0f), "Energie: %.3f KJ", energie / 1000.0f);
+    } 
+
+    ImGui::Checkbox("Arata Forte", &(E.flag.arata_forte));
+    
+    ImGui::Text("Mod De Afisare :");
+    ImGui::RadioButton("Standard", &E.mod_vizualizare, 0);  ImGui::SameLine();
+    ImGui::RadioButton("Viteze", &E.mod_vizualizare, 1);  ImGui::SameLine();
+    ImGui::RadioButton("Acceleratii", &E.mod_vizualizare, 2);
+    
+    ImGui::Separator();
+
+    static float masa = 5.0f;
+    static float dimensiuni[2] = { 1.0f, 1.0f };
+    static int forma_selectata = 0; 
+    static bool meniu_deschis = false;
+    static float culoare_aleasa[3] = { 0.3f, 0.6f, 0.9f };
+
+    // --- 2. MENIU ADAUGARE (Disponibil doar cand e pe Pauza) ---
+    if (E.mod_curent == 1) {
+        if (ImGui::Button(meniu_deschis ? "Anuleaza Adaugarea" : "Adauga Corp Nou", ImVec2(-1, 30))) {
+            meniu_deschis = !meniu_deschis;
+        }
+
+        if (meniu_deschis) {
+            ImGui::Spacing();
+            ImGui::Indent();
+
+            ImGui::InputInt("Layer Activ", &E.cadru_activ);
+            if (E.cadru_activ < 0) E.cadru_activ = 0;
+
+            ImGui::InputFloat("Masa", &masa);
+            if (masa <= 0.01f) masa = 0.01f; 
+
+            ImGui::Text("Setari Forma:");
+            const char* tipuri_forme[] = { "Cerc", "Dreptunghi" };
+            ImGui::Combo("Tip", &forma_selectata, tipuri_forme, IM_ARRAYSIZE(tipuri_forme));
+
+            if (forma_selectata == 0) { 
+                ImGui::InputFloat("Raza", &dimensiuni[0]); 
+            } else { 
+                ImGui::InputFloat2("Dimensiuni (L, h)", dimensiuni); 
+            }
+            
+            ImGui::Spacing();
+            ImGui::TextColored(ImVec4(0.4f, 1.0f, 1.0f, 1.0f), "Click Stanga = Plasare | Click Dreapta = Anulare");
+            ImGui::TextColored(ImVec4(0.4f, 1.0f, 1.0f, 1.0f), "Apasa Q / E pentru a roti corpul.");
+            
+            ImGui::ColorEdit3("Culoare Corp", culoare_aleasa);
+            ImGui::Unindent();
+        }
+    } else {
+        meniu_deschis = false; // Se inchide automat cand dai PLAY
+        ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "Opreste simularea pentru a adauga corpuri.");
+    }
+    
+    ImGui::End(); // Panoul s-a inchis aici
+
+    // --- 3. LOGICA FANTOMEI ---
+    if (E.elementeUI.size() < 2) E.elementeUI.resize(2);
+    auto &fantoma_corp = E.elementeUI[0];
+
+    if (meniu_deschis && E.mod_curent == 1) {
+        // Actualizam datele formei in timp real din slidere
+        fantoma_corp.tip = (forma_selectata == 0) ? 1 : 2;
+        fantoma_corp.dim1 = dimensiuni[0]; 
+        fantoma_corp.dim2 = dimensiuni[1];
+        if (forma_selectata == 0) fantoma_corp.col = {0.3f, 0.9f, 0.3f, 0.5f};
+        else fantoma_corp.col = {0.9f, 0.3f, 0.9f, 0.5f};
+
+        // Verificam daca suntem cu mouse-ul pe scena fizica (nu in meniu)
+        if (!io.WantCaptureMouse) {
+            fantoma_corp.activa = true;
+            fantoma_corp.x = E.mouse_x;
+            fantoma_corp.y = E.mouse_y;
+
+            if (ImGui::IsKeyDown(ImGuiKey_Q)) fantoma_corp.phi += 0.05f;
+            if (ImGui::IsKeyDown(ImGuiKey_E)) fantoma_corp.phi -= 0.05f;
+
+            bool se_suprapune = false;
+
+            float fRazaX, fRazaY;
+            if (fantoma_corp.tip == 1) { // Cerc
+                fRazaX = fRazaY = fantoma_corp.dim1;
+            } else { // Dreptunghi (calculam raza proiectata pentru rotatie)
+                fRazaX = std::abs(std::cos(fantoma_corp.phi) * fantoma_corp.dim1/2.0f) + std::abs(std::sin(fantoma_corp.phi) * fantoma_corp.dim2/2.0f);
+                fRazaY = std::abs(std::sin(fantoma_corp.phi) * fantoma_corp.dim1/2.0f) + std::abs(std::cos(fantoma_corp.phi) * fantoma_corp.dim2/2.0f);
+            }
+
+            for (auto &corp : S.corpuri) {
+                if (!corp.activ) continue;
+                
+                // Verificam DOAR corpurile de pe acelasi layer
+                if (corp.collider.cadru == E.cadru_activ) {
+                    float dist_x = std::abs(fantoma_corp.x - corp.pozitie.x);
+                    float dist_y = std::abs(fantoma_corp.y - corp.pozitie.y);
+                    
+                    // Verificare AABB (Intersectare Scara Larga)
+                    if (dist_x < (fRazaX + corp.collider.bb.razaLatime) && 
+                        dist_y < (fRazaY + corp.collider.bb.razaInaltime)) {
+                        se_suprapune = true;
+                        break;
+                    }
+                }
+            }
+
+            // Aplicam culoarea fantomei: Rosie daca se suprapune, altfel culoarea aleasa (cu transparenta)
+            if (se_suprapune) {
+                fantoma_corp.col = { 1.0f, 0.0f, 0.0f, 0.6f }; // Rosu semitransparent
+            } else {
+                fantoma_corp.col = { culoare_aleasa[0], culoare_aleasa[1], culoare_aleasa[2], 0.5f };
+            }
+
+            // Plasare
+            if (ImGui::IsMouseClicked(0)) {
+                rigid forma_noua;
+                if (fantoma_corp.tip == 1) {
+                    forma_noua = rigid::Disc(fantoma_corp.x, fantoma_corp.y, fantoma_corp.dim1, masa);
+                } else {
+                    forma_noua = rigid::Bara(fantoma_corp.x, fantoma_corp.y, fantoma_corp.dim1, fantoma_corp.dim2, masa);
+                }
+                forma_noua.phi = fantoma_corp.phi;
+                forma_noua.collider.culoare = {fantoma_corp.col.r, fantoma_corp.col.g, fantoma_corp.col.b, 1.0f};
+                forma_noua.collider.cadru = E.cadru_activ;
+                
+                S.adaugaCorpuri(forma_noua);
+                S.incarcaStare();           
+                S.seteazaMatriceInertie();  
+                S.seteazaJacobian();
+                S.seteazaConstrangeri();
+                S.seteazaForteExterne();
+            }
+        } else {
+            // Ascundem fantoma complet daca mouse-ul sta pe meniu
+            fantoma_corp.activa = false;
+        }
+
+        // Anulare manuala
+        if (ImGui::IsMouseClicked(1) || ImGui::IsKeyPressed(ImGuiKey_Escape)) {
+            meniu_deschis = false;
+            fantoma_corp.activa = false;
+        }
+    } else {
+        // Asigurare ca ramane oprita in alte moduri
+        fantoma_corp.activa = false; 
+    }
+}
+void renderInspector(sistem &S, editor &E){
     ImGui::Begin("Proprietati");
 
     if (E.corpApasat != -1 && E.corpApasat < S.corpuri.size()) {
@@ -133,15 +340,27 @@ void renderInspector(sistem &S, editor &E) {
         } else {
             bool trebuie_update = false;
 
+            ImGui::Text("Corp ID: %d | Tip: %s", E.corpApasat,  (r.collider.tip == 1) ? "Cerc" : "Dreptunghi");
+            ImGui::Separator();
+
             // Daca utilizatorul trage de slider, functia returneaza true
             if (ImGui::DragFloat2("Pozitie (X, Y)", &r.pozitie.x, 0.05f)) trebuie_update = true;
-            if (ImGui::DragFloat("Rotatie (Rad)", &r.phi, 0.05f)) trebuie_update = true;
+            
+            float unghi_grade = r.phi * ( 180.0f / M_PI);
+            if (ImGui::DragFloat("Rotatie (Rad)", &unghi_grade, 0.05f)){
+                trebuie_update = true;
+                r.phi = unghi_grade * (M_PI / 180.0f);
+            } 
             
             ImGui::Spacing();
             
             if (ImGui::DragFloat2("Viteza (X, Y)", &r.viteza.x, 0.1f)) trebuie_update = true;
-            if (ImGui::DragFloat("Viteza Ungh.", &r.omega, 0.1f)) trebuie_update = true;
-            
+
+            float omega_grade = r.omega * (180.0f / M_PI);
+            if (ImGui::DragFloat("Viteza Ungh.", &r.omega, 0.1f)){
+                r.omega = omega_grade * ( M_PI / 180.0f); 
+                trebuie_update = true;
+            }
             ImGui::Separator();
 
             if (ImGui::DragFloat2("Forta (X, Y)", &r.tau.forta.x ,0.1f)) trebuie_update = true;
@@ -313,6 +532,20 @@ void renderInspector(sistem &S, editor &E) {
                 }
                 trageSageataUI(f, culoare_ui);
             }
+
+            // --- BUTON DE STERGERE ---
+        
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.2f, 0.2f, 1.0f)); 
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.1f, 0.1f, 1.0f));
+        
+        if (ImGui::Button("Elimina Corp", ImVec2(-1, 30))) {
+            
+            S.eliminaCorp(E.corpApasat);
+            E.corpApasat = -1;
+        }
+        
+        ImGui::PopStyleColor(3); // Scoatem culorile rosii pentru restul interfetei
     } 
 
     ImGui::End();

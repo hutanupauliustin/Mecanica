@@ -6,8 +6,7 @@
 
 void setupGUI(GLFWwindow* window);
 void startFrameGUI();
-void renderPanouDeControl(float &dt, bool &running_flag, bool &arata_energie_flag, bool &arata_forte_flag, float t, float energie);
-void renderPanouDeAdaugatCorpuri(sistem &S, editor &E);
+void renderPanouDeControl(sistem &S,editor &E, float &dt, float t, float energie);
 void renderInspector(sistem &S, editor &E);
 void endFrameGUI();
 void cleanupGUI();

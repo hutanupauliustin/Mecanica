@@ -10,11 +10,13 @@
 // --- 1. VERTEX SHADER ---
 const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec2 aPos;\n"
-    "layout (location = 1) in float aPhi;\n"  
-    "layout (location = 2) in vec2 aSize;\n"  
-    "layout (location = 3) in float aType;\n" 
-    "layout (location = 4) in vec4 aColor;\n" 
-    "layout (location = 5) in float aSelected;\n" // Flag-ul pentru selecție
+    "layout (location = 1) in float aPhi;\n"
+    "layout (location = 2) in vec2 aSize;\n"
+    "layout (location = 3) in float aType;\n"
+    "layout (location = 4) in vec4 aColor;\n"
+    "layout (location = 5) in float aSelected;\n"
+    "layout (location = 6) in vec3 aVel;\n"
+    "layout (location = 7) in vec3 aAcc;\n"
 
     "out VS_OUT {\n"
     "    float phi;\n"
@@ -22,16 +24,19 @@ const char *vertexShaderSource = "#version 330 core\n"
     "    float type;\n"
     "    vec4 color;\n"
     "    float isSelected;\n"
+    "    vec3 vVel;\n" 
+    "    vec3 vAcc;\n"
     "} vs_out;\n"
-    
-    "void main()\n"
-    "{\n"
+
+    "void main() {\n"
     "   gl_Position = vec4(aPos, 0.0, 1.0);\n"
     "   vs_out.phi = aPhi;\n"
     "   vs_out.size = aSize;\n"
     "   vs_out.type = aType;\n"
     "   vs_out.color = aColor;\n"
-    "   vs_out.isSelected = aSelected;\n" // Am pus punctul si virgula lipsa
+    "   vs_out.isSelected = aSelected;\n"
+    "   vs_out.vVel = aVel;\n" 
+    "   vs_out.vAcc = aAcc;\n"
     "}\0";
 
 // --- 2. GEOMETRY SHADER ---  
@@ -40,52 +45,37 @@ const char *geometryShaderSource = "#version 330 core\n"
     "layout (triangle_strip, max_vertices = 4) out;\n"
 
     "in VS_OUT {\n"
-    "    float phi;\n"
-    "    vec2 size;\n"
-    "    float type;\n"
-    "    vec4 color;\n"
-    "    float isSelected;\n"
+    "    float phi; vec2 size; float type; vec4 color; float isSelected; vec3 vVel; vec3 vAcc;\n"
     "} gs_in[];\n"
 
-    "out vec3 TexCoord;\n" 
+    "out vec3 TexCoord;\n"
     "out float ShapeType;\n"
     "out vec4 fColor;\n"
-    "out float fSelected;\n" // Dam mai departe spre Fragment Shader
+    "out float fSelected;\n"
+    "out vec3 fVel; out vec3 fAcc; out vec2 fLocalPos;\n" // Noile iesiri
 
-    "uniform float scale;\n"
-    "uniform vec2 cameraOffset;\n"
-    "uniform float aspect_ratio;\n"
-    
+    "uniform float scale; uniform vec2 cameraOffset; uniform float aspect_ratio;\n"
+
     "void main() {\n"
     "    if(gs_in[0].type < 0.5) return;\n"
-    "    float phi = gs_in[0].phi;\n"
-    "    float c = cos(phi); float s = sin(phi);\n"
-    "    mat2 rot = mat2(c, s, -s, c);\n"
+    "    mat2 rot = mat2(cos(gs_in[0].phi), sin(gs_in[0].phi), -sin(gs_in[0].phi), cos(gs_in[0].phi));\n"
     "    vec2 center = gl_in[0].gl_Position.xy - cameraOffset;\n"
+    
     "    ShapeType = gs_in[0].type;\n"
     "    fColor = gs_in[0].color;\n"
     "    fSelected = gs_in[0].isSelected;\n"
-    
-    // Extindem geometria cu 20% daca e un corp (nu arc) si e selectat
-    "    float expand = (fSelected > 0.5 && ShapeType < 3.5) ? 1.02 : 1.0;\n"
-    
-    "    vec2 halfSize;\n"
-    "    if(ShapeType > 3.5 && ShapeType < 4.5) halfSize = vec2(gs_in[0].size.x / 2.0, 0.15);\n"
-    "    else halfSize = (gs_in[0].size / 2.0) * expand;\n" // Aplicam expansiunea pe X si Y
-    
-    "    vec2 offsets[4];\n"
-    "    offsets[0] = vec2(-halfSize.x, -halfSize.y);\n"
-    "    offsets[1] = vec2( halfSize.x, -halfSize.y);\n"
-    "    offsets[2] = vec2(-halfSize.x,  halfSize.y);\n"
-    "    offsets[3] = vec2( halfSize.x,  halfSize.y);\n"
-    
-    "    vec2 uvs[4];\n" // UV-urile se scaleaza si ele pentru a pastra d=1 la marginea reala
-    "    uvs[0] = vec2(-1.0, -1.0) * expand; uvs[1] = vec2(1.0, -1.0) * expand;\n"
-    "    uvs[2] = vec2(-1.0, 1.0) * expand;  uvs[3] = vec2(1.0, 1.0) * expand;\n"
-    
+    "    fVel = gs_in[0].vVel; fAcc = gs_in[0].vAcc;\n"
+
+    "    float expand = (fSelected > 0.5 && ShapeType < 3.5) ? 1.1 : 1.0;\n"
+    "    vec2 halfSize = (ShapeType > 3.5 && ShapeType < 4.5) ? vec2(gs_in[0].size.x / 2.0, 0.15) : (gs_in[0].size / 2.0) * expand;\n"
+
+    "    vec2 offsets[4] = vec2[](vec2(-halfSize.x, -halfSize.y), vec2(halfSize.x, -halfSize.y), vec2(-halfSize.x, halfSize.y), vec2(halfSize.x, halfSize.y));\n"
+    "    vec2 uvs[4] = vec2[](vec2(-1.0, -1.0)*expand, vec2(1.0, -1.0)*expand, vec2(-1.0, 1.0)*expand, vec2(1.0, 1.0)*expand);\n"
+
     "    for(int i=0; i<4; i++) {\n"
+    "        fLocalPos = offsets[i] / expand;\n" // Vectorul r (metri) fara expansiunea de glow
     "        vec2 pos = center + rot * offsets[i];\n"
-    "        gl_Position = vec4((pos.x * scale )/ aspect_ratio ,pos.y * scale, 0.0, 1.0);\n"
+    "        gl_Position = vec4((pos.x * scale)/aspect_ratio, pos.y * scale, 0.0, 1.0);\n"
     "        TexCoord = vec3(uvs[i], gs_in[0].size.y);\n"
     "        EmitVertex();\n"
     "    }\n"
@@ -93,59 +83,77 @@ const char *geometryShaderSource = "#version 330 core\n"
     "}\0";
 
 // --- 3. FRAGMENT SHADER ---      
-const char *fragmentShaderSource = "#version 330 core\n"
+    const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
-    "in vec3 TexCoord;\n"
-    "in float ShapeType;\n"
-    "in vec4 fColor;\n"
-    "in float fSelected;\n"
+    "in vec3 TexCoord; in float ShapeType; in vec4 fColor; in float fSelected;\n"
+    "in vec3 fVel; in vec3 fAcc; in vec2 fLocalPos;\n"
     
+    "uniform int ViewMode;\n"
+
     "void main() {\n"
     "    vec3 finalGlow = vec3(0.0);\n"
     
+        // --- DECUPARE FORME (DISCARD) --- 
     "    if(ShapeType < 1.5) {\n" // CERC
     "        float d = dot(TexCoord.xy, TexCoord.xy);\n"
     "        if(fSelected > 0.5) {\n"
-    "            if (d > 1.44) discard;\n" // 1.2^2 = 1.44
-    "            float glow = clamp((1.44 - d) / 0.44, 0.0, 1.0);\n"
+    "            if (d > 1.21) discard;\n"
+    "            float glow = clamp((1.21 - d) / 0.21, 0.0, 1.0);\n"
     "            finalGlow = vec3(1.0) * pow(glow, 2.0) * 0.4;\n"
     "        } else if (d > 1.0) discard;\n"
     "    }\n"
-    "    else if (ShapeType < 3.5) {\n" // DREPTUNGHI 
+    "    else if (ShapeType < 3.5) {\n" // DREPTUNGHI
     "        float d = max(abs(TexCoord.x), abs(TexCoord.y));\n"
     "        if(fSelected > 0.5) {\n"
-    "            if (d > 1.2) discard;\n"
-    "            float glow = clamp((1.2 - d) / 0.2, 0.0, 1.0);\n"
+    "            if (d > 1.1) discard;\n"
+    "            float glow = clamp((1.2 - d) / 0.1, 0.0, 1.0);\n"
     "            finalGlow = vec3(1.0) * pow(glow, 2.0) * 0.4;\n"
     "        } else if (d > 1.0) discard;\n"
     "    }\n"
-    "    else if (ShapeType > 3.5 && ShapeType < 4.5) {\n" // ARCURI cu unda sinus
+    "    else if (ShapeType > 3.5 && ShapeType < 4.5) {\n" // ARC
     "        float l_0 = TexCoord.z;\n"
-    "        float spirePerMetru = 8.0;\n"
-    "        float spire = l_0 * spirePerMetru;\n"
-    "        float unda = sin(TexCoord.x * 3.1415 * spire);\n"
-    "        unda *= (1.0 - TexCoord.x * TexCoord.x);\n"
+    "        float spire = l_0 * 8.0;\n"
+    "        float unda = sin(TexCoord.x * 3.1415 * spire) * (1.0 - TexCoord.x * TexCoord.x);\n"
     "        if(abs(TexCoord.y - unda) > 0.35) discard;\n"
     "    }\n"
-    "    else if(ShapeType > 4.5 && ShapeType < 5.5){\n "        //SAGEATA
-    "       float x = TexCoord.x;\n"
-    "       float y = abs(TexCoord.y);\n"
-    "       float start_varf = 0.4;\n"
-    "       float grosime_coada =0.25;\n"
-
-    "       if(x < start_varf){\n"
-    "           if(y > grosime_coada) discard;\n"      
-    "       } else {\n"
-    "           float panta = (1.0 - x) / (1.0 - start_varf);\n"
-    "           if(y> panta) discard;\n"
-    "       }\n"
+    "    else if (ShapeType > 4.5 && ShapeType < 5.5){\n" // SAGEATA
+    "        float x = TexCoord.x;\n"
+    "        float y = abs(TexCoord.y);\n"
+    "        float start_varf = 0.5;\n"
+    "        float grosime_coada = 0.35;\n"
+    "        if(x < start_varf){\n"
+    "            if(y > grosime_coada) discard;\n"
+    "        } else {\n"
+    "            float factor_panta = (x - start_varf) / (1.0 - start_varf);\n"
+    "            if(y > (1.0 - factor_panta)) discard;\n"
+    "        }\n"
     "    }\n"
-    "    FragColor = vec4(fColor.rgb + finalGlow, fColor.a);\n"
+
+        // --- VIZUALIZARE STANDARD --- 
+    "    if (ViewMode == 0 || ShapeType > 3.5) {\n"
+    "        FragColor = vec4(fColor.rgb + finalGlow, fColor.a);\n"
+    "        return;\n"
+    "    }\n"
+
+    "    // --- HEATMAP (VITEZE SAU ACCELERATII) --- \n"
+    "    float mag = 0.0;\n"
+    "    if (ViewMode == 1) {\n" // vM = vO + w x r
+    "        vec2 vM = fVel.xy + vec2(-fVel.z * fLocalPos.y, fVel.z * fLocalPos.x);\n"
+    "        mag = length(vM);\n"
+    "    } else if (ViewMode == 2) {\n" // aM = aO + eps x r - w^2 * r
+    "        vec2 a_tang = vec2(-fAcc.z * fLocalPos.y, fAcc.z * fLocalPos.x);\n"
+    "        vec2 a_norm = -(fVel.z * fVel.z) * fLocalPos;\n"
+    "        mag = length(fAcc.xy + a_tang + a_norm);\n"
+    "    }\n"
+
+    "    float t = clamp(mag / (ViewMode == 1 ? 20.0 : 150.0), 0.0, 1.0);\n"
+    "    vec3 heat = (t < 0.5) ? mix(vec3(0.1, 0.3, 0.8), vec3(1.0, 0.8, 0.0), t*2.0) : mix(vec3(1.0, 0.8, 0.0), vec3(1.0, 0.0, 0.0), (t-0.5)*2.0);\n"
+    "    FragColor = vec4(heat, fColor.a);\n"
     "}\0";
 
-int updateVerticesData(sistem &S, editor &E, float* vertices, bool arata_forte){
+int updateVerticesData(sistem &S, editor &E, float* vertices){
     // 11 float-uri: [x, y, phi, width, height, type, r, g, b, a, selectat]
-    int stride = 11;
+    int stride = 17;
     int pct_curent = 0; // Contor global pentru pozitia in buffer
 
     // Gasim ordinea corecta pentru corpuri (Painter's Algorithm)
@@ -162,37 +170,45 @@ int updateVerticesData(sistem &S, editor &E, float* vertices, bool arata_forte){
     for(int pos = 0; pos < ordine_corpuri.size(); pos++){
         int i  = ordine_corpuri[pos];
         int idx = pct_curent * stride;
+        rigid &r = S.corpuri[i];
         
-        if(S.corpuri[i].activ == 0){
+        if(r.activ == 0){
             for(int k=0; k<11; k++) vertices[idx + k] = 0;
             pct_curent++; // FOARTE IMPORTANT: Avansam in memorie si pt cele inactive!
             continue;
         }
 
-        vertices[idx + 0] = S.corpuri[i].pozitie.x;
-        vertices[idx + 1] = S.corpuri[i].pozitie.y;
-        vertices[idx + 2] = S.corpuri[i].phi;
+        vertices[idx + 0] = r.pozitie.x;
+        vertices[idx + 1] = r.pozitie.y;
+        vertices[idx + 2] = r.phi;
 
-        if(S.corpuri[i].collider.tip == CERC){
-            vertices[idx + 3] = S.corpuri[i].collider.dimensiune1 * 2.0f; 
-            vertices[idx + 4] = S.corpuri[i].collider.dimensiune2 * 2.0f;
+        if(r.collider.tip == CERC){
+            vertices[idx + 3] = r.collider.dimensiune1 * 2.0f; 
+            vertices[idx + 4] = r.collider.dimensiune2 * 2.0f;
         } else {
-            vertices[idx + 3] = S.corpuri[i].collider.dimensiune1;
-            vertices[idx + 4] = S.corpuri[i].collider.dimensiune2;
+            vertices[idx + 3] = r.collider.dimensiune1;
+            vertices[idx + 4] = r.collider.dimensiune2;
         }
 
-        float alpha = S.corpuri[i].collider.culoare.a;
-        if (E.mod_curent == 1 && S.corpuri[i].collider.cadru != E.cadru_activ && S.corpuri[i].collider.obiectVirtual == 0) {
+        float alpha = r.collider.culoare.a;
+        if (E.mod_curent == 1 && r.collider.cadru != E.cadru_activ && r.collider.obiectVirtual == 0) {
             alpha *= 0.2f; 
         }
 
-        vertices[idx + 5] = (float)S.corpuri[i].collider.tip;
-        vertices[idx + 6] = (float)S.corpuri[i].collider.culoare.r;
-        vertices[idx + 7] = (float)S.corpuri[i].collider.culoare.g;
-        vertices[idx + 8] = (float)S.corpuri[i].collider.culoare.b;
+        vertices[idx + 5] = (float)r.collider.tip;
+        vertices[idx + 6] = (float)r.collider.culoare.r;
+        vertices[idx + 7] = (float)r.collider.culoare.g;
+        vertices[idx + 8] = (float)r.collider.culoare.b;
         vertices[idx + 9] = alpha;
         
-        vertices[idx + 10] = S.corpuri[i].collider.selectat ? 1.0f : 0.0f;
+        vertices[idx + 10] = r.collider.selectat ? 1.0f : 0.0f;
+
+        vertices[idx + 11] = r.viteza.x;
+        vertices[idx + 12] = r.viteza.y;
+        vertices[idx + 13] = r.omega;
+        vertices[idx + 14] = r.forte_desen.acc_cadru.x;
+        vertices[idx + 15] = r.forte_desen.acc_cadru.y;
+        vertices[idx + 16] = r.forte_desen.eps_cadru;
         
         pct_curent++; // FOARTE IMPORTANT!
     }
@@ -224,6 +240,13 @@ int updateVerticesData(sistem &S, editor &E, float* vertices, bool arata_forte){
         vertices[idx + 9] = 1.0f;
         
         vertices[idx + 10] = 0.0f; 
+
+        vertices[idx + 11] = 0;
+        vertices[idx + 12] = 0;
+        vertices[idx + 13] = 0;
+        vertices[idx + 14] = 0;
+        vertices[idx + 15] = 0;
+        vertices[idx + 16] = 0;
         
         pct_curent++;
     }
@@ -258,6 +281,13 @@ int updateVerticesData(sistem &S, editor &E, float* vertices, bool arata_forte){
         vertices[idx + 9] = 1.0f;
         
         vertices[idx + 10] = 0.0f;
+
+        vertices[idx + 11] = 0;
+        vertices[idx + 12] = 0;
+        vertices[idx + 13] = 0;
+        vertices[idx + 14] = 0;
+        vertices[idx + 15] = 0;
+        vertices[idx + 16] = 0;
         
         pct_curent++;
     }
@@ -297,7 +327,7 @@ int updateVerticesData(sistem &S, editor &E, float* vertices, bool arata_forte){
     }
    
     // 5. Forte (Desenate separat pe culori)
-    if (arata_forte) {
+    if (E.flag.arata_forte) {
         for (int i = 0; i < S.corpuri.size(); i++) {
             if (!S.corpuri[i].activ || S.corpuri[i].M > 1e10f) continue;
 
@@ -310,13 +340,14 @@ int updateVerticesData(sistem &S, editor &E, float* vertices, bool arata_forte){
 
                     int idx = pct_curent * stride;
                     float unghi = std::atan2(forta.y, forta.x);
-                    float L = magnitudine * scala_forta;
+                    float L = std::log10(1.0f + magnitudine) * 0.4f;
+                    float grosime = 0.15f + (L *0.1f);
 
                     vertices[idx + 0] = origine.x + (L / 2.0f) * std::cos(unghi);
                     vertices[idx + 1] = origine.y + (L / 2.0f) * std::sin(unghi);
                     vertices[idx + 2] = unghi;
                     vertices[idx + 3] = L; 
-                    vertices[idx + 4] = L / 5; // grosimea sagetii
+                    vertices[idx + 4] = grosime; // grosimea sagetii
                     vertices[idx + 5] = 5.0f;  // Tip = SAGEATA
                     vertices[idx + 6] = r;
                     vertices[idx + 7] = g;
@@ -380,8 +411,8 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram){
     vertexShader = glCreateShader(GL_VERTEX_SHADER);  
 
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);     
-    glCompileShader(vertexShader);                                  
-
+    glCompileShader(vertexShader);        
+    
     int  success;
     char infoLog[512];
     
@@ -406,7 +437,13 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram){
     unsigned int fragmentShader;
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);               
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);    
-    glCompileShader(fragmentShader);                                   
+    glCompileShader(fragmentShader);                 
+    
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if(!success) {
+        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
 
     shaderProgram = glCreateProgram();
 
@@ -438,7 +475,7 @@ void initBuffers(unsigned int &VAO, unsigned int &VBO) {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO); 
     
-    GLsizei stride = 11 * sizeof(float);
+    GLsizei stride = 17 * sizeof(float);
 
     // 1. Pozitie (vec2)
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, (void*)0);
@@ -458,16 +495,22 @@ void initBuffers(unsigned int &VAO, unsigned int &VBO) {
     // 6. isSelected (float) - CORECTAT AICI (Locatia 5, offset 10)
     glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, stride, (void*)(10 * sizeof(float)));
     glEnableVertexAttribArray(5);
-    
+    // 7. viteza (vx, vy, omega)
+    glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, stride, (void*)(11 * sizeof(float)));
+    glEnableVertexAttribArray(6);
+    // 8. Accelerația ( ax, ay, eps)
+    glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, stride, (void*)(14 * sizeof(float)));
+    glEnableVertexAttribArray(7);
+
     glBindVertexArray(0);
 }
 
-void drawSystem(sistem &S, editor &E, unsigned int VAO, unsigned int VBO, unsigned int shaderProgram, float* Buffer, bool arata_forte) {
+void drawSystem(sistem &S, editor &E, unsigned int VAO, unsigned int VBO, unsigned int shaderProgram, float* Buffer) {
 
-    int totalPoints = updateVerticesData(S, E, Buffer, arata_forte);
+    int totalPoints = updateVerticesData(S, E, Buffer);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, totalPoints * 11 * sizeof(float), Buffer, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, totalPoints * 17 * sizeof(float), Buffer, GL_DYNAMIC_DRAW);
     
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
@@ -481,6 +524,9 @@ void drawSystem(sistem &S, editor &E, unsigned int VAO, unsigned int VBO, unsign
 
     int aspectLoc = glGetUniformLocation(shaderProgram, "aspect_ratio");
     glUniform1f(aspectLoc, aspect_ratio);
+
+    int viewModeLoc = glGetUniformLocation(shaderProgram, "ViewMode");
+    glUniform1i(viewModeLoc,E.mod_vizualizare);
 
     glDrawArrays(GL_POINTS, 0, totalPoints);
     glBindVertexArray(0);

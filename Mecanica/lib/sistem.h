@@ -20,7 +20,7 @@ public:
 
     float k_s,k_d,g;                                //spring constant si dampening constant -- sunt encesare pentru a introduce o amortizare foarte slaba care sa anuleze erorile de tip floating-point-arithmetic
                                                     // constanta gravitationala                                      
-    matrice Q, J_F, A, A_inv, Lambda, JdotQ;        // Q - vectorul fortelor externe
+    matrice Q, J_F, A, A_inv, Lambda, LambdaPerc, JdotQ;        // Q - vectorul fortelor externe
                                                     // J_f - Jacobianul legaturilor
                                                     //JdotQ - produsul dintre derivata jacobianului si derivata coordonatelor
     matrice F, Fpunct;                              // sunt folosite pentru corectia erorii, impreuna cu constantele k_s si k_d

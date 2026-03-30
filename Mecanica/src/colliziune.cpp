@@ -466,22 +466,20 @@ void ciocnire(sistem &S, int corpA, int corpB, intersectie inter)
         A.omega  -= Jt_final * rAt * invI_A;
         B.viteza = B.viteza + t * (Jt_final * invM_B);
         B.omega  += Jt_final * rBt * invI_B;
-        
-        // ==============================================================
-        // 4. SALVARE PENTRU DEBUG VIZUAL
-        // ==============================================================
+
         float scala = 60.0f; 
         vec2 Fn_viz = n * (P * scala);
         vec2 Ft_viz = t * (Jt_final * scala);
-        
+
         if (invM_A > 0.0f) {
-            A.forte_desen.forte.push_back({FORTA_IMPACT_NORMAL, (-1)*Fn_viz, contacte.puncte[i]});
-            A.forte_desen.forte.push_back({FORTA_IMPACT_FRECARE, (-1)*Ft_viz, contacte.puncte[i]});
+            A.forte_desen.forte.push_back({FORTA_IMPACT_NORMAL, Fn_viz * (-1.0f), contacte.puncte[i]});
+            A.forte_desen.forte.push_back({FORTA_IMPACT_FRECARE, Ft_viz * (-1.0f), contacte.puncte[i]});
         }
         if (invM_B > 0.0f) {
             B.forte_desen.forte.push_back({FORTA_IMPACT_NORMAL, Fn_viz, contacte.puncte[i]});
             B.forte_desen.forte.push_back({FORTA_IMPACT_FRECARE, Ft_viz, contacte.puncte[i]});
         }
+        
     }
     
     // --- C. FRECARE ROSTOGOLIRE (Optional) ---
@@ -499,6 +497,8 @@ void ciocnire(sistem &S, int corpA, int corpB, intersectie inter)
         B.omega += P_ung_final * invI_B;
     }
     
+    
+
     S.incarcaStare();
 }
 
@@ -508,7 +508,7 @@ void percutiiDeLegatura(sistem &S){                   //rezolva sistemul (J * A^
     
     if(S.p == 0) return;
     
-    matrice Lambda_perc(S.p, 1);
+    S.LambdaPerc =  matrice(S.p, 1);
     matrice M(S.p,S.p);
     matrice L(S.p,S.p);
     
@@ -559,16 +559,16 @@ void percutiiDeLegatura(sistem &S){                   //rezolva sistemul (J * A^
     for(int i = S.p - 1; i >= 0; i--){
         float suma = 0.0f;
         for(int j = i + 1 ; j < S.p; j++){
-            suma += L(j,i)* Lambda_perc(j,0);          // L(j,i) este L^T(i,j)
+            suma += L(j,i)* S.LambdaPerc(j,0);          // L(j,i) este L^T(i,j)
         } 
         float valoare = (y(i,0) - suma) / L(i,i);
         if (valoare > percutie_maxima) valoare = percutie_maxima;
         else if (valoare < -percutie_maxima) valoare = -percutie_maxima;
         
-        Lambda_perc(i,0) = valoare;
+        S.LambdaPerc(i,0) = valoare;
     }
     
-    matrice Delta_q = S.A_inv * J_T *Lambda_perc;
+    matrice Delta_q = S.A_inv * J_T *S.LambdaPerc;
     
     for(int i = 0; i < nr_corpuri; i++) {
         if (S.corpuri[i].M > 1e10f) continue; // Corpurile fixe nu se misca
@@ -584,6 +584,40 @@ void percutiiDeLegatura(sistem &S){                   //rezolva sistemul (J * A^
         S.corpuri[i].viteza.x   += dv_x;
         S.corpuri[i].viteza.y   += dv_y;
         S.corpuri[i].omega += d_omega;
+    }
+}
+
+void adaugaFortePercutanteVizuale(sistem &S){
+    if (S.p == 0) return;
+
+    int index_forta = 0;
+    // Transformam impulsul P intr-o forta "aparenta". 
+    // Daca sagetile sunt prea mari/mici, ajusteaza aceasta scala.
+    float scala = 60.0f; 
+
+    for(int i = 0; i < S.legaturi.size(); i++) {
+
+        if (S.legaturi[i]->activ == 0) continue;
+        
+        float Px = S.LambdaPerc(index_forta + 0, 0);
+        float Py = S.LambdaPerc(index_forta + 1, 0);
+        
+        vec2 forta_aparenta = vec2(Px, Py) * scala;
+
+        // Desenam sageata doar daca socul a fost semnificativ (filtram zgomotul de 0.0001)
+        if (forta_aparenta.modul() > 1.0f) { 
+            vec2 punct_global = S.legaturi[i]->getPozitie(S.corpuri);
+            int idA = S.legaturi[i]->contorCorpA;
+            int idB = S.legaturi[i]->contorCorpB;
+
+            if (S.corpuri[idA].M < 1e10f) {
+                S.corpuri[idA].forte_desen.forte.push_back({FORTA_IMPACT_NORMAL, forta_aparenta, punct_global});
+            }
+            if (S.corpuri[idB].M < 1e10f) {
+                S.corpuri[idB].forte_desen.forte.push_back({FORTA_IMPACT_NORMAL, forta_aparenta * (-1.0f), punct_global});
+            }
+        }
+        index_forta += 2;
     }
 }
 
@@ -614,8 +648,10 @@ void verificarCiocniri(sistem &S, editor &E)
                 }
             }
         }
-        
-        if(aFostCiocnire)
+    }
+
+    if(aFostCiocnire){
         percutiiDeLegatura(S);
+        adaugaFortePercutanteVizuale(S);
     }
 }

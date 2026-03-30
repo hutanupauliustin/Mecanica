@@ -20,6 +20,13 @@ struct fantomaUI {
     culoare col;
 };
 
+struct editorFlags {
+    bool arata_energie;
+    bool arata_forte;
+    bool distributie_viteze;
+    bool distributie_acceleratie;
+};
+
 class editor{
 
     public:
@@ -28,6 +35,8 @@ class editor{
 
     int mod_curent;
     int cadru_activ;
+
+    int mod_vizualizare; //0 -- normal 1--distributia vitezelor 2-- distributia acceleratiilor
 
     float mouse_x;
     float mouse_y;
@@ -39,6 +48,8 @@ class editor{
 
     int legatura_corpA;
     int stare_legatura;
+
+    editorFlags flag;
 
     int gasesteCorpSubMouse(sistem &S);
     void mutaCorp(sistem &S, int idCorp, float offsetX, float offsetY);

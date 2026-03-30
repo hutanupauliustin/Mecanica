@@ -109,6 +109,9 @@ rigid::rigid() : pozitie(0.0f, 0.0f), phi(0.0f), viteza(0.0f, 0.0f), omega(0.0f)
             this->tau.moment += r.vectorial(vector_forta);
         }
 
+        this->forte_desen.tau.forta = this->tau.forta;
+        this->forte_desen.tau.moment = this->tau.moment;
+
         forte.clear();
     }
 

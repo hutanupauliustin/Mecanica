@@ -88,42 +88,6 @@ matrice derivata(sistem &S, const matrice &stare_curenta, float t)      //facuta
 
     matrice forte_reactiune = J_T * S.Lambda;
     
-    int index_forta = 0;
-
-    for(int i = 0; i < S.corpuri.size(); i++) {
-        S.corpuri[i].forte_desen.reseteaza();
-    }
-
-    for(int i = 0; i < S.legaturi.size(); i++) {
-        
-        float fx = S.Lambda(index_forta + 0, 0);
-        float fy = S.Lambda(index_forta + 1, 0);
-        vec2 forta_reactiune(fx,fy);
-
-        vec2 punct_global = S.legaturi[i]->getPozitie(S.corpuri);
-
-        int idA = S.legaturi[i]->contorCorpA;
-        int idB = S.legaturi[i]->contorCorpB;
-
-        if (S.corpuri[idA].M < 1e10f) {
-            fortaVizuala fA;
-            fA.tip = FORTA_REACTIUNE;
-            fA.valoare = forta_reactiune; 
-            fA.punct_aplicare = punct_global;
-            S.corpuri[idA].forte_desen.forte.push_back(fA);
-        }
-
-        if (S.corpuri[idB].M < 1e10f) {
-            fortaVizuala fB;
-            fB.tip = FORTA_REACTIUNE;
-            fB.valoare = (-1)*forta_reactiune; // Sens opus!
-            fB.punct_aplicare = punct_global;
-            S.corpuri[idB].forte_desen.forte.push_back(fB);
-        }
-
-        index_forta += 2;
-    }
-
     acc = A_inv * (S.Q + J_T * S.Lambda);
 
     // 5. Construim vectorul derivatei starii: [viteze, acceleratii].
@@ -156,6 +120,39 @@ matrice RK4(sistem &S, float dt, float t) {
     return stare_noua;
 }
 
+void adaugaForteContinueVizuale(sistem &S){
+ int index_forta = 0;
+
+    for(int i = 0; i < S.legaturi.size(); i++) {
+        
+        float fx = S.Lambda(index_forta + 0, 0);
+        float fy = S.Lambda(index_forta + 1, 0);
+        vec2 forta_reactiune(fx,fy);
+
+        vec2 punct_global = S.legaturi[i]->getPozitie(S.corpuri);
+
+        int idA = S.legaturi[i]->contorCorpA;
+        int idB = S.legaturi[i]->contorCorpB;
+
+        if (S.corpuri[idA].M < 1e10f) {
+            fortaVizuala fA;
+            fA.tip = FORTA_REACTIUNE;
+            fA.valoare = forta_reactiune; 
+            fA.punct_aplicare = punct_global;
+            S.corpuri[idA].forte_desen.forte.push_back(fA);
+        }
+
+        if (S.corpuri[idB].M < 1e10f) {
+            fortaVizuala fB;
+            fB.tip = FORTA_REACTIUNE;
+            fB.valoare = (-1)*forta_reactiune; // Sens opus!
+            fB.punct_aplicare = punct_global;
+            S.corpuri[idB].forte_desen.forte.push_back(fB);
+        }
+
+        index_forta += 2;
+    }
+}
 
 float calculeazaEnergiaTotala(sistem &S, float g) {
     float energie = 0.0f;
@@ -177,4 +174,25 @@ float calculeazaEnergiaTotala(sistem &S, float g) {
     }
     
     return energie;
+}
+
+void salveazaDateCinematiceVizuale(sistem &S, float dt_pas_fizica, int nr_iteratii) {
+    // Timpul total scurs in acest cadru (ex: 20 iteratii * 0.001s = 0.02s)
+    float dt_total = dt_pas_fizica * nr_iteratii; 
+
+    if (dt_total <= 0.00001f) return;
+
+    for (int i = 0; i < S.corpuri.size(); i++) {
+        rigid &r = S.corpuri[i];
+        
+        if (!r.activ || r.M > 1e10f) continue; // Sarim peste lumea fixa
+
+        // Viteza curenta la finalul cadrului
+        r.forte_desen.viteza_cadru_trecut = r.viteza;
+        r.forte_desen.omega_cadru_trecut = r.omega;
+
+        // Acceleratia = (V_nou - V_vechi) / Timp
+        r.forte_desen.acc_cadru = (r.viteza - r.forte_desen.viteza_cadru_trecut) / dt_total;
+        r.forte_desen.eps_cadru = (r.omega - r.forte_desen.omega_cadru_trecut) / dt_total;
+    }
 }

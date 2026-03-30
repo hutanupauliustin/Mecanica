@@ -25,7 +25,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     aspect_ratio = (float)width / (float)height; 
 }
 
-void processInput(GLFWwindow *window, float &dt, bool &running_flag, sistem &S, editor &E) {
+void processInput(GLFWwindow *window, float &dt, sistem &S, editor &E) {
     //inchide programul
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -58,7 +58,7 @@ void processInput(GLFWwindow *window, float &dt, bool &running_flag, sistem &S, 
     static bool spaceApasat = false;
     if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
         if(!spaceApasat) {
-            running_flag = !running_flag; 
+           E.mod_curent = E.mod_curent != MOD_RULARE ?  MOD_RULARE : MOD_EDITARE;
             spaceApasat = true;
             std::cout << "==> Deschidere Fereastra OpenGL..." << std::endl;
         }

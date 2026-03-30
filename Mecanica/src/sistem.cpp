@@ -85,6 +85,7 @@
         if(index <= 0 || index >= corpuri.size()) return; // Protejam Lumea (0)
         
         corpuri[index].activ = 0;
+        corpuri[index].collider.selectat = 0;
         
         // Stergem legaturile atasate de acest corp
         for(int i = 0; i < legaturi.size(); i++){
@@ -102,6 +103,9 @@
         
         incarcaStare();
         seteazaMatriceInertie();
+        seteazaJacobian();
+        seteazaConstrangeri(); 
+        seteazaForteExterne();
     }
 
     void sistem::eliminaLegatura(int index){
@@ -151,12 +155,21 @@
 
         for (int i = 0; i < nr_corpuri; i++)
         {
+            if(this->corpuri[i].activ == 0){
+                stare(i * 3, 0) = 0;
+                stare(i * 3 + 1, 0) = 0;
+                stare(i * 3 + 2, 0) = 0;
+                stare(i * 3 + 3 * nr_corpuri, 0) = 0;
+                stare(i * 3 + 1 + 3 * nr_corpuri, 0) = 0;
+                stare(i * 3 + 2 + 3 * nr_corpuri, 0) = 0;
+            }else{
             corpuri[i].pozitie.x = stare(i * 3, 0);
             corpuri[i].pozitie.y = stare(i * 3 + 1, 0);
             corpuri[i].phi = stare(i * 3 + 2, 0);
             corpuri[i].viteza.x = stare(i * 3 + 3 * nr_corpuri, 0);
             corpuri[i].viteza.y = stare(i * 3 + 1 + 3 * nr_corpuri, 0);
             corpuri[i].omega = stare(i * 3 + 2 + 3 * nr_corpuri, 0);
+            }
         }
     }
 
@@ -165,16 +178,12 @@
 
         int nr_corpuri = this->corpuri.size();
 
-        if (J_F.linii != p || J_F.coloane != 3 * nr_corpuri)
-        {
+        if (J_F.linii != p || J_F.coloane != 3 * nr_corpuri){
             J_F = matrice('0', p, 3 * nr_corpuri);
         }
-        else
-        {
-            for (int i = 0; i < J_F.linii; i++)
-            {
-                for (int j = 0; j < J_F.coloane; j++)
-                {
+        else{
+            for (int i = 0; i < J_F.linii; i++){
+                for (int j = 0; j < J_F.coloane; j++){
                     J_F(i, j) = 0.0f;
                 }
             }
@@ -192,7 +201,7 @@
 
         for (int i = 0; i < legaturi.size(); i++)
         {
-            if(legaturi[i]->activ == 0) continue; // Sarim peste cele sterse!
+            if(legaturi[i]->activ == 0) continue;
 
             legaturi[i]->calculeazaJacobian(J_F, rand_constrangere, stare);
             legaturi[i]->calculeazaJpunctQpunct(JdotQ, rand_constrangere, stare, nr_corpuri);

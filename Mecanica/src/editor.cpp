@@ -4,6 +4,7 @@
 
 editor::editor(){
     mod_curent = MOD_RULARE;
+    mod_vizualizare = 0;
     cadru_activ = 0;
     mouse_x = 0.0f;
     mouse_y = 0.0f;

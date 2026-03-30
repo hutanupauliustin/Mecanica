@@ -87,9 +87,23 @@ struct fortaVizuala {
 
 struct debugForte {
     std::vector<fortaVizuala> forte;
+    torsor tau;
+    vec2 viteza_cadru_trecut;
+    float omega_cadru_trecut;
+    vec2 acc_cadru; 
+    float eps_cadru;
 
     void reseteaza() {
         forte.clear(); 
+        tau.forta.x = 0;
+        tau.forta.y = 0;
+        tau.moment = 0;
+        viteza_cadru_trecut.x = 0;
+        viteza_cadru_trecut.y = 0;
+        omega_cadru_trecut = 0;
+        acc_cadru.x = 0;
+        acc_cadru.y = 0;
+        eps_cadru = 0;
     }
 };
 
