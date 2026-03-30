@@ -10,7 +10,7 @@ enum formaGeometrica{
     TRIUNGHI
 };
 
-struct material{
+struct tipMaterial{
     float restituire = 0;
     float frecareStatica = 0;
     float frecareDinamica = 0 ;
@@ -20,10 +20,10 @@ struct material{
 
 namespace materiale {
     //                              Restituire, Static, Dinamic, RostogStatic, RostogDinamic
-    const material Cauciuc =          {0.8f,       0.9f,   0.7f,    0.05f,       0.02f};
-    const material Gheata =           {0.1f,       0.05f,  0.01f,   0.01f,       0.007f};
-    const material Lemn =             {0.4f,       0.5f,   0.4f,    0.02f,       0.05f};
-    const material Piatra =           {0.2f,       0.8f,   0.6f,    0.04f,       0.01f};
+    const tipMaterial Cauciuc =          {0.8f,       0.9f,   0.7f,    0.05f,       0.02f};
+    const tipMaterial Gheata =           {0.1f,       0.05f,  0.01f,   0.01f,       0.007f};
+    const tipMaterial Lemn =             {0.4f,       0.5f,   0.4f,    0.02f,       0.05f};
+    const tipMaterial Piatra =           {0.2f,       0.8f,   0.6f,    0.04f,       0.01f};
 }
 
 struct boundingBox{
@@ -54,7 +54,7 @@ struct FantomaUI {
     float x = 0.0f;
     float y = 0.0f;
     float phi = 0.0f;
-    int tip_forma; // 0 = Punct, 1 = Cerc, 2 = Dreptunghi
+    int tip_forma; // 0 = Punct, 1 = Cerc, 2 = Dreptunghi, 3 = Triunghi, 4 = Arc, 5 = Sageata
     float dimensiune1;
     float dimensiune2;
     culoare col;
@@ -71,6 +71,28 @@ struct fortaExterna{
     float modul;
 };
 
+enum TipFortaVizuala {
+    FORTA_GREUTATE,
+    FORTA_ELASTICA,
+    FORTA_REACTIUNE,
+    FORTA_IMPACT_NORMAL,
+    FORTA_IMPACT_FRECARE
+};
+
+struct fortaVizuala {
+    TipFortaVizuala tip;
+    vec2 valoare;
+    vec2 punct_aplicare; 
+};
+
+struct debugForte {
+    std::vector<fortaVizuala> forte;
+
+    void reseteaza() {
+        forte.clear(); 
+    }
+};
+
 class rigid
 {
 public:
@@ -85,9 +107,10 @@ public:
     float M, J;
     
     geometrie collider;
-    material material;
+    tipMaterial material;
 
     std::vector<fortaExterna> forte;
+    debugForte forte_desen;
 
     
     rigid();
@@ -107,9 +130,9 @@ public:
 
     void seteazaBoundingBox();                  // "deseneaza" o cutie dreptunghiulara cu laturile paralele cu axele OX si OY ale sistemului, care sa cuprinda intreg rigidul
     
-    static rigid Bara( float x, float y, float Lungime, float Grosime, float Masa);
+    static rigid Bara( float x, float y, float Lungime, float Grosime, float Masa, const char* numeMaterial = "Lemn");
 
-    static rigid Disc( float x, float y, float Raza, float Masa);
+    static rigid Disc( float x, float y, float Raza, float Masa, const char* numeMaterial = "Lemn");
 
     static rigid Fix( float x, float y);
 };

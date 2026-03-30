@@ -54,11 +54,29 @@ arc::arc(){
         }
 
         float viteza_rel = (viteza2 - viteza1).scalar(directie);
-        float valoare_forta = -k * (l - lungime_0) - d * viteza_rel;      
+        float valoare_forta = -k * (l - lungime_0) - d * viteza_rel;   
 
+        vec2 vector_forta_A = directie * (-valoare_forta);
+        vec2 vector_forta_B = directie * (valoare_forta);
+        
         A.adauagaForte(-valoare_forta,poz1.x, poz1.y,directie.x,directie.y);
         B.adauagaForte( valoare_forta,poz2.x, poz2.y,directie.x,directie.y);
 
+        // Adaugam fortele si in coada de randare vizuala (daca masa nu e infinita)
+        if (A.M < 1e10f) {
+            fortaVizuala fA;
+            fA.tip = FORTA_ELASTICA;
+            fA.valoare = vector_forta_A;
+            fA.punct_aplicare = poz1;
+            A.forte_desen.forte.push_back(fA);
+        }
+        if (B.M < 1e10f) {
+            fortaVizuala fB;
+            fB.tip = FORTA_ELASTICA;
+            fB.valoare = vector_forta_B;
+            fB.punct_aplicare = poz2;
+            B.forte_desen.forte.push_back(fB);
+        }
 
     }
     

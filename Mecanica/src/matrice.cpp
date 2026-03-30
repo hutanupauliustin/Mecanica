@@ -96,7 +96,7 @@
         return T;
     }
 
-    matrice matrice::inverse() const {
+    matrice matrice::inversaDiagonala() const {
         if (linii != coloane) return matrice();
         matrice B(linii, coloane);
         for (int i = 0; i < linii; i++) {
@@ -146,7 +146,7 @@
 
     matrice matrice::operator^(const char *pow) const {
         if (pow[0] == 'T' || pow[0] == 't') return this->transpose();
-        if (pow[0] == '-' && pow[1] == '1') return this->inverse();
+        if (pow[0] == '-' && pow[1] == '1') return this->inversaDiagonala();
         return *this;
     }
 

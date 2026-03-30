@@ -164,4 +164,7 @@ CMakeFiles/simulator.dir/src/rigid.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/bits/basic_ios.tcc \
  C:/Strawberry/c/include/c++/13.2.0/bits/ostream.tcc \
  C:/Strawberry/c/include/c++/13.2.0/istream \
- C:/Strawberry/c/include/c++/13.2.0/bits/istream.tcc
+ C:/Strawberry/c/include/c++/13.2.0/bits/istream.tcc \
+ C:/Strawberry/c/include/c++/13.2.0/cstring \
+ C:/Strawberry/c/x86_64-w64-mingw32/include/string.h \
+ C:/Strawberry/c/x86_64-w64-mingw32/include/sec_api/string_s.h

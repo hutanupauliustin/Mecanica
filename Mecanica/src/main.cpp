@@ -40,6 +40,7 @@ int main() {
         float t = 0.0f, dt = 0.001f;
         bool running_flag = 0;
         bool arata_energie_flag = 1;
+        bool arata_forte_flag = 0;
 
         // Bucla principala
         std::cout << "==> Intrare in bucla de randare..." << std::endl;
@@ -55,6 +56,7 @@ int main() {
 
             // 3. Fizica 
             if(running_flag){
+
                 for(int i = 0; i < 20; i++) {   //facem calculele de mai multe ori intre cadre, pentru ca nu avem nevoie de mai mult de 60 de cadre pe secunda
                     S.stare = RK4(S, dt, t);
                     S.seteazaStare();       //muta datele din matrice, in obiecte
@@ -85,18 +87,29 @@ int main() {
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            // Asiguram memorie GPU pentru corpurile care tocmai s-au adaugat din meniu
-            vertexBuffer.resize(11 * (S.corpuri.size() + S.legaturi.size() + S.arcuri.size() + E.elementeUI.size()));
+            // Calculam dinamic memoria necesara pentru buffer-ul video
+            size_t nr_forte = 0;
+            if (arata_forte_flag) {
+                for (const auto& corp : S.corpuri) {
+                    if (corp.activ) {
+                        nr_forte += corp.forte_desen.forte.size();
+                    }
+                }
+            }
+            size_t total_elemente = S.corpuri.size() + S.legaturi.size() + S.arcuri.size() + E.elementeUI.size() + nr_forte;
+            vertexBuffer.resize(11 * total_elemente);
 
-            drawSystem(S,E, VAO, VBO, shaderProgram, vertexBuffer.data());
+            drawSystem(S,E, VAO, VBO, shaderProgram, vertexBuffer.data(),arata_forte_flag);
 
             // 5. Randare ImGui (peste scena de fizica)
             float energie = 0.0f;
             if(arata_energie_flag){
                 energie = calculeazaEnergiaTotala(S, S.g);
             }
-            renderPanouDeControl(dt, running_flag, arata_energie_flag, t, energie);
+            renderPanouDeControl(dt, running_flag, arata_energie_flag,arata_forte_flag, t, energie);
             renderPanouDeAdaugatCorpuri(S,E);
+            if(E.corpApasat != -1)
+               renderInspector(S,E);
             endFrameGUI();
 
             glfwSwapBuffers(window);
@@ -105,13 +118,20 @@ int main() {
             if(running_flag) frameCount++;
              // [DEBUG] Afisam starea sistemului regulat (aproximativ 1 data pe secunda)
                 if (frameCount % 60 == 0) { 
-                    std::cout << "\n[Fizica] Cadru " << frameCount << " | Timp: " << t << " | Corpuri in sistem: " << S.corpuri.size() << std::endl;
+                    //std::cout << "\n[Fizica] Cadru " << frameCount << " | Timp: " << t << " | Corpuri in sistem: " << S.corpuri.size() << std::endl;
                     for (size_t c = 0; c < S.corpuri.size(); c++) {
                         if(S.corpuri[c].activ == 0) continue; // Sarim peste cele sterse
-                        std::cout << "  -> Corp " << c 
-                                  << " | Pos: (" << S.corpuri[c].pozitie.x << ", " << S.corpuri[c].pozitie.y << ")"
-                                  << " | Viteza: (" << S.corpuri[c].viteza.x << ", " << S.corpuri[c].viteza.y << ")"
-                                  << " | Masa: " << S.corpuri[c].M << std::endl;
+                        //std::cout << "  -> Corp " << c 
+                        //          << " | Pos: (" << S.corpuri[c].pozitie.x << ", " << S.corpuri[c].pozitie.y << ")"
+                        //          << " | Viteza: (" << S.corpuri[c].viteza.x << ", " << S.corpuri[c].viteza.y << ")"
+                        //          << " | Masa: " << S.corpuri[c].M << std::endl;
+                       std::cout <<" corpul : "<< c;
+                        for(int j  =  0; j < S.corpuri[c].forte.size(); j++){
+                            
+                            fortaExterna f = S.corpuri[c].forte[j];
+                            std::cout<< f.u.x * f.modul << " | " << f.u.y * f.modul;
+                        }
+                        std::cout << std::endl;
                     }
                 }
         }

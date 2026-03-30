@@ -10,6 +10,6 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram);
 
 void initBuffers(unsigned int &VAO, unsigned int &VBO);
 
-void updateVerticesData(sistem &S, editor &E, float* vertices);
+int updateVerticesData(sistem &S, editor &E, float* vertices, bool arata_forte);
 
-void drawSystem(sistem &S, editor &E, unsigned int VAO, unsigned int VBO, unsigned int shaderProgram, float* Buffer);
+void drawSystem(sistem &S, editor &E, unsigned int VAO, unsigned int VBO, unsigned int shaderProgram, float* Buffer, bool arata_forte);

@@ -63,7 +63,7 @@ public:
 
     matrice transpose() const ;
 
-    matrice inverse() const;
+    matrice inversaDiagonala() const;
 
     matrice operator+(const matrice &B) const ;
     matrice operator-(const matrice &B) const ;

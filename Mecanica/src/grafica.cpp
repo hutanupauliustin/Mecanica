@@ -70,7 +70,7 @@ const char *geometryShaderSource = "#version 330 core\n"
     "    float expand = (fSelected > 0.5 && ShapeType < 3.5) ? 1.02 : 1.0;\n"
     
     "    vec2 halfSize;\n"
-    "    if(ShapeType > 3.5) halfSize = vec2(gs_in[0].size.x / 2.0, 0.15);\n"
+    "    if(ShapeType > 3.5 && ShapeType < 4.5) halfSize = vec2(gs_in[0].size.x / 2.0, 0.15);\n"
     "    else halfSize = (gs_in[0].size / 2.0) * expand;\n" // Aplicam expansiunea pe X si Y
     
     "    vec2 offsets[4];\n"
@@ -111,7 +111,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "            finalGlow = vec3(1.0) * pow(glow, 2.0) * 0.4;\n"
     "        } else if (d > 1.0) discard;\n"
     "    }\n"
-    "    else if (ShapeType < 3.5) {\n" // DREPTUNGHI
+    "    else if (ShapeType < 3.5) {\n" // DREPTUNGHI 
     "        float d = max(abs(TexCoord.x), abs(TexCoord.y));\n"
     "        if(fSelected > 0.5) {\n"
     "            if (d > 1.2) discard;\n"
@@ -119,7 +119,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "            finalGlow = vec3(1.0) * pow(glow, 2.0) * 0.4;\n"
     "        } else if (d > 1.0) discard;\n"
     "    }\n"
-    "    else if (ShapeType > 3.5) {\n" // ARCURI (Codul tau fain cu unda sinus)
+    "    else if (ShapeType > 3.5 && ShapeType < 4.5) {\n" // ARCURI cu unda sinus
     "        float l_0 = TexCoord.z;\n"
     "        float spirePerMetru = 8.0;\n"
     "        float spire = l_0 * spirePerMetru;\n"
@@ -127,11 +127,23 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "        unda *= (1.0 - TexCoord.x * TexCoord.x);\n"
     "        if(abs(TexCoord.y - unda) > 0.35) discard;\n"
     "    }\n"
-    
+    "    else if(ShapeType > 4.5 && ShapeType < 5.5){\n "        //SAGEATA
+    "       float x = TexCoord.x;\n"
+    "       float y = abs(TexCoord.y);\n"
+    "       float start_varf = 0.4;\n"
+    "       float grosime_coada =0.25;\n"
+
+    "       if(x < start_varf){\n"
+    "           if(y > grosime_coada) discard;\n"      
+    "       } else {\n"
+    "           float panta = (1.0 - x) / (1.0 - start_varf);\n"
+    "           if(y> panta) discard;\n"
+    "       }\n"
+    "    }\n"
     "    FragColor = vec4(fColor.rgb + finalGlow, fColor.a);\n"
     "}\0";
 
-void updateVerticesData(sistem &S, editor &E, float* vertices){
+int updateVerticesData(sistem &S, editor &E, float* vertices, bool arata_forte){
     // 11 float-uri: [x, y, phi, width, height, type, r, g, b, a, selectat]
     int stride = 11;
     int pct_curent = 0; // Contor global pentru pozitia in buffer
@@ -284,6 +296,57 @@ void updateVerticesData(sistem &S, editor &E, float* vertices){
         pct_curent++;
     }
    
+    // 5. Forte (Desenate separat pe culori)
+    if (arata_forte) {
+        for (int i = 0; i < S.corpuri.size(); i++) {
+            if (!S.corpuri[i].activ || S.corpuri[i].M > 1e10f) continue;
+
+            float scala_forta = 0.02f;
+
+            auto adaugaSageata = [&](vec2 forta, vec2 origine,  float r, float g, float b) {
+                    
+                    float magnitudine = forta.modul(); 
+                    if (magnitudine < 0.1f) return;
+
+                    int idx = pct_curent * stride;
+                    float unghi = std::atan2(forta.y, forta.x);
+                    float L = magnitudine * scala_forta;
+
+                    vertices[idx + 0] = origine.x + (L / 2.0f) * std::cos(unghi);
+                    vertices[idx + 1] = origine.y + (L / 2.0f) * std::sin(unghi);
+                    vertices[idx + 2] = unghi;
+                    vertices[idx + 3] = L; 
+                    vertices[idx + 4] = L / 5; // grosimea sagetii
+                    vertices[idx + 5] = 5.0f;  // Tip = SAGEATA
+                    vertices[idx + 6] = r;
+                    vertices[idx + 7] = g;
+                    vertices[idx + 8] = b; 
+                    vertices[idx + 9] = 0.8f; // Alpha
+                    vertices[idx + 10] = 0.0f; // Selectat
+
+                    pct_curent++;
+                };
+
+            for (const auto& f : S.corpuri[i].forte_desen.forte) {
+                
+                float r = 1.0f, g = 1.0f, b = 1.0f; // Alb default
+                
+                // Alegem culoarea in functie de tip
+                switch (f.tip) {
+                    case FORTA_GREUTATE:       r = 0.2f; g = 0.8f; b = 0.2f; break; // Verde
+                    case FORTA_ELASTICA:       r = 0.2f; g = 0.5f; b = 1.0f; break; // Albastru
+                    case FORTA_REACTIUNE:      r = 1.0f; g = 0.5f; b = 0.0f; break; // Portocaliu
+                    case FORTA_IMPACT_NORMAL:  r = 0.0f; g = 1.0f; b = 1.0f; break; // Cyan
+                    case FORTA_IMPACT_FRECARE: r = 1.0f; g = 1.0f; b = 0.0f; break; // Galben
+                }
+
+                // Trimitem forta.valoare si folosim f.punct_aplicare in loc de centrul corpului
+                adaugaSageata(f.valoare, f.punct_aplicare, r, g, b); 
+            }
+        }
+    }
+
+    return pct_curent;
 }
 
 
@@ -399,12 +462,11 @@ void initBuffers(unsigned int &VAO, unsigned int &VBO) {
     glBindVertexArray(0);
 }
 
-void drawSystem(sistem &S, editor &E, unsigned int VAO, unsigned int VBO, unsigned int shaderProgram, float* Buffer) {
-    updateVerticesData(S, E, Buffer);
-    int totalPoints = S.corpuri.size() + S.legaturi.size() + S.arcuri.size() + E.elementeUI.size();
+void drawSystem(sistem &S, editor &E, unsigned int VAO, unsigned int VBO, unsigned int shaderProgram, float* Buffer, bool arata_forte) {
+
+    int totalPoints = updateVerticesData(S, E, Buffer, arata_forte);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // CORECTAT: Inmultim cu 11 (stride-ul real), nu cu 10
     glBufferData(GL_ARRAY_BUFFER, totalPoints * 11 * sizeof(float), Buffer, GL_DYNAMIC_DRAW);
     
     glUseProgram(shaderProgram);

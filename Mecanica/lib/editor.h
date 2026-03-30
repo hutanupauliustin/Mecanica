@@ -35,6 +35,8 @@ class editor{
     std::vector<int> corpuriSelectate;
     std::vector<fantomaUI> elementeUI;
 
+    int corpApasat;
+
     int legatura_corpA;
     int stare_legatura;
 

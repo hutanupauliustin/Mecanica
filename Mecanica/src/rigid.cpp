@@ -1,5 +1,14 @@
 #include "cmath"
 #include "rigid.h"
+#include <cstring>
+
+tipMaterial obtineMaterialDupaNume(const char* nume) {
+    if (std::strcmp(nume, "Cauciuc") == 0) return materiale::Cauciuc;
+    if (std::strcmp(nume, "Gheata") == 0)  return materiale::Gheata;
+    if (std::strcmp(nume, "Piatra") == 0)  return materiale::Piatra;
+    
+    return materiale::Lemn;     //default
+}
 
 rigid::rigid() : pozitie(0.0f, 0.0f), phi(0.0f), viteza(0.0f, 0.0f), omega(0.0f), M(1.0f), J(1.0f) {
         collider.tip = PUNCT;
@@ -7,10 +16,15 @@ rigid::rigid() : pozitie(0.0f, 0.0f), phi(0.0f), viteza(0.0f, 0.0f), omega(0.0f)
         collider.dimensiune2 = 1.0f;
         collider.bb.razaInaltime = 1.0f;
         collider.bb.razaLatime = 1.0f;
+
+        material = materiale::Lemn;
     }
 
     rigid::rigid (float x_initial, float y_initial, float phi_initial, float masa, float momentInertie)
-        : pozitie(x_initial, y_initial), phi(phi_initial), M(masa), J(momentInertie), viteza(0.0f, 0.0f), omega(0.0f) {}
+        : pozitie(x_initial, y_initial), phi(phi_initial), M(masa), J(momentInertie), viteza(0.0f, 0.0f), omega(0.0f) {
+
+            material = materiale::Lemn;
+        }
         
     void rigid::adauagaForte(float modul_forta, float x_aplicare, float y_aplicare, float u_x, float u_y ){
         fortaExterna F;
@@ -63,7 +77,19 @@ rigid::rigid() : pozitie(0.0f, 0.0f), phi(0.0f), viteza(0.0f, 0.0f), omega(0.0f)
             ;
         } else {
             
-            tau.forta.y -= M*g;
+            fortaVizuala forta_gravitatie;
+            forta_gravitatie.valoare.x = 0;
+            forta_gravitatie.valoare.y = (-1)*M*g;
+            forta_gravitatie.tip = FORTA_GREUTATE;
+            forta_gravitatie.punct_aplicare = pozitie;
+            forte_desen.forte.push_back(forta_gravitatie); 
+
+            fortaExterna gravitatie;
+            gravitatie.u.x = 0;
+            gravitatie.u.y = 1;
+            gravitatie.modul =  (-1)*M*g;
+            gravitatie.punct_aplicatie = this->pozitie;
+            this->forte.push_back(gravitatie);
 
             float drag = collider.coeficientAerodinamic;
             tau.forta.x -= drag * viteza.x;
@@ -111,7 +137,7 @@ rigid::rigid() : pozitie(0.0f, 0.0f), phi(0.0f), viteza(0.0f, 0.0f), omega(0.0f)
     }
     
     
-    rigid rigid::Bara( float x, float y, float Lungime, float Grosime, float Masa) {
+    rigid rigid::Bara( float x, float y, float Lungime, float Grosime, float Masa, const char* numeMaterial) {
         rigid r;
         r.index = 0;
         r.pozitie = vec2(x, y);
@@ -121,10 +147,13 @@ rigid::rigid() : pozitie(0.0f, 0.0f), phi(0.0f), viteza(0.0f, 0.0f), omega(0.0f)
         r.J = (Masa * (Lungime * Lungime + Grosime * Grosime)) / 12.0f;
         r.collider.tip = DREPTUNGHI;
         r.collider.coeficientAerodinamic = ((Lungime + Grosime) / 2.0f) * 1.05f;
+
+        r.material = obtineMaterialDupaNume(numeMaterial);
+
         return r;
     }
 
-    rigid rigid::Disc( float x, float y, float Raza, float Masa) {
+    rigid rigid::Disc( float x, float y, float Raza, float Masa, const char* numeMaterial) {
         rigid r;
         r.index = 0;
         r.pozitie = vec2(x, y);
@@ -134,6 +163,8 @@ rigid::rigid() : pozitie(0.0f, 0.0f), phi(0.0f), viteza(0.0f, 0.0f), omega(0.0f)
         r.J = (Masa * Raza * Raza) / 2.0f;
         r.collider.tip = CERC;
         r.collider.coeficientAerodinamic = Raza * 0.47f;
+
+        r.material = obtineMaterialDupaNume(numeMaterial);  
         return r;
     }
 
@@ -147,5 +178,7 @@ rigid::rigid() : pozitie(0.0f, 0.0f), phi(0.0f), viteza(0.0f, 0.0f), omega(0.0f)
         r.collider.dimensiune1 = 0.0f;
         r.collider.dimensiune2 = 0.0f;
         r.collider.tip = PUNCT;
+
+        r.material = materiale::Lemn;
         return r;
     }

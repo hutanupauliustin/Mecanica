@@ -3470,6 +3470,7 @@ CMakeFiles/simulator.dir/src/rigid.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecan
   C:/Strawberry/c/include/c++/13.2.0/cstddef \
   C:/Strawberry/c/include/c++/13.2.0/cstdio \
   C:/Strawberry/c/include/c++/13.2.0/cstdlib \
+  C:/Strawberry/c/include/c++/13.2.0/cstring \
   C:/Strawberry/c/include/c++/13.2.0/cwchar \
   C:/Strawberry/c/include/c++/13.2.0/cwctype \
   C:/Strawberry/c/include/c++/13.2.0/debug/assertions.h \
@@ -3552,12 +3553,14 @@ CMakeFiles/simulator.dir/src/rigid.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecan
   C:/Strawberry/c/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/sec_api/stdio_s.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/sec_api/stdlib_s.h \
+  C:/Strawberry/c/x86_64-w64-mingw32/include/sec_api/string_s.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/sec_api/wchar_s.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/signal.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/stddef.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/stdio.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/stdlib.h \
+  C:/Strawberry/c/x86_64-w64-mingw32/include/string.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/swprintf.inl \
   C:/Strawberry/c/x86_64-w64-mingw32/include/sys/timeb.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/sys/types.h \
@@ -4315,6 +4318,8 @@ C:/Strawberry/c/include/c++/13.2.0/bits/charconv.h:
 C:/Strawberry/c/x86_64-w64-mingw32/include/wingdi.h:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/avx512fp16intrin.h:
+
+C:/Strawberry/c/include/c++/13.2.0/cstring:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/threadpoolapiset.h:
 

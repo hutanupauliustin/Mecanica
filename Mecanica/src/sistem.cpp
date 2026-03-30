@@ -48,6 +48,7 @@
             }
         }
         // Daca nu am gasit niciun loc liber, adaugam la capat
+        r.activ = 1;
         r.index = corpuri.size();
         corpuri.push_back(r);
     }
@@ -63,6 +64,7 @@
             }
         }
         // Daca nu am gasit niciun loc liber, adaugam la capat
+        l->activ = 1;
         legaturi.push_back(l);
         p += l->getNumarEcuatii();
     }
@@ -267,7 +269,7 @@ void sistem::seteazaConstrangeri()
             }
         }   
         
-        A_inv = A.inverse();
+        A_inv = A.inversaDiagonala();
     }
 
     void sistem::seteazaForteExterne()
@@ -280,6 +282,7 @@ void sistem::seteazaConstrangeri()
 
         // 1. Initializam fortele (gravitatie, frecare aer)
         for (int i = 0; i < nr_corpuri; i++) {
+            corpuri[i].forte_desen.forte.clear();
             corpuri[i].aflaForteProprii(g); 
         }
 
@@ -287,6 +290,10 @@ void sistem::seteazaConstrangeri()
         for (int i = 0; i < arcuri.size(); i++) {
             if(arcuri[i].activ == 0) continue; // Sarim peste cele sterse!
             arcuri[i].aplicaFortaElastica(this->corpuri[arcuri[i].contorCorpA], this->corpuri[arcuri[i].contorCorpB]);
+        }
+
+        for (int i = 0; i < nr_corpuri; i++) {
+            corpuri[i].reducereTorsor(); 
         }
 
         // 3. Incarcam totul in matricea sistemului

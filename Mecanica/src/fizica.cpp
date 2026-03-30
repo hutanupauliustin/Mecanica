@@ -83,8 +83,47 @@ matrice derivata(sistem &S, const matrice &stare_curenta, float t)      //facuta
     // q_ddot = A^-1 * (Q + J^T * Lambda)
     int nr = S.corpuri.size();
     matrice acc(3 * nr, 1);
-    matrice A_inv = S.A.inverse();
+    matrice A_inv = S.A.inversaDiagonala();
     matrice J_T = S.J_F ^ "T";
+
+    matrice forte_reactiune = J_T * S.Lambda;
+    
+    int index_forta = 0;
+
+    for(int i = 0; i < S.corpuri.size(); i++) {
+        S.corpuri[i].forte_desen.reseteaza();
+    }
+
+    for(int i = 0; i < S.legaturi.size(); i++) {
+        
+        float fx = S.Lambda(index_forta + 0, 0);
+        float fy = S.Lambda(index_forta + 1, 0);
+        vec2 forta_reactiune(fx,fy);
+
+        vec2 punct_global = S.legaturi[i]->getPozitie(S.corpuri);
+
+        int idA = S.legaturi[i]->contorCorpA;
+        int idB = S.legaturi[i]->contorCorpB;
+
+        if (S.corpuri[idA].M < 1e10f) {
+            fortaVizuala fA;
+            fA.tip = FORTA_REACTIUNE;
+            fA.valoare = forta_reactiune; 
+            fA.punct_aplicare = punct_global;
+            S.corpuri[idA].forte_desen.forte.push_back(fA);
+        }
+
+        if (S.corpuri[idB].M < 1e10f) {
+            fortaVizuala fB;
+            fB.tip = FORTA_REACTIUNE;
+            fB.valoare = (-1)*forta_reactiune; // Sens opus!
+            fB.punct_aplicare = punct_global;
+            S.corpuri[idB].forte_desen.forte.push_back(fB);
+        }
+
+        index_forta += 2;
+    }
+
     acc = A_inv * (S.Q + J_T * S.Lambda);
 
     // 5. Construim vectorul derivatei starii: [viteze, acceleratii].

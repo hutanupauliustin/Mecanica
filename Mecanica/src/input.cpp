@@ -95,9 +95,10 @@ void processInput(GLFWwindow *window, float &dt, bool &running_flag, sistem &S, 
 
     if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
         switch(E.mod_curent){
-            case MOD_RULARE:               
-                // arc a;
-                // S.adaugaArcuri(a);
+            case MOD_RULARE:
+                if(id_sub_mouse != -1)
+                    E.corpApasat = id_sub_mouse;
+                    
                 break;
             case MOD_EDITARE:               
                 if(id_sub_mouse != -1) {
@@ -107,6 +108,20 @@ void processInput(GLFWwindow *window, float &dt, bool &running_flag, sistem &S, 
                 }
                 break;
 
+            case MOD_PLASARE_CORP:          
+            case MOD_PLASARE_LEGATURA_1:    
+            case MOD_PLASARE_LEGATURA_2:    
+                break;
+        }
+    }
+
+    if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
+        switch(E.mod_curent){
+            case MOD_RULARE:
+                E.corpApasat = -1;
+                    
+                break;
+            case MOD_EDITARE:               
             case MOD_PLASARE_CORP:          
             case MOD_PLASARE_LEGATURA_1:    
             case MOD_PLASARE_LEGATURA_2:    

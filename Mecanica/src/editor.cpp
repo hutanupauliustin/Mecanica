@@ -10,6 +10,8 @@ editor::editor(){
     legatura_corpA = -1;
     stare_legatura = 0;
 
+    corpApasat = -1;
+
     elementeUI.resize(2);   //pentru fantoma de corp si de legatura
 }
 
