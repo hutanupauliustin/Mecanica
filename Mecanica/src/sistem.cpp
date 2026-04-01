@@ -101,10 +101,14 @@
             }
         }
         
+        actualizeazaMatriceFizica();
+    }
+
+    void sistem::actualizeazaMatriceFizica() {
         incarcaStare();
         seteazaMatriceInertie();
         seteazaJacobian();
-        seteazaConstrangeri(); 
+        seteazaConstrangeri();
         seteazaForteExterne();
     }
 
@@ -175,6 +179,12 @@
 
     void sistem::seteazaJacobian()
     {
+        if (p == 0) {
+            int nr_corpuri = this->corpuri.size();
+            J_F = matrice('0', 0, 3 * nr_corpuri);
+            JdotQ = matrice('0', 0, 1);
+        return;
+        }
 
         int nr_corpuri = this->corpuri.size();
 
@@ -211,6 +221,13 @@
 
 void sistem::seteazaConstrangeri()
     {
+        if (p == 0) {
+            int nr_corpuri = this->corpuri.size();
+            J_F = matrice('0', 0, 3 * nr_corpuri);
+            JdotQ = matrice('0', 0, 1);
+        return;
+        }
+
         int nr_corpuri = this->corpuri.size();
 
         if (F.linii != p || F.coloane != 1)

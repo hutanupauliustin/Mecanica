@@ -46,8 +46,8 @@ intersectie intersectareScaraMica(sistem &S, int corpA, int corpB)
         inter.seLovesc = (inter.adancimee >= 0);
         
         if (dist > 0.0001f) {
-            inter.normala.x = (x_A - x_B) / dist;
-            inter.normala.y = (y_A - y_B) / dist;
+            inter.normala.x = (x_B - x_A) / dist;
+            inter.normala.y = (y_B - y_A) / dist;
         } else {
             inter.normala.x = 1.0f; 
             inter.normala.y = 0.0f;
@@ -598,6 +598,10 @@ void adaugaFortePercutanteVizuale(sistem &S){
     for(int i = 0; i < S.legaturi.size(); i++) {
 
         if (S.legaturi[i]->activ == 0) continue;
+
+        int nr_ecuatii = S.legaturi[i]->getNumarEcuatii();
+
+        if(nr_ecuatii >= 2){
         
         float Px = S.LambdaPerc(index_forta + 0, 0);
         float Py = S.LambdaPerc(index_forta + 1, 0);
@@ -617,7 +621,9 @@ void adaugaFortePercutanteVizuale(sistem &S){
                 S.corpuri[idB].forte_desen.forte.push_back({FORTA_IMPACT_NORMAL, forta_aparenta * (-1.0f), punct_global});
             }
         }
-        index_forta += 2;
+
+    }
+        index_forta += nr_ecuatii;
     }
 }
 

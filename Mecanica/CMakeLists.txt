@@ -7,22 +7,23 @@ project(SimulatorMecanica LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Colectam automat toate fisierele sursa (.cpp si .c)
 set(PROJECT_SOURCES
-    src/main.cpp
-    src/sistem.cpp
-    src/fizica.cpp
-    src/input.cpp
-    src/gui.cpp
-    src/grafica.cpp
+    src/arc.cpp
     src/colliziune.cpp
     src/editor.cpp
-    src/scena.cpp
-    src/rigid.cpp
-    src/arc.cpp
-    src/legatura.cpp
-    src/matrice.cpp
+    src/fizica.cpp
     src/glad.c
+    src/grafica.cpp
+    src/gui.cpp
+    src/implot_items.cpp
+    src/implot.cpp
+    src/input.cpp
+    src/legatura.cpp
+    src/main.cpp
+    src/matrice.cpp
+    src/rigid.cpp
+    src/scena.cpp
+    src/sistem.cpp
 )
 
 file(GLOB IMGUI_SOURCES "ImGuiSrc/*.cpp")

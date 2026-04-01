@@ -68,41 +68,56 @@ include CMakeFiles/simulator.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/simulator.dir/flags.make
 
-CMakeFiles/simulator.dir/src/main.cpp.obj: CMakeFiles/simulator.dir/flags.make
-CMakeFiles/simulator.dir/src/main.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
-CMakeFiles/simulator.dir/src/main.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/main.cpp
-CMakeFiles/simulator.dir/src/main.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/simulator.dir/src/main.cpp.obj"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/main.cpp.obj -MF CMakeFiles\simulator.dir\src\main.cpp.obj.d -o CMakeFiles\simulator.dir\src\main.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\main.cpp
+CMakeFiles/simulator.dir/src/arc.cpp.obj: CMakeFiles/simulator.dir/flags.make
+CMakeFiles/simulator.dir/src/arc.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
+CMakeFiles/simulator.dir/src/arc.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/arc.cpp
+CMakeFiles/simulator.dir/src/arc.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/simulator.dir/src/arc.cpp.obj"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/arc.cpp.obj -MF CMakeFiles\simulator.dir\src\arc.cpp.obj.d -o CMakeFiles\simulator.dir\src\arc.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\arc.cpp
 
-CMakeFiles/simulator.dir/src/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/main.cpp.i"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\main.cpp > CMakeFiles\simulator.dir\src\main.cpp.i
+CMakeFiles/simulator.dir/src/arc.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/arc.cpp.i"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\arc.cpp > CMakeFiles\simulator.dir\src\arc.cpp.i
 
-CMakeFiles/simulator.dir/src/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/main.cpp.s"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\main.cpp -o CMakeFiles\simulator.dir\src\main.cpp.s
+CMakeFiles/simulator.dir/src/arc.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/arc.cpp.s"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\arc.cpp -o CMakeFiles\simulator.dir\src\arc.cpp.s
 
-CMakeFiles/simulator.dir/src/sistem.cpp.obj: CMakeFiles/simulator.dir/flags.make
-CMakeFiles/simulator.dir/src/sistem.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
-CMakeFiles/simulator.dir/src/sistem.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/sistem.cpp
-CMakeFiles/simulator.dir/src/sistem.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/simulator.dir/src/sistem.cpp.obj"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/sistem.cpp.obj -MF CMakeFiles\simulator.dir\src\sistem.cpp.obj.d -o CMakeFiles\simulator.dir\src\sistem.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\sistem.cpp
+CMakeFiles/simulator.dir/src/colliziune.cpp.obj: CMakeFiles/simulator.dir/flags.make
+CMakeFiles/simulator.dir/src/colliziune.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
+CMakeFiles/simulator.dir/src/colliziune.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/colliziune.cpp
+CMakeFiles/simulator.dir/src/colliziune.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/simulator.dir/src/colliziune.cpp.obj"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/colliziune.cpp.obj -MF CMakeFiles\simulator.dir\src\colliziune.cpp.obj.d -o CMakeFiles\simulator.dir\src\colliziune.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\colliziune.cpp
 
-CMakeFiles/simulator.dir/src/sistem.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/sistem.cpp.i"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\sistem.cpp > CMakeFiles\simulator.dir\src\sistem.cpp.i
+CMakeFiles/simulator.dir/src/colliziune.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/colliziune.cpp.i"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\colliziune.cpp > CMakeFiles\simulator.dir\src\colliziune.cpp.i
 
-CMakeFiles/simulator.dir/src/sistem.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/sistem.cpp.s"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\sistem.cpp -o CMakeFiles\simulator.dir\src\sistem.cpp.s
+CMakeFiles/simulator.dir/src/colliziune.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/colliziune.cpp.s"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\colliziune.cpp -o CMakeFiles\simulator.dir\src\colliziune.cpp.s
+
+CMakeFiles/simulator.dir/src/editor.cpp.obj: CMakeFiles/simulator.dir/flags.make
+CMakeFiles/simulator.dir/src/editor.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
+CMakeFiles/simulator.dir/src/editor.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/editor.cpp
+CMakeFiles/simulator.dir/src/editor.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/simulator.dir/src/editor.cpp.obj"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/editor.cpp.obj -MF CMakeFiles\simulator.dir\src\editor.cpp.obj.d -o CMakeFiles\simulator.dir\src\editor.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\editor.cpp
+
+CMakeFiles/simulator.dir/src/editor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/editor.cpp.i"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\editor.cpp > CMakeFiles\simulator.dir\src\editor.cpp.i
+
+CMakeFiles/simulator.dir/src/editor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/editor.cpp.s"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\editor.cpp -o CMakeFiles\simulator.dir\src\editor.cpp.s
 
 CMakeFiles/simulator.dir/src/fizica.cpp.obj: CMakeFiles/simulator.dir/flags.make
 CMakeFiles/simulator.dir/src/fizica.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
 CMakeFiles/simulator.dir/src/fizica.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/fizica.cpp
 CMakeFiles/simulator.dir/src/fizica.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/simulator.dir/src/fizica.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/simulator.dir/src/fizica.cpp.obj"
 	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/fizica.cpp.obj -MF CMakeFiles\simulator.dir\src\fizica.cpp.obj.d -o CMakeFiles\simulator.dir\src\fizica.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\fizica.cpp
 
 CMakeFiles/simulator.dir/src/fizica.cpp.i: cmake_force
@@ -113,35 +128,20 @@ CMakeFiles/simulator.dir/src/fizica.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/fizica.cpp.s"
 	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\fizica.cpp -o CMakeFiles\simulator.dir\src\fizica.cpp.s
 
-CMakeFiles/simulator.dir/src/input.cpp.obj: CMakeFiles/simulator.dir/flags.make
-CMakeFiles/simulator.dir/src/input.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
-CMakeFiles/simulator.dir/src/input.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/input.cpp
-CMakeFiles/simulator.dir/src/input.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/simulator.dir/src/input.cpp.obj"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/input.cpp.obj -MF CMakeFiles\simulator.dir\src\input.cpp.obj.d -o CMakeFiles\simulator.dir\src\input.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\input.cpp
+CMakeFiles/simulator.dir/src/glad.c.obj: CMakeFiles/simulator.dir/flags.make
+CMakeFiles/simulator.dir/src/glad.c.obj: CMakeFiles/simulator.dir/includes_C.rsp
+CMakeFiles/simulator.dir/src/glad.c.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/glad.c
+CMakeFiles/simulator.dir/src/glad.c.obj: CMakeFiles/simulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/simulator.dir/src/glad.c.obj"
+	C:\Strawberry\c\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/glad.c.obj -MF CMakeFiles\simulator.dir\src\glad.c.obj.d -o CMakeFiles\simulator.dir\src\glad.c.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\glad.c
 
-CMakeFiles/simulator.dir/src/input.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/input.cpp.i"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\input.cpp > CMakeFiles\simulator.dir\src\input.cpp.i
+CMakeFiles/simulator.dir/src/glad.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/simulator.dir/src/glad.c.i"
+	C:\Strawberry\c\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\glad.c > CMakeFiles\simulator.dir\src\glad.c.i
 
-CMakeFiles/simulator.dir/src/input.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/input.cpp.s"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\input.cpp -o CMakeFiles\simulator.dir\src\input.cpp.s
-
-CMakeFiles/simulator.dir/src/gui.cpp.obj: CMakeFiles/simulator.dir/flags.make
-CMakeFiles/simulator.dir/src/gui.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
-CMakeFiles/simulator.dir/src/gui.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/gui.cpp
-CMakeFiles/simulator.dir/src/gui.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/simulator.dir/src/gui.cpp.obj"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/gui.cpp.obj -MF CMakeFiles\simulator.dir\src\gui.cpp.obj.d -o CMakeFiles\simulator.dir\src\gui.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\gui.cpp
-
-CMakeFiles/simulator.dir/src/gui.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/gui.cpp.i"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\gui.cpp > CMakeFiles\simulator.dir\src\gui.cpp.i
-
-CMakeFiles/simulator.dir/src/gui.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/gui.cpp.s"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\gui.cpp -o CMakeFiles\simulator.dir\src\gui.cpp.s
+CMakeFiles/simulator.dir/src/glad.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/simulator.dir/src/glad.c.s"
+	C:\Strawberry\c\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\glad.c -o CMakeFiles\simulator.dir\src\glad.c.s
 
 CMakeFiles/simulator.dir/src/grafica.cpp.obj: CMakeFiles/simulator.dir/flags.make
 CMakeFiles/simulator.dir/src/grafica.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
@@ -158,86 +158,71 @@ CMakeFiles/simulator.dir/src/grafica.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/grafica.cpp.s"
 	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\grafica.cpp -o CMakeFiles\simulator.dir\src\grafica.cpp.s
 
-CMakeFiles/simulator.dir/src/colliziune.cpp.obj: CMakeFiles/simulator.dir/flags.make
-CMakeFiles/simulator.dir/src/colliziune.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
-CMakeFiles/simulator.dir/src/colliziune.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/colliziune.cpp
-CMakeFiles/simulator.dir/src/colliziune.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/simulator.dir/src/colliziune.cpp.obj"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/colliziune.cpp.obj -MF CMakeFiles\simulator.dir\src\colliziune.cpp.obj.d -o CMakeFiles\simulator.dir\src\colliziune.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\colliziune.cpp
+CMakeFiles/simulator.dir/src/gui.cpp.obj: CMakeFiles/simulator.dir/flags.make
+CMakeFiles/simulator.dir/src/gui.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
+CMakeFiles/simulator.dir/src/gui.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/gui.cpp
+CMakeFiles/simulator.dir/src/gui.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/simulator.dir/src/gui.cpp.obj"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/gui.cpp.obj -MF CMakeFiles\simulator.dir\src\gui.cpp.obj.d -o CMakeFiles\simulator.dir\src\gui.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\gui.cpp
 
-CMakeFiles/simulator.dir/src/colliziune.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/colliziune.cpp.i"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\colliziune.cpp > CMakeFiles\simulator.dir\src\colliziune.cpp.i
+CMakeFiles/simulator.dir/src/gui.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/gui.cpp.i"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\gui.cpp > CMakeFiles\simulator.dir\src\gui.cpp.i
 
-CMakeFiles/simulator.dir/src/colliziune.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/colliziune.cpp.s"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\colliziune.cpp -o CMakeFiles\simulator.dir\src\colliziune.cpp.s
+CMakeFiles/simulator.dir/src/gui.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/gui.cpp.s"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\gui.cpp -o CMakeFiles\simulator.dir\src\gui.cpp.s
 
-CMakeFiles/simulator.dir/src/editor.cpp.obj: CMakeFiles/simulator.dir/flags.make
-CMakeFiles/simulator.dir/src/editor.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
-CMakeFiles/simulator.dir/src/editor.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/editor.cpp
-CMakeFiles/simulator.dir/src/editor.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/simulator.dir/src/editor.cpp.obj"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/editor.cpp.obj -MF CMakeFiles\simulator.dir\src\editor.cpp.obj.d -o CMakeFiles\simulator.dir\src\editor.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\editor.cpp
+CMakeFiles/simulator.dir/src/implot_items.cpp.obj: CMakeFiles/simulator.dir/flags.make
+CMakeFiles/simulator.dir/src/implot_items.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
+CMakeFiles/simulator.dir/src/implot_items.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/implot_items.cpp
+CMakeFiles/simulator.dir/src/implot_items.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/simulator.dir/src/implot_items.cpp.obj"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/implot_items.cpp.obj -MF CMakeFiles\simulator.dir\src\implot_items.cpp.obj.d -o CMakeFiles\simulator.dir\src\implot_items.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\implot_items.cpp
 
-CMakeFiles/simulator.dir/src/editor.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/editor.cpp.i"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\editor.cpp > CMakeFiles\simulator.dir\src\editor.cpp.i
+CMakeFiles/simulator.dir/src/implot_items.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/implot_items.cpp.i"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\implot_items.cpp > CMakeFiles\simulator.dir\src\implot_items.cpp.i
 
-CMakeFiles/simulator.dir/src/editor.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/editor.cpp.s"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\editor.cpp -o CMakeFiles\simulator.dir\src\editor.cpp.s
+CMakeFiles/simulator.dir/src/implot_items.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/implot_items.cpp.s"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\implot_items.cpp -o CMakeFiles\simulator.dir\src\implot_items.cpp.s
 
-CMakeFiles/simulator.dir/src/scena.cpp.obj: CMakeFiles/simulator.dir/flags.make
-CMakeFiles/simulator.dir/src/scena.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
-CMakeFiles/simulator.dir/src/scena.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/scena.cpp
-CMakeFiles/simulator.dir/src/scena.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/simulator.dir/src/scena.cpp.obj"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/scena.cpp.obj -MF CMakeFiles\simulator.dir\src\scena.cpp.obj.d -o CMakeFiles\simulator.dir\src\scena.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\scena.cpp
+CMakeFiles/simulator.dir/src/implot.cpp.obj: CMakeFiles/simulator.dir/flags.make
+CMakeFiles/simulator.dir/src/implot.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
+CMakeFiles/simulator.dir/src/implot.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/implot.cpp
+CMakeFiles/simulator.dir/src/implot.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/simulator.dir/src/implot.cpp.obj"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/implot.cpp.obj -MF CMakeFiles\simulator.dir\src\implot.cpp.obj.d -o CMakeFiles\simulator.dir\src\implot.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\implot.cpp
 
-CMakeFiles/simulator.dir/src/scena.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/scena.cpp.i"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\scena.cpp > CMakeFiles\simulator.dir\src\scena.cpp.i
+CMakeFiles/simulator.dir/src/implot.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/implot.cpp.i"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\implot.cpp > CMakeFiles\simulator.dir\src\implot.cpp.i
 
-CMakeFiles/simulator.dir/src/scena.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/scena.cpp.s"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\scena.cpp -o CMakeFiles\simulator.dir\src\scena.cpp.s
+CMakeFiles/simulator.dir/src/implot.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/implot.cpp.s"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\implot.cpp -o CMakeFiles\simulator.dir\src\implot.cpp.s
 
-CMakeFiles/simulator.dir/src/rigid.cpp.obj: CMakeFiles/simulator.dir/flags.make
-CMakeFiles/simulator.dir/src/rigid.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
-CMakeFiles/simulator.dir/src/rigid.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/rigid.cpp
-CMakeFiles/simulator.dir/src/rigid.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/simulator.dir/src/rigid.cpp.obj"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/rigid.cpp.obj -MF CMakeFiles\simulator.dir\src\rigid.cpp.obj.d -o CMakeFiles\simulator.dir\src\rigid.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\rigid.cpp
+CMakeFiles/simulator.dir/src/input.cpp.obj: CMakeFiles/simulator.dir/flags.make
+CMakeFiles/simulator.dir/src/input.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
+CMakeFiles/simulator.dir/src/input.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/input.cpp
+CMakeFiles/simulator.dir/src/input.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/simulator.dir/src/input.cpp.obj"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/input.cpp.obj -MF CMakeFiles\simulator.dir\src\input.cpp.obj.d -o CMakeFiles\simulator.dir\src\input.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\input.cpp
 
-CMakeFiles/simulator.dir/src/rigid.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/rigid.cpp.i"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\rigid.cpp > CMakeFiles\simulator.dir\src\rigid.cpp.i
+CMakeFiles/simulator.dir/src/input.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/input.cpp.i"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\input.cpp > CMakeFiles\simulator.dir\src\input.cpp.i
 
-CMakeFiles/simulator.dir/src/rigid.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/rigid.cpp.s"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\rigid.cpp -o CMakeFiles\simulator.dir\src\rigid.cpp.s
-
-CMakeFiles/simulator.dir/src/arc.cpp.obj: CMakeFiles/simulator.dir/flags.make
-CMakeFiles/simulator.dir/src/arc.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
-CMakeFiles/simulator.dir/src/arc.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/arc.cpp
-CMakeFiles/simulator.dir/src/arc.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/simulator.dir/src/arc.cpp.obj"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/arc.cpp.obj -MF CMakeFiles\simulator.dir\src\arc.cpp.obj.d -o CMakeFiles\simulator.dir\src\arc.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\arc.cpp
-
-CMakeFiles/simulator.dir/src/arc.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/arc.cpp.i"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\arc.cpp > CMakeFiles\simulator.dir\src\arc.cpp.i
-
-CMakeFiles/simulator.dir/src/arc.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/arc.cpp.s"
-	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\arc.cpp -o CMakeFiles\simulator.dir\src\arc.cpp.s
+CMakeFiles/simulator.dir/src/input.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/input.cpp.s"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\input.cpp -o CMakeFiles\simulator.dir\src\input.cpp.s
 
 CMakeFiles/simulator.dir/src/legatura.cpp.obj: CMakeFiles/simulator.dir/flags.make
 CMakeFiles/simulator.dir/src/legatura.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
 CMakeFiles/simulator.dir/src/legatura.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/legatura.cpp
 CMakeFiles/simulator.dir/src/legatura.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/simulator.dir/src/legatura.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/simulator.dir/src/legatura.cpp.obj"
 	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/legatura.cpp.obj -MF CMakeFiles\simulator.dir\src\legatura.cpp.obj.d -o CMakeFiles\simulator.dir\src\legatura.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\legatura.cpp
 
 CMakeFiles/simulator.dir/src/legatura.cpp.i: cmake_force
@@ -247,6 +232,21 @@ CMakeFiles/simulator.dir/src/legatura.cpp.i: cmake_force
 CMakeFiles/simulator.dir/src/legatura.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/legatura.cpp.s"
 	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\legatura.cpp -o CMakeFiles\simulator.dir\src\legatura.cpp.s
+
+CMakeFiles/simulator.dir/src/main.cpp.obj: CMakeFiles/simulator.dir/flags.make
+CMakeFiles/simulator.dir/src/main.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
+CMakeFiles/simulator.dir/src/main.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/main.cpp
+CMakeFiles/simulator.dir/src/main.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/simulator.dir/src/main.cpp.obj"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/main.cpp.obj -MF CMakeFiles\simulator.dir\src\main.cpp.obj.d -o CMakeFiles\simulator.dir\src\main.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\main.cpp
+
+CMakeFiles/simulator.dir/src/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/main.cpp.i"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\main.cpp > CMakeFiles\simulator.dir\src\main.cpp.i
+
+CMakeFiles/simulator.dir/src/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/main.cpp.s"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\main.cpp -o CMakeFiles\simulator.dir\src\main.cpp.s
 
 CMakeFiles/simulator.dir/src/matrice.cpp.obj: CMakeFiles/simulator.dir/flags.make
 CMakeFiles/simulator.dir/src/matrice.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
@@ -263,26 +263,56 @@ CMakeFiles/simulator.dir/src/matrice.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/matrice.cpp.s"
 	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\matrice.cpp -o CMakeFiles\simulator.dir\src\matrice.cpp.s
 
-CMakeFiles/simulator.dir/src/glad.c.obj: CMakeFiles/simulator.dir/flags.make
-CMakeFiles/simulator.dir/src/glad.c.obj: CMakeFiles/simulator.dir/includes_C.rsp
-CMakeFiles/simulator.dir/src/glad.c.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/glad.c
-CMakeFiles/simulator.dir/src/glad.c.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object CMakeFiles/simulator.dir/src/glad.c.obj"
-	C:\Strawberry\c\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/glad.c.obj -MF CMakeFiles\simulator.dir\src\glad.c.obj.d -o CMakeFiles\simulator.dir\src\glad.c.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\glad.c
+CMakeFiles/simulator.dir/src/rigid.cpp.obj: CMakeFiles/simulator.dir/flags.make
+CMakeFiles/simulator.dir/src/rigid.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
+CMakeFiles/simulator.dir/src/rigid.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/rigid.cpp
+CMakeFiles/simulator.dir/src/rigid.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/simulator.dir/src/rigid.cpp.obj"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/rigid.cpp.obj -MF CMakeFiles\simulator.dir\src\rigid.cpp.obj.d -o CMakeFiles\simulator.dir\src\rigid.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\rigid.cpp
 
-CMakeFiles/simulator.dir/src/glad.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/simulator.dir/src/glad.c.i"
-	C:\Strawberry\c\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\glad.c > CMakeFiles\simulator.dir\src\glad.c.i
+CMakeFiles/simulator.dir/src/rigid.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/rigid.cpp.i"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\rigid.cpp > CMakeFiles\simulator.dir\src\rigid.cpp.i
 
-CMakeFiles/simulator.dir/src/glad.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/simulator.dir/src/glad.c.s"
-	C:\Strawberry\c\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\glad.c -o CMakeFiles\simulator.dir\src\glad.c.s
+CMakeFiles/simulator.dir/src/rigid.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/rigid.cpp.s"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\rigid.cpp -o CMakeFiles\simulator.dir\src\rigid.cpp.s
+
+CMakeFiles/simulator.dir/src/scena.cpp.obj: CMakeFiles/simulator.dir/flags.make
+CMakeFiles/simulator.dir/src/scena.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
+CMakeFiles/simulator.dir/src/scena.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/scena.cpp
+CMakeFiles/simulator.dir/src/scena.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/simulator.dir/src/scena.cpp.obj"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/scena.cpp.obj -MF CMakeFiles\simulator.dir\src\scena.cpp.obj.d -o CMakeFiles\simulator.dir\src\scena.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\scena.cpp
+
+CMakeFiles/simulator.dir/src/scena.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/scena.cpp.i"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\scena.cpp > CMakeFiles\simulator.dir\src\scena.cpp.i
+
+CMakeFiles/simulator.dir/src/scena.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/scena.cpp.s"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\scena.cpp -o CMakeFiles\simulator.dir\src\scena.cpp.s
+
+CMakeFiles/simulator.dir/src/sistem.cpp.obj: CMakeFiles/simulator.dir/flags.make
+CMakeFiles/simulator.dir/src/sistem.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
+CMakeFiles/simulator.dir/src/sistem.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/src/sistem.cpp
+CMakeFiles/simulator.dir/src/sistem.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/simulator.dir/src/sistem.cpp.obj"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/src/sistem.cpp.obj -MF CMakeFiles\simulator.dir\src\sistem.cpp.obj.d -o CMakeFiles\simulator.dir\src\sistem.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\src\sistem.cpp
+
+CMakeFiles/simulator.dir/src/sistem.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simulator.dir/src/sistem.cpp.i"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Paul\Desktop\Mecanica\Mecanica\src\sistem.cpp > CMakeFiles\simulator.dir\src\sistem.cpp.i
+
+CMakeFiles/simulator.dir/src/sistem.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simulator.dir/src/sistem.cpp.s"
+	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Paul\Desktop\Mecanica\Mecanica\src\sistem.cpp -o CMakeFiles\simulator.dir\src\sistem.cpp.s
 
 CMakeFiles/simulator.dir/ImGuiSrc/imgui.cpp.obj: CMakeFiles/simulator.dir/flags.make
 CMakeFiles/simulator.dir/ImGuiSrc/imgui.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
 CMakeFiles/simulator.dir/ImGuiSrc/imgui.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc/imgui.cpp
 CMakeFiles/simulator.dir/ImGuiSrc/imgui.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/simulator.dir/ImGuiSrc/imgui.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/simulator.dir/ImGuiSrc/imgui.cpp.obj"
 	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/ImGuiSrc/imgui.cpp.obj -MF CMakeFiles\simulator.dir\ImGuiSrc\imgui.cpp.obj.d -o CMakeFiles\simulator.dir\ImGuiSrc\imgui.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\ImGuiSrc\imgui.cpp
 
 CMakeFiles/simulator.dir/ImGuiSrc/imgui.cpp.i: cmake_force
@@ -297,7 +327,7 @@ CMakeFiles/simulator.dir/ImGuiSrc/imgui_demo.cpp.obj: CMakeFiles/simulator.dir/f
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_demo.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_demo.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc/imgui_demo.cpp
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_demo.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/simulator.dir/ImGuiSrc/imgui_demo.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/simulator.dir/ImGuiSrc/imgui_demo.cpp.obj"
 	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/ImGuiSrc/imgui_demo.cpp.obj -MF CMakeFiles\simulator.dir\ImGuiSrc\imgui_demo.cpp.obj.d -o CMakeFiles\simulator.dir\ImGuiSrc\imgui_demo.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\ImGuiSrc\imgui_demo.cpp
 
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_demo.cpp.i: cmake_force
@@ -312,7 +342,7 @@ CMakeFiles/simulator.dir/ImGuiSrc/imgui_draw.cpp.obj: CMakeFiles/simulator.dir/f
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_draw.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_draw.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc/imgui_draw.cpp
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_draw.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/simulator.dir/ImGuiSrc/imgui_draw.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/simulator.dir/ImGuiSrc/imgui_draw.cpp.obj"
 	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/ImGuiSrc/imgui_draw.cpp.obj -MF CMakeFiles\simulator.dir\ImGuiSrc\imgui_draw.cpp.obj.d -o CMakeFiles\simulator.dir\ImGuiSrc\imgui_draw.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\ImGuiSrc\imgui_draw.cpp
 
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_draw.cpp.i: cmake_force
@@ -327,7 +357,7 @@ CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_glfw.cpp.obj: CMakeFiles/simulator.
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_glfw.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_glfw.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc/imgui_impl_glfw.cpp
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_glfw.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_glfw.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_glfw.cpp.obj"
 	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_glfw.cpp.obj -MF CMakeFiles\simulator.dir\ImGuiSrc\imgui_impl_glfw.cpp.obj.d -o CMakeFiles\simulator.dir\ImGuiSrc\imgui_impl_glfw.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\ImGuiSrc\imgui_impl_glfw.cpp
 
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_glfw.cpp.i: cmake_force
@@ -342,7 +372,7 @@ CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_opengl3.cpp.obj: CMakeFiles/simulat
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_opengl3.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_opengl3.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc/imgui_impl_opengl3.cpp
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_opengl3.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_opengl3.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_opengl3.cpp.obj"
 	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_opengl3.cpp.obj -MF CMakeFiles\simulator.dir\ImGuiSrc\imgui_impl_opengl3.cpp.obj.d -o CMakeFiles\simulator.dir\ImGuiSrc\imgui_impl_opengl3.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\ImGuiSrc\imgui_impl_opengl3.cpp
 
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_impl_opengl3.cpp.i: cmake_force
@@ -357,7 +387,7 @@ CMakeFiles/simulator.dir/ImGuiSrc/imgui_tables.cpp.obj: CMakeFiles/simulator.dir
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_tables.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_tables.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc/imgui_tables.cpp
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_tables.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/simulator.dir/ImGuiSrc/imgui_tables.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/simulator.dir/ImGuiSrc/imgui_tables.cpp.obj"
 	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/ImGuiSrc/imgui_tables.cpp.obj -MF CMakeFiles\simulator.dir\ImGuiSrc\imgui_tables.cpp.obj.d -o CMakeFiles\simulator.dir\ImGuiSrc\imgui_tables.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\ImGuiSrc\imgui_tables.cpp
 
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_tables.cpp.i: cmake_force
@@ -372,7 +402,7 @@ CMakeFiles/simulator.dir/ImGuiSrc/imgui_widgets.cpp.obj: CMakeFiles/simulator.di
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_widgets.cpp.obj: CMakeFiles/simulator.dir/includes_CXX.rsp
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_widgets.cpp.obj: C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc/imgui_widgets.cpp
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_widgets.cpp.obj: CMakeFiles/simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/simulator.dir/ImGuiSrc/imgui_widgets.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/simulator.dir/ImGuiSrc/imgui_widgets.cpp.obj"
 	C:\Strawberry\c\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simulator.dir/ImGuiSrc/imgui_widgets.cpp.obj -MF CMakeFiles\simulator.dir\ImGuiSrc\imgui_widgets.cpp.obj.d -o CMakeFiles\simulator.dir\ImGuiSrc\imgui_widgets.cpp.obj -c C:\Users\Paul\Desktop\Mecanica\Mecanica\ImGuiSrc\imgui_widgets.cpp
 
 CMakeFiles/simulator.dir/ImGuiSrc/imgui_widgets.cpp.i: cmake_force
@@ -385,20 +415,22 @@ CMakeFiles/simulator.dir/ImGuiSrc/imgui_widgets.cpp.s: cmake_force
 
 # Object files for target simulator
 simulator_OBJECTS = \
-"CMakeFiles/simulator.dir/src/main.cpp.obj" \
-"CMakeFiles/simulator.dir/src/sistem.cpp.obj" \
-"CMakeFiles/simulator.dir/src/fizica.cpp.obj" \
-"CMakeFiles/simulator.dir/src/input.cpp.obj" \
-"CMakeFiles/simulator.dir/src/gui.cpp.obj" \
-"CMakeFiles/simulator.dir/src/grafica.cpp.obj" \
+"CMakeFiles/simulator.dir/src/arc.cpp.obj" \
 "CMakeFiles/simulator.dir/src/colliziune.cpp.obj" \
 "CMakeFiles/simulator.dir/src/editor.cpp.obj" \
-"CMakeFiles/simulator.dir/src/scena.cpp.obj" \
-"CMakeFiles/simulator.dir/src/rigid.cpp.obj" \
-"CMakeFiles/simulator.dir/src/arc.cpp.obj" \
-"CMakeFiles/simulator.dir/src/legatura.cpp.obj" \
-"CMakeFiles/simulator.dir/src/matrice.cpp.obj" \
+"CMakeFiles/simulator.dir/src/fizica.cpp.obj" \
 "CMakeFiles/simulator.dir/src/glad.c.obj" \
+"CMakeFiles/simulator.dir/src/grafica.cpp.obj" \
+"CMakeFiles/simulator.dir/src/gui.cpp.obj" \
+"CMakeFiles/simulator.dir/src/implot_items.cpp.obj" \
+"CMakeFiles/simulator.dir/src/implot.cpp.obj" \
+"CMakeFiles/simulator.dir/src/input.cpp.obj" \
+"CMakeFiles/simulator.dir/src/legatura.cpp.obj" \
+"CMakeFiles/simulator.dir/src/main.cpp.obj" \
+"CMakeFiles/simulator.dir/src/matrice.cpp.obj" \
+"CMakeFiles/simulator.dir/src/rigid.cpp.obj" \
+"CMakeFiles/simulator.dir/src/scena.cpp.obj" \
+"CMakeFiles/simulator.dir/src/sistem.cpp.obj" \
 "CMakeFiles/simulator.dir/ImGuiSrc/imgui.cpp.obj" \
 "CMakeFiles/simulator.dir/ImGuiSrc/imgui_demo.cpp.obj" \
 "CMakeFiles/simulator.dir/ImGuiSrc/imgui_draw.cpp.obj" \
@@ -410,20 +442,22 @@ simulator_OBJECTS = \
 # External object files for target simulator
 simulator_EXTERNAL_OBJECTS =
 
-simulator.exe: CMakeFiles/simulator.dir/src/main.cpp.obj
-simulator.exe: CMakeFiles/simulator.dir/src/sistem.cpp.obj
-simulator.exe: CMakeFiles/simulator.dir/src/fizica.cpp.obj
-simulator.exe: CMakeFiles/simulator.dir/src/input.cpp.obj
-simulator.exe: CMakeFiles/simulator.dir/src/gui.cpp.obj
-simulator.exe: CMakeFiles/simulator.dir/src/grafica.cpp.obj
+simulator.exe: CMakeFiles/simulator.dir/src/arc.cpp.obj
 simulator.exe: CMakeFiles/simulator.dir/src/colliziune.cpp.obj
 simulator.exe: CMakeFiles/simulator.dir/src/editor.cpp.obj
-simulator.exe: CMakeFiles/simulator.dir/src/scena.cpp.obj
-simulator.exe: CMakeFiles/simulator.dir/src/rigid.cpp.obj
-simulator.exe: CMakeFiles/simulator.dir/src/arc.cpp.obj
-simulator.exe: CMakeFiles/simulator.dir/src/legatura.cpp.obj
-simulator.exe: CMakeFiles/simulator.dir/src/matrice.cpp.obj
+simulator.exe: CMakeFiles/simulator.dir/src/fizica.cpp.obj
 simulator.exe: CMakeFiles/simulator.dir/src/glad.c.obj
+simulator.exe: CMakeFiles/simulator.dir/src/grafica.cpp.obj
+simulator.exe: CMakeFiles/simulator.dir/src/gui.cpp.obj
+simulator.exe: CMakeFiles/simulator.dir/src/implot_items.cpp.obj
+simulator.exe: CMakeFiles/simulator.dir/src/implot.cpp.obj
+simulator.exe: CMakeFiles/simulator.dir/src/input.cpp.obj
+simulator.exe: CMakeFiles/simulator.dir/src/legatura.cpp.obj
+simulator.exe: CMakeFiles/simulator.dir/src/main.cpp.obj
+simulator.exe: CMakeFiles/simulator.dir/src/matrice.cpp.obj
+simulator.exe: CMakeFiles/simulator.dir/src/rigid.cpp.obj
+simulator.exe: CMakeFiles/simulator.dir/src/scena.cpp.obj
+simulator.exe: CMakeFiles/simulator.dir/src/sistem.cpp.obj
 simulator.exe: CMakeFiles/simulator.dir/ImGuiSrc/imgui.cpp.obj
 simulator.exe: CMakeFiles/simulator.dir/ImGuiSrc/imgui_demo.cpp.obj
 simulator.exe: CMakeFiles/simulator.dir/ImGuiSrc/imgui_draw.cpp.obj
@@ -435,7 +469,7 @@ simulator.exe: CMakeFiles/simulator.dir/build.make
 simulator.exe: CMakeFiles/simulator.dir/linkLibs.rsp
 simulator.exe: CMakeFiles/simulator.dir/objects1.rsp
 simulator.exe: CMakeFiles/simulator.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Linking CXX executable simulator.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Users\Paul\Desktop\Mecanica\Mecanica\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Linking CXX executable simulator.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\simulator.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

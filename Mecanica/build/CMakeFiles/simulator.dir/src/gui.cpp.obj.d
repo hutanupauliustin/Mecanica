@@ -37,11 +37,14 @@ CMakeFiles/simulator.dir/src/gui.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/bits/std_abs.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib/imgui_impl_glfw.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib/imgui_impl_opengl3.h \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/gui.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/includes/glad/glad.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/includes/KHR/khrplatform.h \
  C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stdint.h \
  C:/Strawberry/c/x86_64-w64-mingw32/include/stdint.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/includes/GLFW/glfw3.h \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/sistem.h \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/matrice.h \
  C:/Strawberry/c/include/c++/13.2.0/iostream \
  C:/Strawberry/c/include/c++/13.2.0/bits/requires_hosted.h \
  C:/Strawberry/c/include/c++/13.2.0/ostream \
@@ -159,9 +162,6 @@ CMakeFiles/simulator.dir/src/gui.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/bits/ostream.tcc \
  C:/Strawberry/c/include/c++/13.2.0/istream \
  C:/Strawberry/c/include/c++/13.2.0/bits/istream.tcc \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/grafica.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/sistem.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/matrice.h \
  C:/Strawberry/c/include/c++/13.2.0/cmath \
  C:/Strawberry/c/x86_64-w64-mingw32/include/math.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/specfun.h \
@@ -185,6 +185,93 @@ CMakeFiles/simulator.dir/src/gui.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/bits/stl_vector.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/stl_bvector.h \
  C:/Strawberry/c/include/c++/13.2.0/bits/vector.tcc \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/json.hpp \
+ C:/Strawberry/c/include/c++/13.2.0/algorithm \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_algo.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/algorithmfwd.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_heap.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/uniform_int_dist.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_tempbuf.h \
+ C:/Strawberry/c/include/c++/13.2.0/pstl/glue_algorithm_defs.h \
+ C:/Strawberry/c/include/c++/13.2.0/pstl/execution_defs.h \
+ C:/Strawberry/c/include/c++/13.2.0/functional \
+ C:/Strawberry/c/include/c++/13.2.0/bits/std_function.h \
+ C:/Strawberry/c/include/c++/13.2.0/unordered_map \
+ C:/Strawberry/c/include/c++/13.2.0/bits/unordered_map.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/hashtable.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/hashtable_policy.h \
+ C:/Strawberry/c/include/c++/13.2.0/ext/aligned_buffer.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/enable_special_members.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/node_handle.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/erase_if.h \
+ C:/Strawberry/c/include/c++/13.2.0/array \
+ C:/Strawberry/c/include/c++/13.2.0/compare \
+ C:/Strawberry/c/include/c++/13.2.0/iterator \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stream_iterator.h \
+ C:/Strawberry/c/include/c++/13.2.0/memory \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_raw_storage_iter.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/align.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/unique_ptr.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/shared_ptr.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/shared_ptr_base.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/allocated_ptr.h \
+ C:/Strawberry/c/include/c++/13.2.0/ext/concurrence.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/shared_ptr_atomic.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/atomic_base.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/atomic_lockfree_defines.h \
+ C:/Strawberry/c/include/c++/13.2.0/backward/auto_ptr.h \
+ C:/Strawberry/c/include/c++/13.2.0/pstl/glue_memory_defs.h \
+ C:/Strawberry/c/include/c++/13.2.0/utility \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_relops.h \
+ C:/Strawberry/c/include/c++/13.2.0/forward_list \
+ C:/Strawberry/c/include/c++/13.2.0/bits/forward_list.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/forward_list.tcc \
+ C:/Strawberry/c/include/c++/13.2.0/map \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_tree.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_map.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_multimap.h \
+ C:/Strawberry/c/include/c++/13.2.0/valarray \
+ C:/Strawberry/c/include/c++/13.2.0/bits/valarray_array.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/valarray_array.tcc \
+ C:/Strawberry/c/include/c++/13.2.0/bits/valarray_before.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/slice_array.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/valarray_after.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/gslice.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/gslice_array.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/mask_array.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/indirect_array.h \
+ C:/Strawberry/c/include/c++/13.2.0/cstdint \
+ C:/Strawberry/c/include/c++/13.2.0/version \
+ C:/Strawberry/c/include/c++/13.2.0/cassert \
+ C:/Strawberry/c/include/c++/13.2.0/cstring \
+ C:/Strawberry/c/include/c++/13.2.0/filesystem \
+ C:/Strawberry/c/include/c++/13.2.0/bits/fs_fwd.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/chrono.h \
+ C:/Strawberry/c/include/c++/13.2.0/ratio \
+ C:/Strawberry/c/include/c++/13.2.0/ctime \
+ C:/Strawberry/c/include/c++/13.2.0/bits/parse_numbers.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/fs_path.h \
+ C:/Strawberry/c/include/c++/13.2.0/locale \
+ C:/Strawberry/c/include/c++/13.2.0/bits/locale_facets_nonio.h \
+ C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/time_members.h \
+ C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/messages_members.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/codecvt.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/locale_facets_nonio.tcc \
+ C:/Strawberry/c/include/c++/13.2.0/bits/locale_conv.h \
+ C:/Strawberry/c/include/c++/13.2.0/iomanip \
+ C:/Strawberry/c/include/c++/13.2.0/bits/quoted_string.h \
+ C:/Strawberry/c/include/c++/13.2.0/sstream \
+ C:/Strawberry/c/include/c++/13.2.0/bits/sstream.tcc \
+ C:/Strawberry/c/include/c++/13.2.0/codecvt \
+ C:/Strawberry/c/include/c++/13.2.0/bits/fs_dir.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/fs_ops.h \
+ C:/Strawberry/c/include/c++/13.2.0/optional \
+ C:/Strawberry/c/include/c++/13.2.0/numeric \
+ C:/Strawberry/c/include/c++/13.2.0/bits/stl_numeric.h \
+ C:/Strawberry/c/include/c++/13.2.0/pstl/glue_numeric_defs.h \
+ C:/Strawberry/c/include/c++/13.2.0/any \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/arc.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/input.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/editor.h
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/editor.h \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/implot.h \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/grafica.h \
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/input.h

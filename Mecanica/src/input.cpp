@@ -1,9 +1,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <algorithm>
 #include "sistem.h"
 #include "editor.h"
 #include "input.h"
+#include "imgui.h"
 
 float zoomScale = 10.0f;
 float cameraX = 0.0f;
@@ -12,6 +14,9 @@ float aspect_ratio = 800.0f / 600.0f;
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
+    ImGuiIO& io = ImGui::GetIO();
+    if(io.WantCaptureMouse)
+        return;
     zoomScale -= (float)yoffset * 0.5f; 
     
     if (zoomScale < 1.0f) zoomScale = 1.0f; 
@@ -25,7 +30,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     aspect_ratio = (float)width / (float)height; 
 }
 
-void processInput(GLFWwindow *window, float &dt, sistem &S, editor &E) {
+void processInput(GLFWwindow *window, sistem &S, editor &E) {
     //inchide programul
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -34,8 +39,8 @@ void processInput(GLFWwindow *window, float &dt, sistem &S, editor &E) {
     static bool plusApasat = false;
     if(glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS) {
         if(!plusApasat){
-            dt += 0.001f; 
-            if(dt > 0.01f) dt = 0.01f;
+            E.dt += 0.001f; 
+            if(E.dt > 0.01f) E.dt = 0.01f;
             plusApasat = true;
         }
     } else {
@@ -46,8 +51,8 @@ void processInput(GLFWwindow *window, float &dt, sistem &S, editor &E) {
     static bool minusApasat = false;
     if(glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS) {
         if(!minusApasat){
-            dt -= 0.001f; 
-            if(dt < 0.0001f) dt = 0.0001f;
+            E.dt -= 0.001f; 
+            if(E.dt < 0.0001f) E.dt = 0.0001f;
             minusApasat = true;
         }
     } else {
@@ -79,53 +84,129 @@ void processInput(GLFWwindow *window, float &dt, sistem &S, editor &E) {
     float mouseX = ndcX * zoomScale * aspect_ratio + cameraX;
     float mouseY = ndcY * zoomScale + cameraY;      
 
-    // Trimitem mouse-ul real catre Panoul de Bord (editor)
+    ImGuiIO& io = ImGui::GetIO();
+
+    static float ndcX_anterior = ndcX;
+    static float ndcY_anterior = ndcY;
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS && !io.WantCaptureMouse) {
+        float delta_camX = (ndcX - ndcX_anterior) * zoomScale * aspect_ratio;
+        float delta_camY = (ndcY - ndcY_anterior) * zoomScale;
+        
+        cameraX -= delta_camX;
+        cameraY -= delta_camY;
+    }
+
+    ndcX_anterior = ndcX;
+    ndcY_anterior = ndcY;
+
+    mouseX = ndcX * zoomScale * aspect_ratio + cameraX;
+    mouseY = ndcY * zoomScale + cameraY;
+
     E.mouse_x = mouseX;
     E.mouse_y = mouseY;
 
-    for (int i = 0; i < S.corpuri.size(); i++) { S.corpuri[i].collider.selectat = 0; }
-    E.corpuriSelectate.clear();
+    for(int i = 0; i <  E.corpuriSubMouse.size(); i++)
+        S.corpuri[E.corpuriSubMouse[i]].collider.subMouse = 0;
+    E.corpuriSubMouse.clear();
+    
 
-    // Editorul cauta corpul acum, nu fisierul de input
     int id_sub_mouse = E.gasesteCorpSubMouse(S);
     if (id_sub_mouse != -1) {
-        S.corpuri[id_sub_mouse].collider.selectat = 1;
-        E.corpuriSelectate.push_back(id_sub_mouse);
+        S.corpuri[id_sub_mouse].collider.subMouse = 1;
+        E.corpuriSubMouse.push_back(id_sub_mouse);
     }
 
-    if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
-        switch(E.mod_curent){
-            case MOD_RULARE:
-                if(id_sub_mouse != -1)
-                    E.corpApasat = id_sub_mouse;
-                    
-                break;
-            case MOD_EDITARE:               
-                if(id_sub_mouse != -1) {
-                    float offsetx = S.corpuri[id_sub_mouse].pozitie.x - E.mouse_x;
-                    float offsety = S.corpuri[id_sub_mouse].pozitie.y - E.mouse_y;
-                    E.mutaCorp(S, id_sub_mouse, offsetx, offsety);
+    static bool stangaApasat = false;
+    bool stangaClick = false;
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        if (!stangaApasat) {
+            stangaClick = true; 
+            stangaApasat = true;
+        }
+    } else {
+        stangaApasat = false;
+    }
+
+    bool hasShift = (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS);
+
+    if(stangaClick && !io.WantCaptureMouse){
+        if(id_sub_mouse != -1){
+            
+            bool dejaSelectat = ( std::find(E.corpuriSelectate.begin(), E.corpuriSelectate.end(), id_sub_mouse) != E.corpuriSelectate.end());
+            if (hasShift) {
+                if (dejaSelectat) {
+                    S.corpuri[id_sub_mouse].collider.selectat = 0;
+                    E.corpuriSelectate.erase(std::find(E.corpuriSelectate.begin(), E.corpuriSelectate.end(), id_sub_mouse));
+                } else {
+                    S.corpuri[id_sub_mouse].collider.selectat = 1;
+                    E.corpuriSelectate.push_back(id_sub_mouse);
                 }
-                break;
+            } else {
+                if (!dejaSelectat) { 
+                    for (int i = 0 ; i < E.corpuriSelectate.size(); i++) {
+                        S.corpuri[E.corpuriSelectate[i]].collider.selectat = 0;
+                    }
+                    E.corpuriSelectate.clear();
+                    
+                    S.corpuri[id_sub_mouse].collider.selectat = 1;
+                    E.corpuriSelectate.push_back(id_sub_mouse);
+                }
+            }
+        
+        } else {
+            if(!hasShift){}
+                for (int i = 0 ; i < E.corpuriSelectate.size(); i++) {
+                    S.corpuri[E.corpuriSelectate[i]].collider.selectat = 0;
+                }
+            E.corpuriSelectate.clear();
+            }
+        }
 
-            case MOD_PLASARE_CORP:          
-            case MOD_PLASARE_LEGATURA_1:    
-            case MOD_PLASARE_LEGATURA_2:    
-                break;
+    static bool seMutaCorpuri = false;
+    static vec2 pozitieMouseTrecut(mouseX, mouseY);
+    vec2 mouseCurent(mouseX, mouseY);
+
+    if(stangaClick && id_sub_mouse != -1) {
+        if(std::find(E.corpuriSelectate.begin(), E.corpuriSelectate.end(), id_sub_mouse) != E.corpuriSelectate.end()) {
+            seMutaCorpuri = true;
         }
     }
 
-    if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
-        switch(E.mod_curent){
-            case MOD_RULARE:
-                E.corpApasat = -1;
-                    
-                break;
-            case MOD_EDITARE:               
-            case MOD_PLASARE_CORP:          
-            case MOD_PLASARE_LEGATURA_1:    
-            case MOD_PLASARE_LEGATURA_2:    
-                break;
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        if (E.mod_curent == MOD_EDITARE && seMutaCorpuri) {
+            
+            float deltaX = mouseCurent.x - pozitieMouseTrecut.x;
+            float deltaY = mouseCurent.y - pozitieMouseTrecut.y;
+
+            for (int id : E.corpuriSelectate) {
+                S.corpuri[id].pozitie.x += deltaX;
+                S.corpuri[id].pozitie.y += deltaY;
+
+                S.corpuri[id].viteza.x = 0.0f;
+                S.corpuri[id].viteza.y = 0.0f;
+                S.corpuri[id].omega = 0.0f;
+            }
+
+            if (E.corpuriSelectate.size() > 0 && (deltaX != 0 || deltaY != 0)) {
+                
+                for(int i = 0; i < S.corpuri.size(); i++){
+                    S.corpuri[i].forte_desen.reseteaza();
+                }
+                S.seteazaForteExterne();
+                S.incarcaStare();
+            }
         }
+    } else {
+        seMutaCorpuri = false; 
+    }
+    pozitieMouseTrecut = mouseCurent;
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+        for (int i = 0 ; i < E.corpuriSelectate.size(); i++) {
+            S.corpuri[E.corpuriSelectate[i]].collider.selectat = 0;
+        }
+        E.corpuriSelectate.clear();
     }
 }

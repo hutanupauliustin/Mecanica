@@ -1,9 +1,15 @@
 #include "scena.h"
 #include <cmath>
+#include "json.hpp"
+using json = nlohmann::json;
 
 const float PI = 3.1415926535f;
 
+using json = nlohmann::json;
+
+
 void incarcaScenaInitiala(sistem &S) {
+
     
     // 1. FUNDATIA
     // Curatam tot si ne asiguram ca elementul 0 este Lumea (fixa, masa infinita)
@@ -91,6 +97,102 @@ void incarcaScenaInitiala(sistem &S) {
 
     // 4. Initializam matematica fizicii
     S.setareConstanteStabilizare(1000.0f, 500.0f);
-    S.incarcaStare();
-    S.seteazaMatriceInertie();
+    S.actualizeazaMatriceFizica();
+}
+
+void salveazaScenaJSON(sistem &S, const std::string& nume_fisier){
+
+    json scena_json;
+    scena_json["corpuri"] = json::array();
+
+    for (int i = 0; i < S.corpuri.size(); i++) {
+        rigid &r = S.corpuri[i];
+        
+        // Ignoram corpurile sterse sau fantomele UI
+        if (!r.activ || r.collider.obiectVirtual) continue; 
+        
+        // Nu salvam "Lumea" (corpul fix cu masa uriasa), il generam automat la incarcare
+        if (r.M > 1e10f) continue; 
+
+        json corp_json;
+        corp_json["tip"] = r.collider.tip; // 1 pt Cerc, 2 pt Dreptunghi
+        corp_json["x"] = r.pozitie.x;
+        corp_json["y"] = r.pozitie.y;
+        corp_json["phi"] = r.phi;
+        corp_json["dimensiune1"] = r.collider.dimensiune1;
+        corp_json["dimensiune2"] = r.collider.dimensiune2;
+        corp_json["masa"] = r.M;
+        corp_json["material"] = r.material;
+        
+        // Salvam culoarea ca un array [R, G, B, A]
+        corp_json["culoare"] = { r.collider.culoare.r, r.collider.culoare.g, r.collider.culoare.b, r.collider.culoare.a };
+
+        scena_json["corpuri"].push_back(corp_json);
+    }
+
+    std::ofstream fisier(nume_fisier);
+    if (fisier.is_open()) {
+        fisier << scena_json.dump(4);
+        fisier.close();
+        std::cout << "Scena salvata cu succes in " << nume_fisier << "!\n";
+    } else {
+        std::cerr << "Eroare la deschiderea fisierului pentru salvare!\n";
+    }
+}
+
+void citesteScenaJSON(sistem &S, const std::string& nume_fisier){
+    std::ifstream fisier(nume_fisier);
+    if( !fisier.is_open()){
+        std::cerr << "Eroare: Nu am putut gasi sau deschide fisierul " << nume_fisier << "!\n";
+        return;
+    }
+
+    json scena_json;
+    fisier >> scena_json;
+    fisier.close();
+
+    S.corpuri.clear();
+    S.legaturi.clear();
+    S.arcuri.clear();
+    S.p = 0;
+
+    rigid lume = rigid::Fix(0.0f, 0.0f);
+    S.adaugaCorpuri(lume);
+    if(scena_json.contains("corpuri")){
+        for(const auto& corp_json : scena_json["corpuri"]){
+
+            int tip = corp_json["tip"];
+            float x = corp_json["x"];
+            float y = corp_json["y"];
+            float phi = corp_json["phi"];
+            float dim1 = corp_json["dimensiune1"];
+            float dim2 = corp_json["dimensiune2"];
+            float masa = corp_json["masa"];
+            
+            rigid corp_nou;
+
+            if(tip == 1){
+                corp_nou = rigid::Disc(x,y,dim1,masa);
+            } else if (tip == 2){
+                corp_nou = rigid::Bara(x,y,dim1,dim2,masa);
+            }
+
+            
+            corp_nou.material = corp_json["material"];
+            corp_nou.phi = phi;
+            corp_nou.collider.culoare = {
+                corp_json["culoare"][0],
+                corp_json["culoare"][1],
+                corp_json["culoare"][2],
+                corp_json["culoare"][3]
+            };
+
+            S.adaugaCorpuri(corp_nou);
+        }
+
+        S.setareConstanteStabilizare(1000.0f, 500.0f);
+        S.actualizeazaMatriceFizica();
+
+        std::cout << "Scena a fost incarcata cu succes din " << nume_fisier << "!\n";
+    }
 }

@@ -7,7 +7,7 @@ float forta_maxima = 10000.0f;
 
 //rezolva sisteme olonoame scleronome, cu legaturi bilaterale
 
-void calculeazaMultiplicatori(sistem &S, float t){                   //rezolva sistemul (J * A^-1 * J^T) Lambda = - JpunctQpunct - J * A^-1 * Q - k_s*F - k_d*Fpunct 
+void calculeazaMultiplicatori(sistem &S, double t){                   //rezolva sistemul (J * A^-1 * J^T) Lambda = - JpunctQpunct - J * A^-1 * Q - k_s*F - k_d*Fpunct 
                          
     S.Lambda = matrice(S.p, 1);
 
@@ -60,7 +60,7 @@ void calculeazaMultiplicatori(sistem &S, float t){                   //rezolva s
     
 
 
-matrice derivata(sistem &S, const matrice &stare_curenta, float t)      //facuta de AI
+matrice derivata(sistem &S, const matrice &stare_curenta, double t)      //facuta de AI
 {
     // Pentru a calcula derivata starii (viteze si acceleratii) la un moment dat,
     // trebuie sa recalculam fortele si constrangerile pentru starea curenta (pozitii si viteze).
@@ -105,7 +105,7 @@ matrice derivata(sistem &S, const matrice &stare_curenta, float t)      //facuta
     return stare_derivata;
 }
 
-matrice RK4(sistem &S, float dt, float t) {
+matrice RK4(sistem &S, double dt, double t) {
 
     int dim  = S.stare.linii;
     matrice k1(dim,1), k2(dim,1), k3(dim,1), k4(dim,1), stare_noua(dim,1);
@@ -123,8 +123,15 @@ matrice RK4(sistem &S, float dt, float t) {
 void adaugaForteContinueVizuale(sistem &S){
  int index_forta = 0;
 
+    if (S.p == 0 || S.Lambda.linii != S.p) return;
+
     for(int i = 0; i < S.legaturi.size(); i++) {
+
+        if(S.legaturi[i]->activ == 0) continue;
         
+        int nr_ecuatii = S.legaturi[i]->getNumarEcuatii();
+
+        if(nr_ecuatii >= 2){
         float fx = S.Lambda(index_forta + 0, 0);
         float fy = S.Lambda(index_forta + 1, 0);
         vec2 forta_reactiune(fx,fy);
@@ -149,12 +156,13 @@ void adaugaForteContinueVizuale(sistem &S){
             fB.punct_aplicare = punct_global;
             S.corpuri[idB].forte_desen.forte.push_back(fB);
         }
+    }
 
-        index_forta += 2;
+        index_forta += nr_ecuatii;
     }
 }
 
-float calculeazaEnergiaTotala(sistem &S, float g) {
+void calculeazaEnergiaTotala(sistem &S) {
     float energie = 0.0f;
     
     // Parcurgem toate corpurile (presupunand ca le ai intr-un vector S.corpuri)
@@ -168,12 +176,13 @@ float calculeazaEnergiaTotala(sistem &S, float g) {
         
         float e_cinetica = 0.5f * c.M * viteza_la_patrat;
         float e_rotatie = 0.5f * c.J * (c.omega * c.omega);
-        float e_potentiala = c.M * g * (c.pozitie.y + 10); // 'g' trebuie sa fie o valoare pozitiva aici (ex: 9.81)
+
+        float e_potentiala = c.M * S.g * (c.pozitie.y - S.nivelEnergiePotentiala );
 
         energie += (e_cinetica + e_rotatie + e_potentiala);
     }
     
-    return energie;
+    S.energie = energie;
 }
 
 void salveazaDateCinematiceVizuale(sistem &S, float dt_pas_fizica, int nr_iteratii) {

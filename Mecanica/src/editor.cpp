@@ -10,10 +10,18 @@ editor::editor(){
     mouse_y = 0.0f;
     legatura_corpA = -1;
     stare_legatura = 0;
+    frameCount = 0;
 
-    corpApasat = -1;
+    dt = 0.001f;
+    t = 0.0f;
+
+    scala_timp = 1.0f;
+    corpuriSelectate.resize(0);
 
     elementeUI.resize(2);   //pentru fantoma de corp si de legatura
+
+    valoriSimulate.reserve(16000);
+    valoriSimulate.reserve(30); // 1000 de corpuri pre-alocate sunt arhisuficiente
 }
 
 void editor::mutaCorp(sistem &S, int idCorp, float offsetX, float offsetY){   
@@ -22,7 +30,6 @@ void editor::mutaCorp(sistem &S, int idCorp, float offsetX, float offsetY){
     S.corpuri[idCorp].pozitie.y = this->mouse_y + offsetY;
 
 }
-
 
 int editor::gasesteCorpSubMouse(sistem &S){
     int celMaiAproape_id = -1;
@@ -78,4 +85,66 @@ int editor::gasesteCorpSubMouse(sistem &S){
     }
 
     return celMaiAproape_id;
+}
+
+void editor::sincronizeazaMemorie(sistem &S){
+    if (valoriSimulate.size() < S.corpuri.size()) {
+        size_t old_size = valoriSimulate.size();
+        valoriSimulate.resize(S.corpuri.size());
+        
+        // Pre-alocăm capacitatea maximă exactă pentru istoricul corpurilor noi
+        for (size_t i = old_size; i < valoriSimulate.size(); i++) {
+            valoriSimulate[i].timpAfisat.reserve(valoriSimulate[i].capacitate_maxima);
+            for (int axa = 0; axa < TOTAL_PARAMETRII; axa++) {
+                valoriSimulate[i].axe[axa].reserve(valoriSimulate[i].capacitate_maxima);
+            }
+        }
+    }
+    
+    // Curățăm istoricul corpurilor inactive pentru a preveni amestecarea graficelor dacă indexul este refolosit
+    for(size_t i = 0; i < S.corpuri.size(); i++){
+        if (!S.corpuri[i].activ && valoriSimulate.size() > i) {
+            valoriSimulate[i].timpAfisat.clear();
+            for (int axa = 0; axa < TOTAL_PARAMETRII; axa++) {
+                valoriSimulate[i].axe[axa].clear();
+            }
+            valoriSimulate[i].offset = 0;
+        }
+    }
+}
+
+void editor::incarcaDatePentruGrafic(sistem &S){
+    
+    for(int i = 0; i < S.corpuri.size(); i++){
+
+        if (!S.corpuri[i].activ || S.corpuri[i].M > 1e10f) continue;
+        
+        IstoricCorp& istoric = valoriSimulate[i];
+
+        if (istoric.timpAfisat.size() < istoric.capacitate_maxima) {
+            istoric.timpAfisat.push_back(this->t);
+            istoric.axe[POZITIE_X].push_back(S.corpuri[i].pozitie.x);
+            istoric.axe[POZITIE_Y].push_back(S.corpuri[i].pozitie.y);
+            istoric.axe[POZITIE_PHI].push_back(S.corpuri[i].phi);
+            istoric.axe[VITEZA_X].push_back(S.corpuri[i].viteza.x);
+            istoric.axe[VITEZA_Y].push_back(S.corpuri[i].viteza.y);
+            istoric.axe[VITEZA_OMEGA].push_back(S.corpuri[i].omega);
+            istoric.axe[ACCELERATIE_X].push_back(S.corpuri[i].forte_desen.acc_cadru.x);
+            istoric.axe[ACCELERATIE_Y].push_back(S.corpuri[i].forte_desen.acc_cadru.y);
+            istoric.axe[ACCELERATIE_EPSILON].push_back(S.corpuri[i].forte_desen.eps_cadru);
+        } else {
+            istoric.timpAfisat[istoric.offset] = this->t;
+            istoric.axe[POZITIE_X][istoric.offset] = S.corpuri[i].pozitie.x;
+            istoric.axe[POZITIE_Y][istoric.offset] = S.corpuri[i].pozitie.y;
+            istoric.axe[POZITIE_PHI][istoric.offset] = S.corpuri[i].phi;
+            istoric.axe[VITEZA_X][istoric.offset] = S.corpuri[i].viteza.x;
+            istoric.axe[VITEZA_Y][istoric.offset] = S.corpuri[i].viteza.y;
+            istoric.axe[VITEZA_OMEGA][istoric.offset] = S.corpuri[i].omega;
+            istoric.axe[ACCELERATIE_X][istoric.offset] = S.corpuri[i].forte_desen.acc_cadru.x;
+            istoric.axe[ACCELERATIE_Y][istoric.offset] = S.corpuri[i].forte_desen.acc_cadru.y;
+            istoric.axe[ACCELERATIE_EPSILON][istoric.offset] = S.corpuri[i].forte_desen.eps_cadru;
+            
+            istoric.offset = (istoric.offset + 1) % istoric.capacitate_maxima;
+        }
+    }
 }

@@ -22,6 +22,8 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/fizica.cpp" "CMakeFiles/simulator.dir/src/fizica.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/fizica.cpp.obj.d"
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/grafica.cpp" "CMakeFiles/simulator.dir/src/grafica.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/grafica.cpp.obj.d"
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/gui.cpp" "CMakeFiles/simulator.dir/src/gui.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/gui.cpp.obj.d"
+  "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/implot.cpp" "CMakeFiles/simulator.dir/src/implot.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/implot.cpp.obj.d"
+  "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/implot_items.cpp" "CMakeFiles/simulator.dir/src/implot_items.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/implot_items.cpp.obj.d"
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/input.cpp" "CMakeFiles/simulator.dir/src/input.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/input.cpp.obj.d"
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/legatura.cpp" "CMakeFiles/simulator.dir/src/legatura.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/legatura.cpp.obj.d"
   "C:/Users/Paul/Desktop/Mecanica/Mecanica/src/main.cpp" "CMakeFiles/simulator.dir/src/main.cpp.obj" "gcc" "CMakeFiles/simulator.dir/src/main.cpp.obj.d"

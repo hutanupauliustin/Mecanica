@@ -26,6 +26,8 @@ public:
     matrice F, Fpunct;                              // sunt folosite pentru corectia erorii, impreuna cu constantele k_s si k_d
     int id_corp_lume;
 
+    float energie;
+    float nivelEnergiePotentiala;
 
     sistem();
 
@@ -47,6 +49,7 @@ public:
 
     void eliminaArc(int index);
 
+    void actualizeazaMatriceFizica();
 
     void incarcaStare();
 

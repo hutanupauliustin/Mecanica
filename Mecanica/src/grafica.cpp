@@ -14,7 +14,7 @@ const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 2) in vec2 aSize;\n"
     "layout (location = 3) in float aType;\n"
     "layout (location = 4) in vec4 aColor;\n"
-    "layout (location = 5) in float aSelected;\n"
+    "layout (location = 5) in float aFiltru;\n"
     "layout (location = 6) in vec3 aVel;\n"
     "layout (location = 7) in vec3 aAcc;\n"
 
@@ -23,7 +23,7 @@ const char *vertexShaderSource = "#version 330 core\n"
     "    vec2 size;\n"
     "    float type;\n"
     "    vec4 color;\n"
-    "    float isSelected;\n"
+    "    float filtru;\n"
     "    vec3 vVel;\n" 
     "    vec3 vAcc;\n"
     "} vs_out;\n"
@@ -34,7 +34,7 @@ const char *vertexShaderSource = "#version 330 core\n"
     "   vs_out.size = aSize;\n"
     "   vs_out.type = aType;\n"
     "   vs_out.color = aColor;\n"
-    "   vs_out.isSelected = aSelected;\n"
+    "   vs_out.filtru = aFiltru;\n"
     "   vs_out.vVel = aVel;\n" 
     "   vs_out.vAcc = aAcc;\n"
     "}\0";
@@ -45,13 +45,13 @@ const char *geometryShaderSource = "#version 330 core\n"
     "layout (triangle_strip, max_vertices = 4) out;\n"
 
     "in VS_OUT {\n"
-    "    float phi; vec2 size; float type; vec4 color; float isSelected; vec3 vVel; vec3 vAcc;\n"
+    "    float phi; vec2 size; float type; vec4 color; float filtru; vec3 vVel; vec3 vAcc;\n"
     "} gs_in[];\n"
 
     "out vec3 TexCoord;\n"
     "out float ShapeType;\n"
     "out vec4 fColor;\n"
-    "out float fSelected;\n"
+    "out float filtru;\n"
     "out vec3 fVel; out vec3 fAcc; out vec2 fLocalPos;\n" // Noile iesiri
 
     "uniform float scale; uniform vec2 cameraOffset; uniform float aspect_ratio;\n"
@@ -63,10 +63,10 @@ const char *geometryShaderSource = "#version 330 core\n"
     
     "    ShapeType = gs_in[0].type;\n"
     "    fColor = gs_in[0].color;\n"
-    "    fSelected = gs_in[0].isSelected;\n"
+    "    filtru = gs_in[0].filtru;\n"
     "    fVel = gs_in[0].vVel; fAcc = gs_in[0].vAcc;\n"
 
-    "    float expand = (fSelected > 0.5 && ShapeType < 3.5) ? 1.1 : 1.0;\n"
+    "    float expand = (filtru > 0.5 && ShapeType < 3.5) ? 1.15 : 1.0;\n"
     "    vec2 halfSize = (ShapeType > 3.5 && ShapeType < 4.5) ? vec2(gs_in[0].size.x / 2.0, 0.15) : (gs_in[0].size / 2.0) * expand;\n"
 
     "    vec2 offsets[4] = vec2[](vec2(-halfSize.x, -halfSize.y), vec2(halfSize.x, -halfSize.y), vec2(-halfSize.x, halfSize.y), vec2(halfSize.x, halfSize.y));\n"
@@ -85,30 +85,37 @@ const char *geometryShaderSource = "#version 330 core\n"
 // --- 3. FRAGMENT SHADER ---      
     const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
-    "in vec3 TexCoord; in float ShapeType; in vec4 fColor; in float fSelected;\n"
+    "in vec3 TexCoord; in float ShapeType; in vec4 fColor; in float filtru;\n"
     "in vec3 fVel; in vec3 fAcc; in vec2 fLocalPos;\n"
     
     "uniform int ViewMode;\n"
 
     "void main() {\n"
-    "    vec3 finalGlow = vec3(0.0);\n"
-    
+    "   vec4 outputColor = fColor;\n"
+    "   bool inBorder = false;\n"
+    "    bool isHovered = (filtru > 0.5 && filtru < 1.5) || (filtru > 2.5);\n" // E sub mouse
+    "    bool isSelected = (filtru > 1.5);\n" // E selectat din click
+    //
+    "    float raza_curenta = isHovered ? 1.06 : 1.0;\n" 
+    "    float grosime_margine = 0.08;\n" // Cat de groasa e linia alba
+    //
         // --- DECUPARE FORME (DISCARD) --- 
     "    if(ShapeType < 1.5) {\n" // CERC
-    "        float d = dot(TexCoord.xy, TexCoord.xy);\n"
-    "        if(fSelected > 0.5) {\n"
-    "            if (d > 1.21) discard;\n"
-    "            float glow = clamp((1.21 - d) / 0.21, 0.0, 1.0);\n"
-    "            finalGlow = vec3(1.0) * pow(glow, 2.0) * 0.4;\n"
-    "        } else if (d > 1.0) discard;\n"
+    "        float d = length(TexCoord.xy);\n"
+    "        if (d > raza_curenta + (isSelected ? grosime_margine : 0.0)) discard;\n" // Taiem ce e in afara
+    
+    "        if (isSelected && d > raza_curenta) {\n"
+    "            outputColor = vec4(1.0, 1.0, 1.0, 1.0); // Alb pentru margine\n"
+    "            inBorder = true;\n"
+    "        }\n"
     "    }\n"
-    "    else if (ShapeType < 3.5) {\n" // DREPTUNGHI
+    "    else if (ShapeType > 1.5 && ShapeType < 3.5 ) {\n" // DREPTUNGHI
     "        float d = max(abs(TexCoord.x), abs(TexCoord.y));\n"
-    "        if(fSelected > 0.5) {\n"
-    "            if (d > 1.1) discard;\n"
-    "            float glow = clamp((1.2 - d) / 0.1, 0.0, 1.0);\n"
-    "            finalGlow = vec3(1.0) * pow(glow, 2.0) * 0.4;\n"
-    "        } else if (d > 1.0) discard;\n"
+    "        if (d > raza_curenta + (isSelected ? grosime_margine : 0.0)) discard;\n"
+    "        if (isSelected && d > raza_curenta) {\n"
+    "            outputColor = vec4(1.0, 1.0, 1.0, 1.0);\n"
+    "            inBorder = true;\n"
+    "        }\n"
     "    }\n"
     "    else if (ShapeType > 3.5 && ShapeType < 4.5) {\n" // ARC
     "        float l_0 = TexCoord.z;\n"
@@ -131,8 +138,9 @@ const char *geometryShaderSource = "#version 330 core\n"
 
         // --- VIZUALIZARE STANDARD --- 
     "    if (ViewMode == 0 || ShapeType > 3.5) {\n"
-    "        FragColor = vec4(fColor.rgb + finalGlow, fColor.a);\n"
-    "        return;\n"
+    "        FragColor =outputColor;\n"
+    "        if(filtru > 1.5f && filtru < 2.5f){\n}"
+    "           return;\n"
     "    }\n"
 
     "    // --- HEATMAP (VITEZE SAU ACCELERATII) --- \n"
@@ -148,11 +156,15 @@ const char *geometryShaderSource = "#version 330 core\n"
 
     "    float t = clamp(mag / (ViewMode == 1 ? 20.0 : 150.0), 0.0, 1.0);\n"
     "    vec3 heat = (t < 0.5) ? mix(vec3(0.1, 0.3, 0.8), vec3(1.0, 0.8, 0.0), t*2.0) : mix(vec3(1.0, 0.8, 0.0), vec3(1.0, 0.0, 0.0), (t-0.5)*2.0);\n"
-    "    FragColor = vec4(heat, fColor.a);\n"
+    "    if (inBorder) {\n"
+    "        FragColor = vec4(1.0, 1.0, 1.0, outputColor.a);\n"
+    "    } else {\n"
+    "        FragColor = vec4(heat, outputColor.a);\n"
+    "    }\n"
     "}\0";
 
 int updateVerticesData(sistem &S, editor &E, float* vertices){
-    // 11 float-uri: [x, y, phi, width, height, type, r, g, b, a, selectat]
+    // 17 float-uri: [x, y, phi, width, height, type, r, g, b, a, selectie, viteza_x, viteza_y, omega, acc_x, acc_y, epsilon]
     int stride = 17;
     int pct_curent = 0; // Contor global pentru pozitia in buffer
 
@@ -174,7 +186,7 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
         
         if(r.activ == 0){
             for(int k=0; k<11; k++) vertices[idx + k] = 0;
-            pct_curent++; // FOARTE IMPORTANT: Avansam in memorie si pt cele inactive!
+            pct_curent++;
             continue;
         }
 
@@ -201,7 +213,11 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
         vertices[idx + 8] = (float)r.collider.culoare.b;
         vertices[idx + 9] = alpha;
         
-        vertices[idx + 10] = r.collider.selectat ? 1.0f : 0.0f;
+        float stare_filtru = 0.0f;
+        if (r.collider.subMouse) stare_filtru += 1.0f; // Adaugă 1 dacă e sub mouse
+        if (r.collider.selectat) stare_filtru += 2.0f; // Adaugă 2 dacă e selectat
+        
+        vertices[idx + 10] = stare_filtru;
 
         vertices[idx + 11] = r.viteza.x;
         vertices[idx + 12] = r.viteza.y;
@@ -210,7 +226,7 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
         vertices[idx + 15] = r.forte_desen.acc_cadru.y;
         vertices[idx + 16] = r.forte_desen.eps_cadru;
         
-        pct_curent++; // FOARTE IMPORTANT!
+        pct_curent++;
     }
 
     // 2. Legaturi 

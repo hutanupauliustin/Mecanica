@@ -2,6 +2,8 @@
 #include <cmath>
 #include <vector>
 #include "matrice.h"
+#include "json.hpp"
+using json = nlohmann::json;
 
 enum formaGeometrica{
     PUNCT,
@@ -17,6 +19,8 @@ struct tipMaterial{
     float frecareRostogolireStatica = 0;
     float frecareRostogolireDinamica = 0;
 };
+ 
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(tipMaterial, restituire, frecareStatica, frecareDinamica, frecareRostogolireStatica , frecareRostogolireDinamica)
 
 namespace materiale {
     //                              Restituire, Static, Dinamic, RostogStatic, RostogDinamic
@@ -44,6 +48,7 @@ struct geometrie{
     bool obiectStatic = 0;
     bool obiectVirtual = 0;
     bool selectat = 0;
+    bool subMouse = 0;
     int cadru = 0;
 
     float coeficientAerodinamic = 0;

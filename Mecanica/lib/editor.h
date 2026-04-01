@@ -1,5 +1,6 @@
 #pragma once
 #include "sistem.h"
+#include <vector>
 
 enum {
     MOD_RULARE = 0,
@@ -7,6 +8,19 @@ enum {
     MOD_PLASARE_CORP,
     MOD_PLASARE_LEGATURA_1,
     MOD_PLASARE_LEGATURA_2
+};
+
+enum{
+    POZITIE_X = 0,
+    POZITIE_Y,
+    POZITIE_PHI,
+    VITEZA_X,
+    VITEZA_Y,
+    VITEZA_OMEGA,
+    ACCELERATIE_X,
+    ACCELERATIE_Y,
+    ACCELERATIE_EPSILON,
+    TOTAL_PARAMETRII
 };
 
 struct fantomaUI {
@@ -27,6 +41,13 @@ struct editorFlags {
     bool distributie_acceleratie;
 };
 
+struct IstoricCorp{
+    std::vector<float> axe[TOTAL_PARAMETRII];
+    std::vector<float> timpAfisat;
+    int offset = 0;
+    int capacitate_maxima = 7200; // 60 FPS * 120 de secunde = 2 minute
+};
+
 class editor{
 
     public:
@@ -41,16 +62,32 @@ class editor{
     float mouse_x;
     float mouse_y;
 
+    std::vector<int> corpuriSubMouse;
     std::vector<int> corpuriSelectate;
     std::vector<fantomaUI> elementeUI;
 
-    int corpApasat;
+    unsigned int VAO, VBO;
+    std::vector<float> vertexBuffer;
+    size_t total_elemente;
+
+    unsigned int shaderProgram;
+    unsigned int vertexStride;
+    unsigned int frameCount;
 
     int legatura_corpA;
     int stare_legatura;
 
+    double t;
+    double dt;
+    float scala_timp;
+
     editorFlags flag;
+
+    std::vector<IstoricCorp> valoriSimulate; 
 
     int gasesteCorpSubMouse(sistem &S);
     void mutaCorp(sistem &S, int idCorp, float offsetX, float offsetY);
+
+    void sincronizeazaMemorie(sistem &S);
+    void incarcaDatePentruGrafic(sistem &S);
 };

@@ -464,6 +464,54 @@ src/gui.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/gui.cpp.s
 .PHONY : src/gui.cpp.s
 
+src/implot.obj: src/implot.cpp.obj
+.PHONY : src/implot.obj
+
+# target to build an object file
+src/implot.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/implot.cpp.obj
+.PHONY : src/implot.cpp.obj
+
+src/implot.i: src/implot.cpp.i
+.PHONY : src/implot.i
+
+# target to preprocess a source file
+src/implot.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/implot.cpp.i
+.PHONY : src/implot.cpp.i
+
+src/implot.s: src/implot.cpp.s
+.PHONY : src/implot.s
+
+# target to generate assembly for a file
+src/implot.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/implot.cpp.s
+.PHONY : src/implot.cpp.s
+
+src/implot_items.obj: src/implot_items.cpp.obj
+.PHONY : src/implot_items.obj
+
+# target to build an object file
+src/implot_items.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/implot_items.cpp.obj
+.PHONY : src/implot_items.cpp.obj
+
+src/implot_items.i: src/implot_items.cpp.i
+.PHONY : src/implot_items.i
+
+# target to preprocess a source file
+src/implot_items.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/implot_items.cpp.i
+.PHONY : src/implot_items.cpp.i
+
+src/implot_items.s: src/implot_items.cpp.s
+.PHONY : src/implot_items.s
+
+# target to generate assembly for a file
+src/implot_items.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\simulator.dir\build.make CMakeFiles/simulator.dir/src/implot_items.cpp.s
+.PHONY : src/implot_items.cpp.s
+
 src/input.obj: src/input.cpp.obj
 .PHONY : src/input.obj
 
@@ -683,6 +731,12 @@ help:
 	@echo ... src/gui.obj
 	@echo ... src/gui.i
 	@echo ... src/gui.s
+	@echo ... src/implot.obj
+	@echo ... src/implot.i
+	@echo ... src/implot.s
+	@echo ... src/implot_items.obj
+	@echo ... src/implot_items.i
+	@echo ... src/implot_items.s
 	@echo ... src/input.obj
 	@echo ... src/input.i
 	@echo ... src/input.s
