@@ -8,4 +8,4 @@ void incarcaScenaInitiala(sistem &S);
 
 void salveazaScenaJSON(sistem &S, const std::string& nume_fisier);
 
-void incarcaScenaInitiala(sistem &S);
+void citesteScenaJSON(sistem &S, const std::string& nume_fisier);

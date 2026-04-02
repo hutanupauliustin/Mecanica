@@ -13,6 +13,8 @@
         k_d = 0.0f;
         k_s = 0.0f;
         g = 9.81f; // Initializare implicita
+        nivelEnergiePotentiala = 0.0f;
+        energie = 0.0f;
 
         stare = matrice(2, 1);
 
@@ -135,6 +137,10 @@
         
         for (int i = 0; i < nr_corpuri; i++)
         {
+
+            if( std::abs(stare(i*3,0)) > 10000 || std::abs(stare(i*3 + 1,0)) > 10000 )
+                this->corpuri[i].activ = 0;
+
             if(this->corpuri[i].activ == 0){
                 stare(i * 3, 0) = 0;
                 stare(i * 3 + 1, 0) = 0;

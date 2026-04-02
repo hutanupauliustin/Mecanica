@@ -31,11 +31,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 void processInput(GLFWwindow *window, sistem &S, editor &E) {
-    //inchide programul
+
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    //creste viteza 
     static bool plusApasat = false;
     if(glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS) {
         if(!plusApasat){
@@ -47,7 +46,6 @@ void processInput(GLFWwindow *window, sistem &S, editor &E) {
         plusApasat = false;
     }
 
-    // scade viteza
     static bool minusApasat = false;
     if(glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS) {
         if(!minusApasat){
@@ -59,8 +57,8 @@ void processInput(GLFWwindow *window, sistem &S, editor &E) {
         minusApasat = false;
     }
 
-    // Pauza
     static bool spaceApasat = false;
+
     if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
         if(!spaceApasat) {
            E.mod_curent = E.mod_curent != MOD_RULARE ?  MOD_RULARE : MOD_EDITARE;
@@ -156,14 +154,14 @@ void processInput(GLFWwindow *window, sistem &S, editor &E) {
             }
         
         } else {
-            if(!hasShift){}
+            if(!hasShift) {
                 for (int i = 0 ; i < E.corpuriSelectate.size(); i++) {
                     S.corpuri[E.corpuriSelectate[i]].collider.selectat = 0;
                 }
-            E.corpuriSelectate.clear();
+                E.corpuriSelectate.clear();
             }
         }
-
+    }
     static bool seMutaCorpuri = false;
     static vec2 pozitieMouseTrecut(mouseX, mouseY);
     vec2 mouseCurent(mouseX, mouseY);

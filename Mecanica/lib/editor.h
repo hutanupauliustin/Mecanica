@@ -1,6 +1,7 @@
 #pragma once
 #include "sistem.h"
 #include <vector>
+#include <fstream>
 
 enum {
     MOD_RULARE = 0,
@@ -35,10 +36,10 @@ struct fantomaUI {
 };
 
 struct editorFlags {
-    bool arata_energie;
-    bool arata_forte;
-    bool distributie_viteze;
-    bool distributie_acceleratie;
+    bool arata_energie = false;
+    bool arata_forte = false;
+    bool distributie_viteze = false;
+    bool distributie_acceleratie = false;
 };
 
 struct IstoricCorp{
@@ -46,6 +47,14 @@ struct IstoricCorp{
     std::vector<float> timpAfisat;
     int offset = 0;
     int capacitate_maxima = 7200; // 60 FPS * 120 de secunde = 2 minute
+
+    IstoricCorp() {
+        timpAfisat.reserve(capacitate_maxima);
+        for(int i = 0; i < TOTAL_PARAMETRII; i++) {
+            axe[i].reserve(capacitate_maxima);
+        }
+    }
+
 };
 
 class editor{
@@ -53,6 +62,7 @@ class editor{
     public:
 
     editor();
+    ~editor();
 
     int mod_curent;
     int cadru_activ;
@@ -90,4 +100,7 @@ class editor{
 
     void sincronizeazaMemorie(sistem &S);
     void incarcaDatePentruGrafic(sistem &S);
+    
+    std::string nume_fisier_export = ".temp_istoric_simulare.csv";
+    std::ofstream fisier_export;
 };

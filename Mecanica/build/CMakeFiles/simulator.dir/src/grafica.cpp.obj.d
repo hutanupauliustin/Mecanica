@@ -263,4 +263,8 @@ CMakeFiles/simulator.dir/src/grafica.cpp.obj: \
  C:/Strawberry/c/include/c++/13.2.0/any \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/arc.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/editor.h \
+ C:/Strawberry/c/include/c++/13.2.0/fstream \
+ C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/basic_file.h \
+ C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/c++io.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/fstream.tcc \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/grafica.h

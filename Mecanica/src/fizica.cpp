@@ -165,12 +165,10 @@ void adaugaForteContinueVizuale(sistem &S){
 void calculeazaEnergiaTotala(sistem &S) {
     float energie = 0.0f;
     
-    // Parcurgem toate corpurile (presupunand ca le ai intr-un vector S.corpuri)
     for (int i = 0; i < S.corpuri.size(); i++) {
         rigid& c = S.corpuri[i];
         
-        // Ignoram peretii si corpurile statice (masa infinita)
-        if (c.M > 1e10f) continue; 
+        if (!c.activ || c.M > 1e10f) continue; 
 
         float viteza_la_patrat = (c.viteza.x * c.viteza.x) + (c.viteza.y * c.viteza.y);
         

@@ -1,0 +1,136 @@
+{
+    "corpuri": [
+        {
+            "culoare": [
+                0.800000011920929,
+                0.6000000238418579,
+                0.20000000298023224,
+                1.0
+            ],
+            "dimensiune1": 10.0,
+            "dimensiune2": 0.4000000059604645,
+            "masa": 15.0,
+            "material": {
+                "frecareDinamica": 0.6000000238418579,
+                "frecareRostogolireDinamica": 0.009999999776482582,
+                "frecareRostogolireStatica": 0.03999999910593033,
+                "frecareStatica": 0.800000011920929,
+                "restituire": 0.20000000298023224
+            },
+            "phi": 0.1738809496164322,
+            "tip": 2,
+            "x": 4.924597263336182,
+            "y": 0.8650307059288025
+        },
+        {
+            "culoare": [
+                0.4000000059604645,
+                0.699999988079071,
+                1.0,
+                1.0
+            ],
+            "dimensiune1": 4.0,
+            "dimensiune2": 0.4000000059604645,
+            "masa": 20.0,
+            "material": {
+                "frecareDinamica": 0.6000000238418579,
+                "frecareRostogolireDinamica": 0.009999999776482582,
+                "frecareRostogolireStatica": 0.03999999910593033,
+                "frecareStatica": 0.800000011920929,
+                "restituire": 0.20000000298023224
+            },
+            "phi": 1.1160231139228927e-07,
+            "tip": 2,
+            "x": 7.908846378326416,
+            "y": 0.641889214515686
+        },
+        {
+            "culoare": [
+                1.0,
+                0.30000001192092896,
+                0.30000001192092896,
+                1.0
+            ],
+            "dimensiune1": 0.5,
+            "dimensiune2": 0.5,
+            "masa": 3.0,
+            "material": {
+                "frecareDinamica": 0.6000000238418579,
+                "frecareRostogolireDinamica": 0.009999999776482582,
+                "frecareRostogolireStatica": 0.03999999910593033,
+                "frecareStatica": 0.800000011920929,
+                "restituire": 0.20000000298023224
+            },
+            "phi": -0.0019559208303689957,
+            "tip": 1,
+            "x": 8.199146270751953,
+            "y": 2.1499388217926025
+        },
+        {
+            "culoare": [
+                0.30000001192092896,
+                0.6000000238418579,
+                0.8999999761581421,
+                1.0
+            ],
+            "dimensiune1": 1.0,
+            "dimensiune2": 1.0,
+            "masa": 5.0,
+            "material": {
+                "frecareDinamica": 0.4000000059604645,
+                "frecareRostogolireDinamica": 0.05000000074505806,
+                "frecareRostogolireStatica": 0.019999999552965164,
+                "frecareStatica": 0.5,
+                "restituire": 0.4000000059604645
+            },
+            "phi": 0.0,
+            "tip": 1,
+            "x": 2.6334214210510254,
+            "y": 6.780402660369873
+        },
+        {
+            "culoare": [
+                0.30000001192092896,
+                0.6000000238418579,
+                0.8999999761581421,
+                1.0
+            ],
+            "dimensiune1": 1.0,
+            "dimensiune2": 1.0,
+            "masa": 5.0,
+            "material": {
+                "frecareDinamica": 0.4000000059604645,
+                "frecareRostogolireDinamica": 0.05000000074505806,
+                "frecareRostogolireStatica": 0.019999999552965164,
+                "frecareStatica": 0.5,
+                "restituire": 0.4000000059604645
+            },
+            "phi": 0.0,
+            "tip": 1,
+            "x": 7.322834491729736,
+            "y": 7.725284099578857
+        },
+        {
+            "culoare": [
+                0.30000001192092896,
+                0.6000000238418579,
+                0.8999999761581421,
+                1.0
+            ],
+            "dimensiune1": 1.0,
+            "dimensiune2": 1.0,
+            "masa": 5.0,
+            "material": {
+                "frecareDinamica": 0.4000000059604645,
+                "frecareRostogolireDinamica": 0.05000000074505806,
+                "frecareRostogolireStatica": 0.019999999552965164,
+                "frecareStatica": 0.5,
+                "restituire": 0.4000000059604645
+            },
+            "phi": 0.0,
+            "tip": 1,
+            "x": 5.765528678894043,
+            "y": 4.295713424682617
+        }
+    ]
+}

@@ -264,6 +264,10 @@ CMakeFiles/simulator.dir/src/main.cpp.obj: \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/includes/GLFW/glfw3.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/input.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/editor.h \
+ C:/Strawberry/c/include/c++/13.2.0/fstream \
+ C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/basic_file.h \
+ C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/c++io.h \
+ C:/Strawberry/c/include/c++/13.2.0/bits/fstream.tcc \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/fizica.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/colliziune.h \
  C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/gui.h \
@@ -275,8 +279,4 @@ CMakeFiles/simulator.dir/src/main.cpp.obj: \
  C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stdarg.h \
  C:/Strawberry/c/x86_64-w64-mingw32/include/stdarg.h \
  C:/Strawberry/c/x86_64-w64-mingw32/include/_mingw_stdarg.h \
- C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/scena.h \
- C:/Strawberry/c/include/c++/13.2.0/fstream \
- C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/basic_file.h \
- C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/c++io.h \
- C:/Strawberry/c/include/c++/13.2.0/bits/fstream.tcc
+ C:/Users/Paul/Desktop/Mecanica/Mecanica/lib/scena.h

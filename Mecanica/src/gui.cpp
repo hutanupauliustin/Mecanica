@@ -5,9 +5,23 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-
+#include <fstream>
 #include "grafica.h"
-//#include "editor.h"
+#include "font.h"
+#include <cstring>
+#include "portable-file-dialogs.h"
+#include "scena.h"
+
+std::string cereLocatieSalvare() {
+    auto f = pfd::save_file("Salveaza Export CSV", "export_simulare.csv",
+                            { "Fisiere CSV", "*.csv", "Toate Fisierele", "*" });
+    
+    std::string result = f.result();
+    if (!result.empty() && (result.length() < 4 || result.substr(result.length() - 4) != ".csv")) {
+        result += ".csv";
+    }
+    return result;
+}
 
 void setupGUI(GLFWwindow* window){
     IMGUI_CHECKVERSION();
@@ -30,22 +44,117 @@ void setupGUI(GLFWwindow* window){
         0,
     };
     
-    ImFont* font = io.Fonts->AddFontFromFileTTF("assets/fonts/Inter_18pt-Medium.ttf", 18.0f, NULL, ranges);
-    if (font == NULL) {
-        // Dacă nu găsește fișierul, ImGui va folosi fontul default automat.
-        std::cerr << "[EROARE] Nu s-a putut incarca fontul din assets/fonts/!" << std::endl;
+    ImFont* font = nullptr;
+    
+    // Verificăm dacă fișierul există înainte să lăsăm ImGui să încerce să-l încarce
+    std::ifstream font_file("assets/fonts/Inter_18pt-Medium.ttf");
+    if (font_file.is_open()) {
+        font_file.close();
+        font = io.Fonts->AddFontFromFileTTF("assets/fonts/Inter_18pt-Medium.ttf", 18.0f, NULL, ranges);
+    }
+
+    if (font == nullptr) {
+        std::cout << "[INFO] Fontul nu a fost gasit pe disk. Se incarca varianta din memoria interna..." << std::endl;
+        ImFontConfig font_cfg;
+
+        font_cfg.FontDataOwnedByAtlas = false; 
+        
+        font = io.Fonts->AddFontFromMemoryTTF((void*)Inter_18pt_Medium, 343200, 18.0f, &font_cfg, ranges);
+        
+        if (font == nullptr) {
+            io.Fonts->AddFontDefault();
+        }
     }
     
     // Apelat DUPĂ openGLWindow, ImGui va păstra callback-urile tale și le va rula și pe ale sale.
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
-}
 
+}
 void startFrameGUI(){
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+
 }
+
+void renderMeniu(sistem &S, editor &E){
+    // Verificăm dacă bara a putut fi creată
+if (ImGui::BeginMainMenuBar()) {
+    
+    // --- Meniul FILE ---
+    if (ImGui::BeginMenu("File")) {
+        if (ImGui::MenuItem("New Scene", "Ctrl+N")) { 
+            incarcaScenaInitiala(S);
+            E.sincronizeazaMemorie(S);
+        }
+        
+        if (ImGui::MenuItem("Open...", "Ctrl+O")) { 
+            auto f = pfd::open_file("Incarca Scena", "", { "Fisiere JSON", "*.json", "Toate Fisierele", "*" });
+            if (!f.result().empty()) {
+                citesteScenaJSON(S, f.result()[0]);
+                E.sincronizeazaMemorie(S); // Sincronizam listele si istoricul pentru noile corpuri
+            }
+        }
+        
+        if (ImGui::MenuItem("Save Scene As...", "Ctrl+S")) { 
+            auto f = pfd::save_file("Salveaza Scena", "scena_salvata.json", { "Fisiere JSON", "*.json", "Toate Fisierele", "*" });
+            std::string result = f.result();
+            if (!result.empty()) {
+                // Ne asiguram ca fisierul va avea extensia .json
+                if (result.length() < 5 || result.substr(result.length() - 5) != ".json") {
+                    result += ".json";
+                }
+                salveazaScenaJSON(S, result);
+            }
+        }
+        
+        if (ImGui::MenuItem("Export CSV...", "Ctrl+E")) { 
+            std::string fisier_ales = cereLocatieSalvare();
+            if (!fisier_ales.empty()) {
+                E.fisier_export.flush(); 
+                
+                std::ifstream src(E.nume_fisier_export, std::ios::binary);
+                std::ofstream dst(fisier_ales, std::ios::binary);
+                if (src && dst) {
+                    dst << src.rdbuf(); 
+                }
+            }
+        }
+        
+        ImGui::Separator(); // Trage o linie orizontala eleganta
+        
+        if (ImGui::MenuItem("Exit", "Alt+F4")) { 
+            // Aici pui logica de inchidere. 
+            // Daca ai acces la pointerul ferestrei, pui:
+            // glfwSetWindowShouldClose(window, true);
+        }
+        
+        ImGui::EndMenu(); // Nu uita sa inchizi meniul!
+    }
+
+    // --- Meniul SETTINGS ---
+    if (ImGui::BeginMenu("Settings")) {
+        // Poti lega butoanele direct de un bool ca sa devina bifabile (cu checkmark)
+        ImGui::MenuItem("Arata forte", NULL, &E.flag.arata_forte);
+        ImGui::MenuItem("Arata energie", NULL, &E.flag.arata_energie);
+        ImGui::Separator();
+        
+        ImGui::EndMenu();
+    }
+
+    // --- Meniul VIZUALIZARE ---
+    if (ImGui::BeginMenu("View")) {
+        // Optiuni care nu fac decat sa dezactiveze click-ul (disabled)
+        ImGui::MenuItem("Theme: Dark", NULL, false, false);
+        ImGui::EndMenu();
+    }
+
+    ImGui::EndMainMenuBar();
+}
+
+}
+
 
 void renderPanouDeControl(sistem &S, editor &E) {
     ImGuiIO& io = ImGui::GetIO(); // O luam la inceput pentru a o avea disponibila peste tot
@@ -256,7 +365,6 @@ void renderInspector(sistem &S, editor &E){
             ImGui::Text("Tip: Lumea (Element Fix)");
             ImGui::Text("Pozitie: %.2f, %.2f", r.pozitie.x, r.pozitie.y);
         } else {
-            bool trebuie_update = false;
             
             ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f),"Corp ID: %d | Tip: %s", id_corp,  (r.collider.tip == 1) ? "Cerc" : "Dreptunghi");
             if (ImGui::DragFloat2("Pozitie (X,Y)", &r.pozitie.x, 0.05f)) trebuie_update = true;
@@ -428,6 +536,8 @@ void renderInspector(sistem &S, editor &E){
                 
                 ImPlot::EndPlot();
             }
+            
+            ImGui::Spacing();
         }
     }
         //butonul de stergere
@@ -499,6 +609,7 @@ void randareGrafica(sistem &S, editor &E,  GLFWwindow* &window){
     (E.vertexBuffer).resize(17 * total_elemente);
     drawSystem(S,E, E.VAO, E.VBO, E.shaderProgram, E.vertexBuffer.data());
 
+    renderMeniu(S,E);
     renderPanouDeControl(S,E);
     if(E.corpuriSelectate.size() != 0)
        renderInspector(S,E);

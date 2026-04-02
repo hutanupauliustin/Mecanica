@@ -1,6 +1,7 @@
 #include "editor.h"
 #include <cmath>
 #include <algorithm>
+#include <cstdio>
 
 editor::editor(){
     mod_curent = MOD_RULARE;
@@ -22,6 +23,18 @@ editor::editor(){
 
     valoriSimulate.reserve(16000);
     valoriSimulate.reserve(30); // 1000 de corpuri pre-alocate sunt arhisuficiente
+
+    fisier_export.open(nume_fisier_export);
+    if (fisier_export.is_open()) {
+        fisier_export << "Timp,ID_Corp,PozitieX,PozitieY,UnghiPhi,VitezaX,VitezaY,VitezaOmega,AcceleratieX,AcceleratieY,AcceleratieEpsilon\n";
+    }
+}
+
+editor::~editor() {
+    if (fisier_export.is_open()) {
+        fisier_export.close();
+    }
+    std::remove(nume_fisier_export.c_str());
 }
 
 void editor::mutaCorp(sistem &S, int idCorp, float offsetX, float offsetY){   
@@ -104,6 +117,7 @@ void editor::sincronizeazaMemorie(sistem &S){
     // Curățăm istoricul corpurilor inactive pentru a preveni amestecarea graficelor dacă indexul este refolosit
     for(size_t i = 0; i < S.corpuri.size(); i++){
         if (!S.corpuri[i].activ && valoriSimulate.size() > i) {
+            
             valoriSimulate[i].timpAfisat.clear();
             for (int axa = 0; axa < TOTAL_PARAMETRII; axa++) {
                 valoriSimulate[i].axe[axa].clear();
@@ -114,6 +128,8 @@ void editor::sincronizeazaMemorie(sistem &S){
 }
 
 void editor::incarcaDatePentruGrafic(sistem &S){
+    std::string csv_buffer;
+    csv_buffer.reserve(S.corpuri.size() * 100);
     
     for(int i = 0; i < S.corpuri.size(); i++){
 
@@ -146,5 +162,21 @@ void editor::incarcaDatePentruGrafic(sistem &S){
             
             istoric.offset = (istoric.offset + 1) % istoric.capacitate_maxima;
         }
+        
+        csv_buffer += std::to_string(this->t) + "," +
+                      std::to_string(i) + "," +
+                      std::to_string(S.corpuri[i].pozitie.x) + "," +
+                      std::to_string(S.corpuri[i].pozitie.y) + "," +
+                      std::to_string(S.corpuri[i].phi) + "," +
+                      std::to_string(S.corpuri[i].viteza.x) + "," +
+                      std::to_string(S.corpuri[i].viteza.y) + "," +
+                      std::to_string(S.corpuri[i].omega) + "," +
+                      std::to_string(S.corpuri[i].forte_desen.acc_cadru.x) + "," +
+                      std::to_string(S.corpuri[i].forte_desen.acc_cadru.y) + "," +
+                      std::to_string(S.corpuri[i].forte_desen.eps_cadru) + "\n";
+    }
+    
+    if (fisier_export.is_open() && !csv_buffer.empty()) {
+        fisier_export << csv_buffer;
     }
 }
