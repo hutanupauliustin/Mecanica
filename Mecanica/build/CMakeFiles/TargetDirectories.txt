@@ -1,3 +1,0 @@
-C:/Users/Paul/Desktop/Mecanica/Mecanica/build/CMakeFiles/simulator.dir
-C:/Users/Paul/Desktop/Mecanica/Mecanica/build/CMakeFiles/edit_cache.dir
-C:/Users/Paul/Desktop/Mecanica/Mecanica/build/CMakeFiles/rebuild_cache.dir

@@ -2,30 +2,49 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Compilare si Rulare Simulator",
-            "type": "process",
+            "label": "Build Simulator",
+            "type": "shell",
             "command": "powershell",
             "args": [
                 "-ExecutionPolicy",
                 "Bypass",
                 "-File",
-                "${workspaceFolder}/Mecanica/run.ps1"
+                "${workspaceFolder}/run.ps1"
             ],
-            "options": {
-                "cwd": "${workspaceFolder}/Mecanica"
-            },
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "clear": true
-            },
-            "problemMatcher": []
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Clean & Build Simulator",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/run.ps1",
+                "-Clean"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "type": "cmake",
+            "label": "CMake: build",
+            "command": "build",
+            "targets": [
+                "all"
+            ],
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "CMake template build task"
         }
     ]
 }

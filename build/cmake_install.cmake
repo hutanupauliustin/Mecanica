@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/Paul/Desktop/Mecanica/Mecanica
+# Install script for directory: C:/Users/Paul/Desktop/Mecanica
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

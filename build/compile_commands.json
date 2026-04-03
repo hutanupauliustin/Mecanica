@@ -1,140 +1,146 @@
 [
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\arc.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\arc.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\arc.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\arc.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -w -o CMakeFiles\\vendor.dir\\vendor\\glad\\glad.c.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\glad\\glad.c",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\glad\\glad.c",
+  "output": "CMakeFiles\\vendor.dir\\vendor\\glad\\glad.c.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\colliziune.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\colliziune.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\colliziune.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\colliziune.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -w -o CMakeFiles\\vendor.dir\\vendor\\imgui\\imgui.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\imgui\\imgui.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\imgui\\imgui.cpp",
+  "output": "CMakeFiles\\vendor.dir\\vendor\\imgui\\imgui.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\editor.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\editor.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\editor.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\editor.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -w -o CMakeFiles\\vendor.dir\\vendor\\imgui\\imgui_demo.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\imgui\\imgui_demo.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\imgui\\imgui_demo.cpp",
+  "output": "CMakeFiles\\vendor.dir\\vendor\\imgui\\imgui_demo.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\fizica.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\fizica.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\fizica.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\fizica.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -w -o CMakeFiles\\vendor.dir\\vendor\\imgui\\imgui_draw.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\imgui\\imgui_draw.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\imgui\\imgui_draw.cpp",
+  "output": "CMakeFiles\\vendor.dir\\vendor\\imgui\\imgui_draw.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -o CMakeFiles\\simulator.dir\\src\\glad.c.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\glad.c",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\glad.c",
-  "output": "CMakeFiles\\simulator.dir\\src\\glad.c.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -w -o CMakeFiles\\vendor.dir\\vendor\\imgui\\imgui_impl_glfw.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\imgui\\imgui_impl_glfw.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\imgui\\imgui_impl_glfw.cpp",
+  "output": "CMakeFiles\\vendor.dir\\vendor\\imgui\\imgui_impl_glfw.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\grafica.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\grafica.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\grafica.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\grafica.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -w -o CMakeFiles\\vendor.dir\\vendor\\imgui\\imgui_impl_opengl3.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\imgui\\imgui_impl_opengl3.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\imgui\\imgui_impl_opengl3.cpp",
+  "output": "CMakeFiles\\vendor.dir\\vendor\\imgui\\imgui_impl_opengl3.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\gui.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\gui.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\gui.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\gui.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -w -o CMakeFiles\\vendor.dir\\vendor\\imgui\\imgui_tables.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\imgui\\imgui_tables.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\imgui\\imgui_tables.cpp",
+  "output": "CMakeFiles\\vendor.dir\\vendor\\imgui\\imgui_tables.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\implot_items.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\implot_items.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\implot_items.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\implot_items.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -w -o CMakeFiles\\vendor.dir\\vendor\\imgui\\imgui_widgets.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\imgui\\imgui_widgets.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\imgui\\imgui_widgets.cpp",
+  "output": "CMakeFiles\\vendor.dir\\vendor\\imgui\\imgui_widgets.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\implot.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\implot.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\implot.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\implot.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -w -o CMakeFiles\\vendor.dir\\vendor\\implot\\implot.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\implot\\implot.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\implot\\implot.cpp",
+  "output": "CMakeFiles\\vendor.dir\\vendor\\implot\\implot.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\input.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\input.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\input.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\input.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -w -o CMakeFiles\\vendor.dir\\vendor\\implot\\implot_items.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\implot\\implot_items.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\vendor\\implot\\implot_items.cpp",
+  "output": "CMakeFiles\\vendor.dir\\vendor\\implot\\implot_items.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\legatura.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\legatura.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\legatura.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\legatura.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -x c++-header -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\cmake_pch.hxx.gch -c C:\\Users\\Paul\\Desktop\\Mecanica\\build\\CMakeFiles\\simulator.dir\\cmake_pch.hxx.cxx",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\build\\CMakeFiles\\simulator.dir\\cmake_pch.hxx.cxx",
+  "output": "CMakeFiles\\simulator.dir\\cmake_pch.hxx.gch"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\main.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\main.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\main.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\main.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\core\\editor.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\core\\editor.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\core\\editor.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\core\\editor.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\matrice.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\matrice.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\matrice.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\matrice.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\core\\input.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\core\\input.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\core\\input.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\core\\input.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\rigid.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\rigid.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\rigid.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\rigid.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\core\\main.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\core\\main.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\core\\main.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\core\\main.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\scena.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\scena.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\scena.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\scena.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\core\\sistem.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\core\\sistem.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\core\\sistem.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\core\\sistem.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\src\\sistem.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\sistem.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\src\\sistem.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\sistem.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\fizica\\arc.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\fizica\\arc.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\fizica\\arc.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\fizica\\arc.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\ImGuiSrc\\imgui.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\ImGuiSrc\\imgui.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\ImGuiSrc\\imgui.cpp",
-  "output": "CMakeFiles\\simulator.dir\\ImGuiSrc\\imgui.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\fizica\\colliziune.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\fizica\\colliziune.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\fizica\\colliziune.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\fizica\\colliziune.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\ImGuiSrc\\imgui_demo.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\ImGuiSrc\\imgui_demo.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\ImGuiSrc\\imgui_demo.cpp",
-  "output": "CMakeFiles\\simulator.dir\\ImGuiSrc\\imgui_demo.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\fizica\\fizica.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\fizica\\fizica.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\fizica\\fizica.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\fizica\\fizica.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\ImGuiSrc\\imgui_draw.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\ImGuiSrc\\imgui_draw.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\ImGuiSrc\\imgui_draw.cpp",
-  "output": "CMakeFiles\\simulator.dir\\ImGuiSrc\\imgui_draw.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\fizica\\legatura.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\fizica\\legatura.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\fizica\\legatura.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\fizica\\legatura.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\ImGuiSrc\\imgui_impl_glfw.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\ImGuiSrc\\imgui_impl_glfw.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\ImGuiSrc\\imgui_impl_glfw.cpp",
-  "output": "CMakeFiles\\simulator.dir\\ImGuiSrc\\imgui_impl_glfw.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\fizica\\rigid.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\fizica\\rigid.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\fizica\\rigid.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\fizica\\rigid.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\ImGuiSrc\\imgui_impl_opengl3.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\ImGuiSrc\\imgui_impl_opengl3.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\ImGuiSrc\\imgui_impl_opengl3.cpp",
-  "output": "CMakeFiles\\simulator.dir\\ImGuiSrc\\imgui_impl_opengl3.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\mate\\matrice.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\mate\\matrice.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\mate\\matrice.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\mate\\matrice.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\ImGuiSrc\\imgui_tables.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\ImGuiSrc\\imgui_tables.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\ImGuiSrc\\imgui_tables.cpp",
-  "output": "CMakeFiles\\simulator.dir\\ImGuiSrc\\imgui_tables.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\render\\grafica.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\render\\grafica.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\render\\grafica.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\render\\grafica.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/Mecanica/lib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiSrc -IC:/Users/Paul/Desktop/Mecanica/Mecanica/ImGuiLib -IC:/Users/Paul/Desktop/Mecanica/Mecanica/includes -g -std=gnu++17 -o CMakeFiles\\simulator.dir\\ImGuiSrc\\imgui_widgets.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\ImGuiSrc\\imgui_widgets.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\Mecanica\\ImGuiSrc\\imgui_widgets.cpp",
-  "output": "CMakeFiles\\simulator.dir\\ImGuiSrc\\imgui_widgets.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\render\\gui.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\render\\gui.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\render\\gui.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\render\\gui.cpp.obj"
+},
+{
+  "directory": "C:/Users/Paul/Desktop/Mecanica/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\render\\scena.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\render\\scena.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\render\\scena.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\render\\scena.cpp.obj"
 }
 ]

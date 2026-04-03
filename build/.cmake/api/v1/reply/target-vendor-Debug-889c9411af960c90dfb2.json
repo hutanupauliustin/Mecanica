@@ -1,0 +1,269 @@
+{
+	"archive" : {},
+	"artifacts" : 
+	[
+		{
+			"path" : "libvendor.a"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"target_compile_options",
+			"target_include_directories"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 25,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 49,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 29,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "-w"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/glad"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/glfw"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/imgui"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/implot"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/json"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/KHR"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/pfd"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/stb"
+				}
+			],
+			"language" : "C",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		},
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g -std=gnu++17"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "-w"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/glad"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/glfw"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/imgui"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/implot"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/json"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/KHR"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/pfd"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/Paul/Desktop/Mecanica/vendor/stb"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "17"
+			},
+			"sourceIndexes" : 
+			[
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9
+			]
+		}
+	],
+	"id" : "vendor::@6890427a1f51a3e7e1df",
+	"name" : "vendor",
+	"nameOnDisk" : "libvendor.a",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "vendor/glad/glad.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "vendor/imgui/imgui.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "vendor/imgui/imgui_demo.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "vendor/imgui/imgui_draw.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "vendor/imgui/imgui_impl_glfw.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "vendor/imgui/imgui_impl_opengl3.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "vendor/imgui/imgui_tables.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "vendor/imgui/imgui_widgets.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "vendor/implot/implot.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "vendor/implot/implot_items.cpp",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "STATIC_LIBRARY"
+}
