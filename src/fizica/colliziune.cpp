@@ -1,4 +1,5 @@
 #include "colliziune.h"
+#include "editor.h"
 
 float percutie_maxima = 5000.0f;
 
@@ -595,7 +596,7 @@ void adaugaFortePercutanteVizuale(sistem &S){
     // Daca sagetile sunt prea mari/mici, ajusteaza aceasta scala.
     float scala = 60.0f; 
 
-    for(int i = 0; i < S.legaturi.size(); i++) {
+    for(int i = 0; i < (int) S.legaturi.size(); i++) {
 
         if (S.legaturi[i]->activ == 0) continue;
 
@@ -629,20 +630,21 @@ void adaugaFortePercutanteVizuale(sistem &S){
 
 void verificarCiocniri(sistem &S, editor &E)
 {
+    (void)E;
     bool aFostCiocnire = 0;
     
-    for (int i = 0; i < S.corpuri.size(); i++)
+    for (size_t i = 0; i < S.corpuri.size(); i++)
     {
         if (S.corpuri[i].activ) {
             S.corpuri[i].seteazaBoundingBox();
         }
     }
     
-    for (int i = 0; i < S.corpuri.size(); i++)
+    for (size_t i = 0; i < S.corpuri.size(); i++)
     {
         if (!S.corpuri[i].activ) continue;
         
-        for (int j = i + 1; j < S.corpuri.size(); j++)
+        for (int j = i + 1; j < (int) S.corpuri.size(); j++)
         {
             if (!S.corpuri[j].activ) continue;
             

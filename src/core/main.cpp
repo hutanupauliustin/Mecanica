@@ -19,8 +19,6 @@ int main() {
     incarcaScenaInitiala(S);
     E.sincronizeazaMemorie(S);
 
-    int frameCount = 0;
-
     GLFWwindow* window = initializareGrafica(S,E);
 
     double timp_anterior = glfwGetTime();
@@ -45,7 +43,7 @@ int main() {
 
         if(E.mod_curent == MOD_RULARE){
 
-            timp_trecut += dt_cadru * E.scala_timp;
+            timp_trecut += dt_cadru * S.scala_timp;
             iteratii = 0;
 
             for(size_t i = 0; i < S.corpuri.size(); i++){
@@ -54,15 +52,11 @@ int main() {
                 S.corpuri[i].forte_desen.omega_cadru_trecut = S.corpuri[i].omega;
             }
 
-            while(timp_trecut >= E.dt) {  
-                S.stare = RK4(S, E.dt, E.t);
-                S.seteazaStare();       
-                S.plafonareViteze();
-                verificarCiocniri(S,E);  
-                S.incarcaStare();    
-
-                E.t += E.dt;
-                timp_trecut -= E.dt;
+            while(timp_trecut >= S.dt) {  
+                S.step(E.dt);
+               
+                S.t += S.dt;
+                timp_trecut -= S.dt;
                 iteratii++;
             }
 

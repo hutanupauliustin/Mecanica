@@ -224,7 +224,7 @@ void renderPanouDeControl(sistem &S, editor &E) {
     static int forma_selectata = 0; 
     static float culoare_aleasa[3] = { 0.3f, 0.6f, 0.9f };
     
-    // --- 2. MENIU ADAUGARE (Disponibil doar cand e pe Pauza) ---
+   // --- 2. MENIU ADAUGARE (Disponibil doar cand e pe Pauza) ---
     
     if (E.mod_curent != MOD_RULARE) {
         bool in_adaugare = (E.mod_curent >= MOD_ADAUGARE_CORP);
@@ -233,14 +233,10 @@ void renderPanouDeControl(sistem &S, editor &E) {
             ImGui::SeparatorText("Adauga Elemente");
             if (ImGui::Button("Adauga Corp Nou", ImVec2(-1, 30))) E.mod_curent = MOD_ADAUGARE_CORP;
             
-            static int tip_legatura = 0;
-            const char* optiuni_legaturi[] = { "Articulatie", "Incastrare", "Arc Elastic" };
-            ImGui::Combo("Tip Legatura", &tip_legatura, optiuni_legaturi, IM_ARRAYSIZE(optiuni_legaturi));
-            
+            // Fără Combo Box, doar butonul direct care pune Incastrarea ca default
             if (ImGui::Button("Adauga Legatura / Arc", ImVec2(-1, 30))) {
-                if (tip_legatura == 0) { E.mod_curent = MOD_ADAUGARE_LEGATURA_PAS_1; E.tip_legatura_de_adaugat = 0; }
-                if (tip_legatura == 1) { E.mod_curent = MOD_ADAUGARE_LEGATURA_PAS_1; E.tip_legatura_de_adaugat = 1; }
-                if (tip_legatura == 2) { E.mod_curent = MOD_ADAUGARE_ARC_PAS_1; }
+                E.mod_curent = MOD_ADAUGARE_LEGATURA_PAS_1; 
+                E.tip_legatura_de_adaugat = 1; // 1 = Incastrare (default)
             }
         } else {
             if (ImGui::Button("Anuleaza Adaugarea", ImVec2(-1, 30))) {
@@ -283,36 +279,59 @@ void renderPanouDeControl(sistem &S, editor &E) {
                 ImGui::PopButtonRepeat();
                 ImGui::TextColored(ImVec4(0.4f, 1.0f, 1.0f, 1.0f), "Click Stanga = Plasare | Click Dreapta = Anulare");
                 ImGui::TextColored(ImVec4(0.4f, 1.0f, 1.0f, 1.0f), "Apasa Q / E pentru a roti corpul.");
-            } else if (E.mod_curent == MOD_ADAUGARE_ARC_PAS_1 || E.mod_curent == MOD_ADAUGARE_ARC_PAS_2) {
-                ImGui::TextColored(ImVec4(0.4f, 1.0f, 0.4f, 1.0f), "Setari Arc Elastic:");
-                ImGui::SliderFloat("Lungime repaus (%)", &E.arc_l0_procent, 0.0f, 200.0f, "%.0f%%");
-                ImGui::InputFloat("Constanta elastica (k)", &E.arc_k);
-                ImGui::InputFloat("Amortizare (d)", &E.arc_d);
-                ImGui::Separator();
-                if (E.mod_curent == MOD_ADAUGARE_ARC_PAS_1) {
-                    ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Pas 1: Click pe primul corp / pe fundal");
-                } else {
-                    ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Pas 2: Click pe al doilea corp / pe fundal");
+            } 
+            else if (E.mod_curent == MOD_ADAUGARE_ARC_PAS_1 || E.mod_curent == MOD_ADAUGARE_ARC_PAS_2 || 
+                     E.mod_curent == MOD_ADAUGARE_LEGATURA_PAS_1 || E.mod_curent == MOD_ADAUGARE_LEGATURA_PAS_2) {
+                
+                ImGui::TextColored(ImVec4(0.4f, 1.0f, 0.4f, 1.0f), "Tip Legatura:");
+                
+                // Determinam logic ce optiune sa afisam ca fiind bifata
+                int selectie_tip = (E.mod_curent == MOD_ADAUGARE_ARC_PAS_1 || E.mod_curent == MOD_ADAUGARE_ARC_PAS_2) ? 2 : E.tip_legatura_de_adaugat;
+                int vechea_selectie = selectie_tip;
+                
+                // Desenam butoanele radio
+                ImGui::RadioButton("Articulatie", &selectie_tip, 0); ImGui::SameLine();
+                ImGui::RadioButton("Incastrare", &selectie_tip, 1); ImGui::SameLine();
+                ImGui::RadioButton("Arc", &selectie_tip, 2);
+                
+                // Detectam daca ai dat click pe alta varianta si facem tranzitia
+                if (selectie_tip != vechea_selectie) {
+                    bool era_pas_1 = (E.mod_curent == MOD_ADAUGARE_LEGATURA_PAS_1 || E.mod_curent == MOD_ADAUGARE_ARC_PAS_1);
+                    if (selectie_tip == 2) { // Trecem pe Arc
+                        E.mod_curent = era_pas_1 ? MOD_ADAUGARE_ARC_PAS_1 : MOD_ADAUGARE_ARC_PAS_2;
+                    } else {                 // Trecem pe Incastrare/Articulatie
+                        E.mod_curent = era_pas_1 ? MOD_ADAUGARE_LEGATURA_PAS_1 : MOD_ADAUGARE_LEGATURA_PAS_2;
+                        E.tip_legatura_de_adaugat = selectie_tip;
+                    }
                 }
-            } else if (E.mod_curent == MOD_ADAUGARE_LEGATURA_PAS_1 || E.mod_curent == MOD_ADAUGARE_LEGATURA_PAS_2) {
-                ImGui::TextColored(ImVec4(0.4f, 1.0f, 0.4f, 1.0f), "Setari Legatura:");
-                ImGui::Text("Tip curent: %s", E.tip_legatura_de_adaugat == 0 ? "Articulatie" : "Incastrare");
+                
                 ImGui::Separator();
-                if (E.mod_curent == MOD_ADAUGARE_LEGATURA_PAS_1) {
-                    ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Pas 1: Click pe corpul care va fi legat");
-                } else {
-                    ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Pas 2: Muta fantoma si click pentru a forma legatura!");
-                    ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "Apasa Q / E pentru a roti corpul.");
+                
+                // Afisam UI-ul secundar in functie de ce a ramas selectat
+                if (selectie_tip == 2) { // E Arc
+                    ImGui::SliderFloat("Lungime repaus (%)", &E.arc_l0_procent, 0.0f, 200.0f, "%.0f%%");
+                    ImGui::InputFloat("Constanta (k)", &E.arc_k);
+                    ImGui::InputFloat("Amortizare (d)", &E.arc_d);
+                    ImGui::Separator();
+                    if (E.mod_curent == MOD_ADAUGARE_ARC_PAS_1) {
+                        ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Pas 1: Click pe primul corp / pe fundal");
+                    } else {
+                        ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Pas 2: Click pe al doilea corp / pe fundal");
+                    }
+                } else { // E Legatura normala
+                    if (E.mod_curent == MOD_ADAUGARE_LEGATURA_PAS_1) {
+                        ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Pas 1: Click pe corpul care va fi legat");
+                    } else {
+                        ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Pas 2: Muta fantoma si click pentru a forma legatura!");
+                        ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "Apasa Q / E pentru a roti corpul.");
+                    }
                 }
             }
             
             ImGui::Unindent();
-            
-
         }
     } else {
         ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "Opreste simularea pentru a adauga elemente.");
-
     }
     
     ImGui::End(); // Panoul s-a inchis aici
@@ -391,50 +410,45 @@ void renderPanouDeControl(sistem &S, editor &E) {
                     E.sincronizeazaMemorie(S);
                 }
             }
-            else if (E.mod_curent == MOD_ADAUGARE_LEGATURA_PAS_2) {
-                if (E.adaugare_corp_A != 0) {
-                    rigid& corpA = S.corpuri[E.adaugare_corp_A];
-                    fantoma_corp.tip = corpA.collider.tip;
-                    fantoma_corp.dim1 = corpA.collider.dimensiune1;
-                    fantoma_corp.dim2 = corpA.collider.dimensiune2;
-                    fantoma_corp.col = { corpA.collider.culoare.r, corpA.collider.culoare.g, corpA.collider.culoare.b, 0.5f };
-                    fantoma_corp.activa = true;
+            else if (E.mod_curent == MOD_ADAUGARE_LEGATURA_PAS_1 || E.mod_curent == MOD_ADAUGARE_LEGATURA_PAS_2) {
+                
+                // Fantoma corpului agățat apare DOAR în pasul 2 (după ce ai ales corpul)
+                if (E.mod_curent == MOD_ADAUGARE_LEGATURA_PAS_2) {
+                    if (E.adaugare_corp_A != 0) {
+                        rigid& corpA = S.corpuri[E.adaugare_corp_A];
+                        fantoma_corp.tip = corpA.collider.tip;
+                        fantoma_corp.dim1 = corpA.collider.dimensiune1;
+                        fantoma_corp.dim2 = corpA.collider.dimensiune2;
+                        fantoma_corp.col = { corpA.collider.culoare.r, corpA.collider.culoare.g, corpA.collider.culoare.b, 0.5f };
+                        fantoma_corp.activa = true;
 
-                    if (ImGui::IsKeyDown(ImGuiKey_Q)) fantoma_corp.phi += 0.05f;
-                    if (ImGui::IsKeyDown(ImGuiKey_E)) fantoma_corp.phi -= 0.05f;
-                    
-                    vec2 offset_rotit(
-                        E.adaugare_punct_A_local.x * cos(fantoma_corp.phi) - E.adaugare_punct_A_local.y * sin(fantoma_corp.phi),
-                        E.adaugare_punct_A_local.x * sin(fantoma_corp.phi) + E.adaugare_punct_A_local.y * cos(fantoma_corp.phi)
-                    );
+                        if (ImGui::IsKeyDown(ImGuiKey_Q)) fantoma_corp.phi += 0.05f;
+                        if (ImGui::IsKeyDown(ImGuiKey_E)) fantoma_corp.phi -= 0.05f;
+                        
+                        vec2 offset_rotit(
+                            E.adaugare_punct_A_local.x * cos(fantoma_corp.phi) - E.adaugare_punct_A_local.y * sin(fantoma_corp.phi),
+                            E.adaugare_punct_A_local.x * sin(fantoma_corp.phi) + E.adaugare_punct_A_local.y * cos(fantoma_corp.phi)
+                        );
 
-                    fantoma_corp.x = E.mouse_x - offset_rotit.x;
-                    fantoma_corp.y = E.mouse_y - offset_rotit.y;
-                } else {
-                    fantoma_corp.activa = false;
+                        fantoma_corp.x = E.mouse_x - offset_rotit.x;
+                        fantoma_corp.y = E.mouse_y - offset_rotit.y;
+                    } else {
+                        fantoma_corp.activa = false;
+                    }
                 }
                 
+                // Fantoma legăturii în sine (Cerc sau Pătrat) - Vizibilă din prima secundă (Pas 1 și Pas 2)
                 fantoma_leg.activa = true;
                 fantoma_leg.x = E.mouse_x;
                 fantoma_leg.y = E.mouse_y;
-                fantoma_leg.dim1 = 0.5f;
-                fantoma_leg.dim2 = 0.5f;
-                fantoma_leg.phi = (E.adaugare_corp_A != 0) ? fantoma_corp.phi : 0.0f;
-                fantoma_leg.tip = (E.tip_legatura_de_adaugat == 0) ? 1 : 2;
+                
+                // Aici controlăm dimensiunea. 0.15f arată mult mai curat pe post de "cui" / punct de sudură
+                fantoma_leg.dim1 = 0.15f; 
+                fantoma_leg.dim2 = 0.15f;
+                
+                fantoma_leg.phi = (E.mod_curent == MOD_ADAUGARE_LEGATURA_PAS_2 && E.adaugare_corp_A != 0) ? fantoma_corp.phi : 0.0f;
+                fantoma_leg.tip = (E.tip_legatura_de_adaugat == 0) ? 1 : 2; // 1 = Cerc (Articulatie), 2 = Dreptunghi (Incastrare)
                 fantoma_leg.col = {1.0f, 1.0f, 1.0f, 0.8f};
-            }
-            else if (E.mod_curent == MOD_ADAUGARE_ARC_PAS_2) {
-                fantoma_leg.activa = true;
-                vec2 p1 = S.corpuri[E.adaugare_corp_A].localToGlobal(E.adaugare_punct_A_local);
-                vec2 p2(E.mouse_x, E.mouse_y);
-                vec2 diferenta = p2 - p1;
-                fantoma_leg.phi = std::atan2(diferenta.y, diferenta.x);
-                fantoma_leg.dim1 = diferenta.modul(); 
-                fantoma_leg.dim2 = fantoma_leg.dim1;  
-                fantoma_leg.x = (p1.x + p2.x) / 2.0f;
-                fantoma_leg.y = (p1.y + p2.y) / 2.0f;
-                fantoma_leg.tip = 4;
-                fantoma_leg.col = {0.5f, 1.0f, 0.5f, 0.8f};
             }
         } else {
             fantoma_corp.activa = false;
@@ -464,12 +478,12 @@ void renderInspector(sistem &S, editor &E){
     
     // proprietati pt fiecare corp
     
-    for(int i = 0; i < E.corpuriSelectate.size(); i++  ){
+    for(int i = 0; i < (int) E.corpuriSelectate.size(); i++  ){
         int id_corp = E.corpuriSelectate[i];
         rigid &r = S.corpuri[id_corp];
         
         ImGui::PushID(id_corp);
-        // Lumea (corpul 0) are masa infinita, nu vrem sa ii stricam matematica
+        
         if (r.M > 1e10f) {
             ImGui::Text("Tip: Lumea (Element Fix)");
             ImGui::Text("Pozitie: %.2f, %.2f", r.pozitie.x, r.pozitie.y);
@@ -479,7 +493,7 @@ void renderInspector(sistem &S, editor &E){
             if (ImGui::DragFloat2("Pozitie (X,Y)", &r.pozitie.x, 0.05f)) trebuie_update = true;
             
             float unghi_grade = r.phi * (180.0f / M_PI);
-            if (ImGui::DragFloat("Rotatie (Rad)", &unghi_grade, 0.05f)) {
+            if (ImGui::DragFloat("Rotatie (°)", &unghi_grade, 0.05f)) {
                 trebuie_update = true;
                 r.phi = unghi_grade * (M_PI / 180.0f);
             } 
@@ -512,7 +526,7 @@ void renderInspector(sistem &S, editor &E){
     ImGui::Text(E.corpuriSelectate.size() == 1 ? "Diagrama de Corp Liber:" : "Diagrama de Grup:");
     
     float min_x = 99999.0f, max_x = -99999.0f, min_y = 99999.0f, max_y = -99999.0f;
-    for (int i = 0; i < E.corpuriSelectate.size(); i++) {
+    for (size_t i = 0; i < E.corpuriSelectate.size(); i++) {
         rigid &r = S.corpuri[E.corpuriSelectate[i]];
         if(r.pozitie.x < min_x) min_x = r.pozitie.x;
         if(r.pozitie.x > max_x) max_x = r.pozitie.x;
@@ -522,7 +536,7 @@ void renderInspector(sistem &S, editor &E){
     vec2 centru_grup((min_x + max_x) / 2.0f, (min_y + max_y) / 2.0f);
     
     float extensie_maxima = 0.5f;
-    for( int i = 0; i < E.corpuriSelectate.size(); i++){
+    for( size_t i = 0; i < E.corpuriSelectate.size(); i++){
         rigid &r  = S.corpuri[E.corpuriSelectate[i]];
         
         vec2 offset_fata_de_centru = r.pozitie - centru_grup;
@@ -534,7 +548,7 @@ void renderInspector(sistem &S, editor &E){
             extensie_maxima = dist_la_centru_corp + ext_geometrica;
         }
         
-        for(int j = 0; j < r.forte_desen.forte.size(); j++) {
+        for(size_t j = 0; j < r.forte_desen.forte.size(); j++) {
             float mod_f = r.forte_desen.forte[j].valoare.modul();
             if (mod_f < 0.1f) continue;
             
@@ -557,7 +571,7 @@ void renderInspector(sistem &S, editor &E){
     draw_list->AddRectFilled(p0, ImVec2(p0.x + sz.x, p0.y + sz.y), IM_COL32(40, 40, 40, 255));
     draw_list->AddRect(p0, ImVec2(p0.x + sz.x, p0.y + sz.y), IM_COL32(100, 100, 100, 255));
     
-    for (int id_corp = 0; id_corp < E.corpuriSelectate.size(); id_corp++) {
+    for (int id_corp = 0; id_corp < (int) E.corpuriSelectate.size(); id_corp++) {
         rigid &r = S.corpuri[E.corpuriSelectate[id_corp]];
         ImU32 col_corp = IM_COL32((int)(r.collider.culoare.r * 255), (int)(r.collider.culoare.g * 255), (int)(r.collider.culoare.b * 255), 255);
         
@@ -585,7 +599,7 @@ void renderInspector(sistem &S, editor &E){
         }
         
         // Desenare Forte
-        for(int j = 0; j < r.forte_desen.forte.size(); j++) {
+        for(int j = 0; j < (int) r.forte_desen.forte.size(); j++) {
             fortaVizuala f = r.forte_desen.forte[j];
             float mod_f = f.valoare.modul();
             if (mod_f < 0.1f) continue;
@@ -617,10 +631,10 @@ void renderInspector(sistem &S, editor &E){
         }
     } else if(afiseazaDetalii == 1){
 
-        for(int i = 0; i < E.corpuriSelectate.size(); i++){
+        for(int i = 0; i < (int) E.corpuriSelectate.size(); i++){
             int id_corp = E.corpuriSelectate[i];
             
-            if (E.valoriSimulate.size() <= id_corp || E.valoriSimulate[id_corp].timpAfisat.empty()) continue;
+            if (( (int) E.valoriSimulate.size() )<= id_corp || E.valoriSimulate[id_corp].timpAfisat.empty()) continue;
             
             IstoricCorp& istoric = E.valoriSimulate[id_corp];
             
@@ -656,7 +670,7 @@ void renderInspector(sistem &S, editor &E){
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.1f, 0.1f, 1.0f));
         
         if (ImGui::Button(E.corpuriSelectate.size() == 1 ? "Elimina Corp" : "Elimina Toate Corpurile", ImVec2(-1, 30))) {
-            for (int i = 0; i < E.corpuriSelectate.size(); i++) {
+            for (int i = 0; i < (int) E.corpuriSelectate.size(); i++) {
                 S.eliminaCorp(E.corpuriSelectate[i]);
             }
             E.corpuriSelectate.clear();
@@ -692,10 +706,10 @@ void renderInspector(sistem &S, editor &E){
         setupGUI(window);
 
         // 17 valori (x, y, phi, w, h, type, red, green, blue, alpha, tip, viteza_x, viteza_x, omega, acceleratie_x, acceleratie_y, epsilon) * (nr_corpuri + nr_legaturi)
-        E.vertexBuffer.resize(17 * (S.corpuri.size() + S.legaturi.size() + S.arcuri.size()));
+        E.vertexBuffer.resize(17 * (S.corpuri.size() + S.legaturi.size() + S.surseForte.size()));
 
         std::cout << "==> Intrare in bucla de randare..." << std::endl;
-        size_t total_elemente =   S.corpuri.size() + S.legaturi.size() + S.arcuri.size();
+        size_t total_elemente =   S.corpuri.size() + S.legaturi.size() + S.surseForte.size();
         E.vertexBuffer.resize(E.vertexStride * total_elemente);
     }
     return window;
@@ -713,7 +727,7 @@ void randareGrafica(sistem &S, editor &E,  GLFWwindow* &window){
         }
     }
     
-    size_t total_elemente = S.corpuri.size() + S.legaturi.size() + S.arcuri.size() + E.elementeUI.size() + nr_forte;
+    size_t total_elemente = S.corpuri.size() + S.legaturi.size() + S.surseForte.size() + E.elementeUI.size() + nr_forte;
 
     (E.vertexBuffer).resize(17 * total_elemente);
     drawSystem(S,E, E.VAO, E.VBO, E.shaderProgram, E.vertexBuffer.data());

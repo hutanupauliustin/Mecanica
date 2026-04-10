@@ -2,7 +2,7 @@
 #include "matrice.h"
 #include "legatura.h"
 #include "rigid.h"
-#include "arc.h"
+#include "forte.h"
 #include <cmath>
 #include <vector>
 
@@ -12,8 +12,12 @@ public:
 
     std::vector<rigid> corpuri;
     std::vector<legatura*> legaturi;                // vector de pointeri
-    std::vector<arc> arcuri;                          
+    std::vector<generatorForte*> surseForte;                          
 
+    
+    double t;
+    double dt;
+    float scala_timp;
 
     int p;                                          // p este numarul de ecuatii adaugate de legaturi (2 pt articulatii, 3 pt incastrare, etc.)
     matrice stare;                                  // am sa ma refer la ecuatiile adaugate f_1,f_2... cu numele de "constrangeri"
@@ -41,15 +45,17 @@ public:
 
     void adaugaLegaturi(legatura *l);
 
-    void adaugaArcuri(arc &a);
+    void adaugaGeneratorForte(generatorForte *F);
 
     void eliminaCorp(int index);
     
     void eliminaLegatura(int index);
 
-    void eliminaArc(int index);
+    void eliminaGeneratorForte(int index);
 
     void actualizeazaMatriceFizica();
+
+    void verificaOutOfBounds(std::vector<int> corpuriSelectate, std::vector<int> corpuriSubMouse);
 
     void incarcaStare();
 
@@ -64,4 +70,6 @@ public:
     void seteazaForteExterne();
 
     void plafonareViteze();
+
+    void step(double dt);
 };

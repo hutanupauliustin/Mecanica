@@ -11,10 +11,6 @@ editor::editor(){
     mouse_y = 0.0f;
     frameCount = 0;
 
-    dt = 0.001f;
-    t = 0.0f;
-
-    scala_timp = 1.0f;
     corpuriSelectate.resize(0);
 
     elementeUI.resize(2);   //pentru fantoma de corp si de legatura
@@ -135,7 +131,7 @@ void editor::incarcaDatePentruGrafic(sistem &S){
         
         IstoricCorp& istoric = valoriSimulate[i];
 
-        if (istoric.timpAfisat.size() < istoric.capacitate_maxima) {
+        if ((int) istoric.timpAfisat.size() < istoric.capacitate_maxima) {
             istoric.timpAfisat.push_back(this->t);
             istoric.axe[POZITIE_X].push_back(S.corpuri[i].pozitie.x);
             istoric.axe[POZITIE_Y].push_back(S.corpuri[i].pozitie.y);
@@ -172,4 +168,19 @@ void editor::incarcaDatePentruGrafic(sistem &S){
     if (fisier_export.is_open() && !csv_buffer.empty()) {
         fisier_export << csv_buffer;
     }
+}
+
+void editor::updateMousePosition(GLFWwindow *window){
+    
+    double mx, my;
+    glfwGetCursorPos(window, &mx, &my);
+
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
+
+    float ndcX = (2.0f * (float)mx) / width - 1.0f;
+    float ndcY = 1.0f - (2.0f * (float)my) / height; 
+    
+    this->mouse_x = ndcX * camera.zoom * camera.aspect_ratio + camera.x;
+    this->mouse_y = ndcY * camera.zoom + camera.y;    
 }

@@ -1,6 +1,8 @@
 #include "sistem.h"
 #include <cmath>
 #include <vector>
+#include <algorithm>
+#include "fizica.h"
 
     float inertie_minima = 0.00001f;
     float viteza_maxima = 500.0f;
@@ -28,6 +30,10 @@
         for (size_t i = 0; i < this->legaturi.size(); i++)
         {
             delete legaturi[i];
+        }
+        for (size_t i = 0; i < this->surseForte.size(); i++)
+        {
+            delete surseForte[i];
         }
     }
 
@@ -73,37 +79,42 @@
         p += l->getNumarEcuatii();
     }
 
-    void sistem::adaugaArcuri(arc &a)
+    void sistem::adaugaGeneratorForte(generatorForte *F)
     {
-        for(size_t i  = 0; i < arcuri.size(); i++){
-            if(arcuri[i].activ == 0){
-                a.activ = 1;
-                arcuri[i] = a; // Suprascriem arcul vechi
-                return;        // Iesim din functie
+        for(size_t i  = 0; i < surseForte.size(); i++){
+            if(surseForte[i]->activ == 0){
+                delete surseForte[i];
+                F->activ = 1;
+                surseForte[i] = F; 
+                return;        
             }
         }
         // Daca nu am gasit niciun loc liber, adaugam la capat
-        arcuri.push_back(a);
+       F->activ = 1;
+       surseForte.push_back(F);
     }
 
     void sistem::eliminaCorp(int index){
-        if(index <= 0 || index >= corpuri.size()) return; // Protejam Lumea (0)
+        if(index <= 0 || index >= (int) corpuri.size()) return; 
         
         corpuri[index].activ = 0;
         corpuri[index].collider.selectat = 0;
         
-        // Stergem legaturile atasate de acest corp
         for(size_t i = 0; i < legaturi.size(); i++){
             if(legaturi[i]->activ && (legaturi[i]->contorCorpA == index || legaturi[i]->contorCorpB == index)){
                 eliminaLegatura(i);
             }
         }
         
-        // Stergem arcurile atasate de acest corp
-        for(size_t i = 0; i < arcuri.size(); i++){
-            if(arcuri[i].activ && (arcuri[i].contorCorpA == index || arcuri[i].contorCorpB == index)){
-                eliminaArc(i);
-            }
+        for(size_t i = 0; i < surseForte.size(); i++){
+
+            if(surseForte[i]->activ == false)
+                continue;
+
+            std::vector<int> corpuriAtasate = surseForte[i]->getCorpuriAtasate();
+
+            if(std::find(corpuriAtasate.begin(), corpuriAtasate.end() ,index) != corpuriAtasate.end())
+                eliminaGeneratorForte(i);
         }
         
         actualizeazaMatriceFizica();
@@ -117,34 +128,47 @@
         seteazaForteExterne();
     }
 
-    void sistem::eliminaLegatura(int index){
-        if(index < 0 || index >= legaturi.size()) return;
+    void sistem::eliminaLegatura(int i){
+
+        int index = i;
+
+        if(index < 0 || index >= (int) legaturi.size()) return;
         if(legaturi[index]->activ == 1) {
             legaturi[index]->activ = 0;
             p -= legaturi[index]->getNumarEcuatii(); // Reducem imediat dimensiunea sistemului matriceal
         }
     }
 
-    void sistem::eliminaArc(int index){
-        if(index < 0 || index >= arcuri.size()) return;
-        arcuri[index].activ = 0;
+    void sistem::eliminaGeneratorForte(int i){
+
+        int index = i;
+
+        if(index < 0 || index >= (int) surseForte.size()) return;
+        surseForte[index]->activ = 0;
+    }
+
+
+    void sistem::verificaOutOfBounds(std::vector<int> corpuriSelectate, std::vector<int> corpuriSubMouse){
+    for(int i = 0; i < (int) this->corpuri.size(); i++ )
+        if( std::abs(stare(i*3,0)) > 500 || std::abs(stare(i*3 + 1,0)) > 500 ){
+              this->eliminaCorp(i);
+
+            corpuriSelectate.erase(std::remove(corpuriSelectate.begin(), corpuriSelectate.end(), i), corpuriSelectate.end());
+            corpuriSubMouse.erase(std::remove(corpuriSubMouse.begin(), corpuriSubMouse.end(), i), corpuriSubMouse.end());
+        }
     }
 
 
     void sistem::incarcaStare(){
 
-        int nr_corpuri = this->corpuri.size();
-        int nr_legaturi = this->legaturi.size();
+       int nr_corpuri = this->corpuri.size();
 
-        if (stare.linii != 6 * nr_corpuri || stare.coloane != 1) {
+        if (stare.linii != 6 * nr_corpuri || (int) stare.coloane != 1) {
             stare = matrice(6 * nr_corpuri, 1);
         }
         
-        for (size_t i = 0; i < nr_corpuri; i++)
+        for (int i = 0; i < nr_corpuri; i++)
         {
-
-            if( std::abs(stare(i*3,0)) > 10000 || std::abs(stare(i*3 + 1,0)) > 10000 )
-                this->corpuri[i].activ = 0;
 
             if(this->corpuri[i].activ == 0){
                 stare(i * 3, 0) = 0;
@@ -170,7 +194,7 @@
         const float PI = 3.1415926535f;
         const float TWO_PI = 2.0f * PI;
 
-        for (size_t i = 0; i < nr_corpuri; i++)
+        for (int i = 0; i < (int) nr_corpuri; i++)
         {
             if(this->corpuri[i].activ == 0){
                 stare(i * 3, 0) = 0;
@@ -212,8 +236,8 @@
             J_F = matrice('0', p, 3 * nr_corpuri);
         }
         else{
-            for (size_t i = 0; i < J_F.linii; i++){
-                for (size_t j = 0; j < J_F.coloane; j++){
+            for (int i = 0; i < J_F.linii; i++){
+                for (int j = 0; j < J_F.coloane; j++){
                     J_F(i, j) = 0.0f;
                 }
             }
@@ -222,7 +246,7 @@
         if(JdotQ.linii != p || JdotQ.coloane != 1){
             JdotQ = matrice('0',p,1);
         } else {
-            for(size_t i = 0; i < p; i++){
+            for(int i = 0; i < p; i++){
                 JdotQ(i,0) = 0.0f;
             }
         }
@@ -256,7 +280,7 @@ void sistem::seteazaConstrangeri()
         }
         else
         {
-            for (size_t i = 0; i < F.linii; i++)
+            for (int i = 0; i < (int) F.linii; i++)
             {
                 F(i, 0) = 0.0f;
             }
@@ -269,7 +293,7 @@ void sistem::seteazaConstrangeri()
         }
         else
         {
-            for (size_t i = 0; i < Fpunct.linii; i++)
+            for (int i = 0; i < (int) Fpunct.linii; i++)
                 Fpunct(i, 0) = 0.0f;
         }
 
@@ -327,23 +351,23 @@ void sistem::seteazaConstrangeri()
         }
 
         // 1. Initializam fortele (gravitatie, frecare aer)
-        for (size_t i = 0; i < nr_corpuri; i++) {
+        for (int i = 0; i < (int) nr_corpuri; i++) {
             corpuri[i].forte_desen.forte.clear();
             corpuri[i].aflaForteProprii(g); 
         }
-
         // 2. Adaugam fortele elastice 
-        for (size_t i = 0; i < arcuri.size(); i++) {
-            if(arcuri[i].activ == 0) continue; // Sarim peste cele sterse!
-            arcuri[i].aplicaFortaElastica(this->corpuri[arcuri[i].contorCorpA], this->corpuri[arcuri[i].contorCorpB]);
+
+        for (size_t i = 0; i < surseForte.size(); i++) {
+            if(surseForte[i]->activ == 0) continue; 
+            surseForte[i]->aplicaForta(this->corpuri);
         }
 
-        for (size_t i = 0; i < nr_corpuri; i++) {
+        for (int i = 0; i < nr_corpuri; i++) {
             corpuri[i].reducereTorsor(); 
         }
 
         // 3. Incarcam totul in matricea sistemului
-        for (size_t i = 0; i < nr_corpuri; i++) {
+        for (int i = 0; i < nr_corpuri; i++) {
             Q(3 * i, 0) = corpuri[i].tau.forta.x;
             Q(3 * i + 1, 0) = corpuri[i].tau.forta.y;
             Q(3 * i + 2, 0) = corpuri[i].tau.moment;
@@ -366,4 +390,21 @@ void sistem::seteazaConstrangeri()
                 else if(corpuri[i].omega < -viteza_unghiulara_maxima) corpuri[i].omega = -viteza_unghiulara_maxima;
             }
         }
+    }
+
+    void sistem::step(double dt) {
+        for(auto& corp : corpuri) {
+            corp.forte_desen.reseteaza();
+        }
+
+        this->stare = RK4(*this, dt, t);
+        this->seteazaStare();       
+        this->plafonareViteze();
+
+        verificarCiocniri(*this, dt);  
+
+        this->incarcaStare();
+        this->t += dt;
+        S.verificaOutOfBounds(E.corpuriSelectate, E.corpuriSubMouse);   
+
     }

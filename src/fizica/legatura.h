@@ -12,6 +12,11 @@ public:
     bool activ = false;
     legatura() = default;
 
+    bool selectat = false;
+    bool subMouse = false;
+
+    torsor fortaReactiune;
+
     legatura(int a, int b) : contorCorpA(a), contorCorpB(b) {}
 
     virtual ~legatura() = default; // "virtual" ii spune destructorului sa stearga si spatiul utilizat de celelalte clase
@@ -65,6 +70,34 @@ public:
 
     vec2 getPozitie(std::vector<rigid> &corpuri) override;
 
+    void getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) override;
+
+    void calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare) override;
+
+    void calculeazaConstrangereDerivate(matrice &Fpunct, int rand_start, const matrice &stare, int n) override;
+
+    void calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) override;
+
+    void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) override ;
+
+    static incastrare* Creaza(rigid& A, rigid& B, float globalX, float globalY) ;
+};
+
+class fir : public legatura
+{
+private:
+    vec2 l_A;
+    vec2 l_B;
+    float lungime;
+    bool tensionat = 0;
+
+public:
+    fir(int a, int b, float lxa, float lya, float lxb, float lyb, float unghiInitial);
+
+    int getNumarEcuatii() const override;
+
+    vec2 getPozitie(std::vector<rigid> &corpuri) override;
+
     virtual void getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi);
 
     void calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare) override;
@@ -73,7 +106,7 @@ public:
 
     void calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) override;
 
-   void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) override ;
+    void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) override;
 
-    static incastrare* Creaza(rigid& A, rigid& B, float globalX, float globalY) ;
+    static fir* Creaza(rigid& A, rigid& B, float globalX, float globalY);
 };

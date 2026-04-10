@@ -1,5 +1,7 @@
 #pragma once
 #include "sistem.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <vector>
 #include <fstream>
 
@@ -67,16 +69,28 @@ class editor{
     editor();
     ~editor();
 
-    int mod_curent;
     int cadru_activ;
-
     int mod_vizualizare; //0 -- normal 1--distributia vitezelor 2-- distributia acceleratiilor
 
     float mouse_x;
     float mouse_y;
 
+    struct camera {
+        float x = 0.0f;
+        float y = 0.0f;
+        float zoom = 10.0f;
+        float aspect_ratio = 1.33f;
+
+        vec2 screenToWorld(float mouseX, float mouseY, int screenWidth, int screenHeight) {
+            float ndcX = (2.0f * mouseX) / screenWidth - 1.0f;
+            float ndcY = 1.0f - (2.0f * mouseY) / screenHeight; 
+            return vec2(ndcX * zoom * aspect_ratio + x, ndcY * zoom + y);
+        }
+    };
+
     std::vector<int> corpuriSubMouse;
     std::vector<int> corpuriSelectate;
+    std::vector<int> legaturiSelectate;
     std::vector<fantomaUI> elementeUI;
 
     unsigned int VAO, VBO;
@@ -87,30 +101,19 @@ class editor{
     unsigned int vertexStride;
     unsigned int frameCount;
 
-    int adaugare_corp_A = 0;
-    int adaugare_corp_B = 0;
-    vec2 adaugare_punct_A_local;
-    vec2 adaugare_punct_B_local;
-    int tip_legatura_de_adaugat = 0; // 0 = Articulatie, 1 = Incastrare
-
-    float arc_l0_procent = 100.0f;
-    float arc_k = 100.0f;
-    float arc_d = 5.0f;
-
-    double t;
-    double dt;
-    float scala_timp;
-
     editorFlags flag;
 
     std::vector<IstoricCorp> valoriSimulate; 
+
+    std::string nume_fisier_export = ".temp_istoric_simulare.csv";
+    std::ofstream fisier_export;
 
     int gasesteCorpSubMouse(sistem &S);
     void mutaCorp(sistem &S, int idCorp, float offsetX, float offsetY);
 
     void sincronizeazaMemorie(sistem &S);
     void incarcaDatePentruGrafic(sistem &S);
+
+    void updateMousePosition(GLFWwindow *window);
     
-    std::string nume_fisier_export = ".temp_istoric_simulare.csv";
-    std::ofstream fisier_export;
 };

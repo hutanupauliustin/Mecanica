@@ -8,6 +8,7 @@ float forta_maxima = 10000.0f;
 //rezolva sisteme olonoame scleronome, cu legaturi bilaterale
 
 void calculeazaMultiplicatori(sistem &S, double t){                   //rezolva sistemul (J * A^-1 * J^T) Lambda = - JpunctQpunct - J * A^-1 * Q - k_s*F - k_d*Fpunct 
+    (void)t;
                          
     if (S.Lambda.linii != S.p || S.Lambda.coloane != 1) {
         S.Lambda = matrice(S.p, 1);
@@ -57,7 +58,40 @@ void calculeazaMultiplicatori(sistem &S, double t){                   //rezolva 
         else if (valoare < -forta_maxima) valoare = -forta_maxima;
 
         S.Lambda(i,0) = valoare;
+    }
+
+    int index_rand = 0;
+    for (size_t i = 0; i < S.legaturi.size(); i++) {
+        if (!S.legaturi[i]->activ) continue;
+        
+        int nr_ec = S.legaturi[i]->getNumarEcuatii();
+        
+        // Resetam valorile de la cadrul precedent pentru a nu se acumula la infinit
+        S.legaturi[i]->fortaReactiune.forta.x = 0.0f;
+        S.legaturi[i]->fortaReactiune.forta.y = 0.0f;
+        S.legaturi[i]->fortaReactiune.moment = 0.0f;
+
+        // Repartizam rezultatele in functie de tipul legaturii
+        if (nr_ec == 1) { 
+            // Ex: fir sau arc impus prin matrice.
+            // Valoarea reprezinta tensiunea, nu strict forta pe o axa anume.
+            S.legaturi[i]->fortaReactiune.forta.x = S.Lambda(index_rand + 0, 0); 
+        } 
+        else if (nr_ec == 2) { 
+            // Ex: Articulatie simpla
+            S.legaturi[i]->fortaReactiune.forta.x = S.Lambda(index_rand + 0, 0);
+            S.legaturi[i]->fortaReactiune.forta.y = S.Lambda(index_rand + 1, 0);
         }
+        else if (nr_ec == 3) { 
+            // Ex: Incastrare (sudura)
+            S.legaturi[i]->fortaReactiune.forta.x = S.Lambda(index_rand + 0, 0);
+            S.legaturi[i]->fortaReactiune.forta.y = S.Lambda(index_rand + 1, 0);
+            S.legaturi[i]->fortaReactiune.moment = S.Lambda(index_rand + 2, 0);
+        }
+
+        index_rand += nr_ec;
+    }
+
 }
     
 
@@ -76,9 +110,9 @@ matrice derivata(sistem &S, const matrice &stare_curenta, double t)      //facut
     S.seteazaStare(); // Actualizeaza pozitiile si vitezele corpurilor din sistem.
 
     // 3. Recalculam marimile care depind de stare.
+    S.seteazaConstrangeri();      // Calculam erorile de constrangere F si Fpunct
     S.seteazaForteExterne();      // Recalculeaza vectorul de forte externe Q.
     S.seteazaJacobian();          // Recalculeaza Jacobianul J_F si termenul Jdot * Qdot.
-    S.seteazaConstrangeri();      // Calculam erorile de constrangere F si Fpunct
     calculeazaMultiplicatori(S, t); // Calculeaza multiplicatorii Lagrange Lambda.
 
     // 4. Calculam acceleratiile folosind ecuatia de miscare.
@@ -127,7 +161,7 @@ void adaugaForteContinueVizuale(sistem &S){
 
     if (S.p == 0 || S.Lambda.linii != S.p) return;
 
-    for(int i = 0; i < S.legaturi.size(); i++) {
+    for(int i = 0; i < (int) S.legaturi.size(); i++) {
 
         if(S.legaturi[i]->activ == 0) continue;
         
@@ -167,7 +201,7 @@ void adaugaForteContinueVizuale(sistem &S){
 void calculeazaEnergiaTotala(sistem &S) {
     float energie = 0.0f;
     
-    for (int i = 0; i < S.corpuri.size(); i++) {
+    for (size_t i = 0; i < S.corpuri.size(); i++) {
         rigid& c = S.corpuri[i];
         
         if (!c.activ || c.M > 1e10f) continue; 
@@ -191,7 +225,7 @@ void salveazaDateCinematiceVizuale(sistem &S, float dt_pas_fizica, int nr_iterat
 
     if (dt_total <= 0.00001f) return;
 
-    for (int i = 0; i < S.corpuri.size(); i++) {
+    for (size_t i = 0; i < S.corpuri.size(); i++) {
         rigid &r = S.corpuri[i];
         
         if (!r.activ || r.M > 1e10f) continue; // Sarim peste lumea fixa

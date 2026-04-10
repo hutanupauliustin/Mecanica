@@ -170,7 +170,7 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
 
     // Gasim ordinea corecta pentru corpuri (Painter's Algorithm)
     std::vector<int> ordine_corpuri;
-    for (int i = 0; i < S.corpuri.size(); i++) {
+    for (size_t i = 0; i < S.corpuri.size(); i++) {
         ordine_corpuri.push_back(i);
     }
 
@@ -179,7 +179,7 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
     });
 
     // 1. Corpuri
-    for(int pos = 0; pos < ordine_corpuri.size(); pos++){
+    for(int pos = 0; pos < (int)ordine_corpuri.size(); pos++){
         int i  = ordine_corpuri[pos];
         int idx = pct_curent * stride;
         rigid &r = S.corpuri[i];
@@ -230,8 +230,8 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
     }
 
     // 2. Legaturi 
-    for(int i = 0; i <  S.legaturi.size(); i++){
-        int idx = pct_curent * stride; // FARA OFFSET VECHI!
+    for(size_t i = 0; i <  S.legaturi.size(); i++){
+        int idx = pct_curent * stride; 
 
         if(S.legaturi[i]->activ == 0){
             for(int k=0; k<11; k++) vertices[idx + k] = 0;
@@ -254,8 +254,12 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
         vertices[idx + 7] = 1.0f;
         vertices[idx + 8] = 1.0f;
         vertices[idx + 9] = 1.0f;
+
+        float stare_filtru = 0.0f;
+        if (S.legaturi[i]->subMouse) stare_filtru += 1.0f; 
+        if (S.legaturi[i]->selectat) stare_filtru += 2.0f;
         
-        vertices[idx + 10] = 0.0f; 
+        vertices[idx + 10] = stare_filtru; 
 
         vertices[idx + 11] = 0;
         vertices[idx + 12] = 0;
@@ -267,36 +271,34 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
         pct_curent++;
     }
 
-    //3. Arcuri
-    for(int i = 0; i <  S.arcuri.size(); i++){
-        int idx = pct_curent * stride; // FARA OFFSET VECHI!
+    //3. Generatori de forte
+    for(size_t i = 0; i < S.surseForte.size(); i++){
+        int idx = pct_curent * stride;
 
-        if(S.arcuri[i].activ == 0){
+        int type = -1;
+        float widht = 0.0f, height = 0.0f, phi = 0.0f, col_r = 0.0f, col_g = 0.0f, col_b = 0.0f;
+        vec2 poz;
+
+        S.surseForte[i]->getGraphics(S.stare, type, widht, height, phi, poz, col_r, col_g, col_b);
+
+        if (type == -1  || !S.surseForte[i]->activ) {
             for(int k=0; k<11; k++) vertices[idx + k] = 0;
             pct_curent++;
             continue;
         }
 
-        vec2 p1 = S.corpuri[S.arcuri[i].contorCorpA].localToGlobal(S.arcuri[i].l_A);
-        vec2 p2 = S.corpuri[S.arcuri[i].contorCorpB].localToGlobal(S.arcuri[i].l_B);
-        
-        vec2 diferenta = p2 - p1;
-        float phi = std::atan2(diferenta.y , diferenta.x);
-        float lungime_curenta = diferenta.modul();
-        float lungime_repaus = S.arcuri[i].lungime_0;
-
-        vertices[idx + 0] = (p1.x + p2.x )/ 2.0f;
-        vertices[idx + 1] = (p1.y + p2.y )/ 2.0f;
+        vertices[idx + 0] = poz.x;
+        vertices[idx + 1] = poz.y;
         vertices[idx + 2] = phi;
-        vertices[idx + 3] = lungime_curenta; 
-        vertices[idx + 4] = lungime_repaus;       
-        vertices[idx + 5] = 4.0f;
-        vertices[idx + 6] = 1.0f;
-        vertices[idx + 7] = 0.62f;
-        vertices[idx + 8] = 0.0f;
-        vertices[idx + 9] = 1.0f;
+        vertices[idx + 3] = widht; 
+        vertices[idx + 4] = height;       
+        vertices[idx + 5] = (float)type;
+        vertices[idx + 6] = col_r;
+        vertices[idx + 7] = col_g;
+        vertices[idx + 8] = col_b;
+        vertices[idx + 9] = 1.0f; // Alpha
         
-        vertices[idx + 10] = 0.0f;
+        vertices[idx + 10] = 0.0f; // Filtru/Selectie
 
         vertices[idx + 11] = 0;
         vertices[idx + 12] = 0;
@@ -309,7 +311,7 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
     }
 
     //4 Entitati de UI
-    for(int i = 0; i < E.elementeUI.size(); i++){
+    for(size_t i = 0; i < E.elementeUI.size(); i++){
 
         int idx = pct_curent * stride;
 
@@ -344,10 +346,8 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
    
     // 5. Forte (Desenate separat pe culori)
     if (E.flag.arata_forte) {
-        for (int i = 0; i < S.corpuri.size(); i++) {
+        for (size_t i = 0; i < S.corpuri.size(); i++) {
             if (!S.corpuri[i].activ || S.corpuri[i].M > 1e10f) continue;
-
-            float scala_forta = 0.02f;
 
             auto adaugaSageata = [&](vec2 forta, vec2 origine,  float r, float g, float b) {
                     

@@ -469,6 +469,79 @@ Prin urmare, atunci când calculăm produsul $\dot{J}_F \dot{q}$, componenta cor
         0
     \end{bmatrix}
 \end{equation}
+
+\subsubsection{Firul de legătură}
+Introducerea unui fir între corpurile $A$ și $B$ forțează ca distanța dintre punctele de legătură să nu depășească lungimea firului $d$: $\sqrt{ (x_{PA} - x_{PB})^2 + (y_{PA} - y_{PB})^2 } \leq d$. Aceasta adaugă o constrângere la sistem:
+
+\begin{equation}
+    f_{p+1} = \sqrt{ (x_{PA} - x_{PB})^2 + (y_{PA} - y_{PB})^2 } - d \leq 0
+\end{equation}
+
+Calculăm derivatele parțiale ale funcțiilor $f_{p+1}$ și $f_{p+2}$ pentru a le adăuga în Jacobian:
+Notăm:
+\begin{equation*}
+    \begin{aligned}
+        \Delta x &= x_{PA} - x_{PB} \\
+        \Delta y &= y_{PA} - y_{PB} \\
+        D &= \sqrt{\Delta x^2 + \Delta y^2}
+    \end{aligned}
+\end{equation*}
+
+Aplicând regula de derivare a funcțiilor compuse, obținem componentele Jacobianului pentru corpul $A$:
+\begin{equation}
+    \begin{aligned}
+        \frac{\partial f}{\partial x_A} &= \frac{1}{2D} \cdot 2\Delta x \cdot \frac{\partial (\Delta x)}{\partial x_A} = \frac{\Delta x}{D} \\[1ex]
+        \frac{\partial f}{\partial y_A} &= \frac{1}{2D} \cdot 2\Delta y \cdot \frac{\partial (\Delta y)}{\partial y_A} = \frac{\Delta y}{D} \\[1ex]
+        \frac{\partial f}{\partial \varphi_A} &= \frac{\Delta x}{D} \left( -l_{xA}\sin\varphi_A - l_{yA}\cos\varphi_A \right) + \frac{\Delta y}{D} \left( l_{xA}\cos\varphi_A - l_{yA}\sin\varphi_A \right)
+    \end{aligned}
+\end{equation}
+
+În mod similar, pentru corpul $B$, derivatele își schimbă semnul deoarece coordonatele punctului $P_B$ sunt scăzute din cele ale punctului $P_A$:
+\begin{equation}
+    \begin{aligned}
+        \frac{\partial f}{\partial x_B} &= -\frac{\Delta x}{D} \\[1ex]
+        \frac{\partial f}{\partial y_B} &= -\frac{\Delta y}{D} \\[1ex]
+        \frac{\partial f}{\partial \varphi_B} &= \frac{\Delta x}{D} \left( l_{xB}\sin\varphi_B + l_{yB}\cos\varphi_B \right) - \frac{\Delta y}{D} \left( l_{xB}\cos\varphi_B - l_{yB}\sin\varphi_B \right)
+    \end{aligned}
+\end{equation}
+
+Firul adaugă o singură linie în matricea Jacobiană:
+\begin{equation}
+    \begin{bmatrix}
+        0 \\ \vdots \\ \frac{\Delta x}{D} \\ \frac{\Delta y}{D} \\ \frac{\Delta x}{D} \left( -l_{xA}\sin\varphi_A - l_{yA}\cos\varphi_A \right) + \frac{\Delta y}{D} \left( l_{xA}\cos\varphi_A - l_{yA}\sin\varphi_A \right) \\ \vdots \\ -\frac{\Delta x}{D} \\ -\frac{\Delta y}{D} \\ \frac{\Delta x}{D} \left( l_{xB}\sin\varphi_B + l_{yB}\cos\varphi_B \right) - \frac{\Delta y}{D} \left( l_{xB}\cos\varphi_B - l_{yB}\sin\varphi_B \right) \\ \vdots \\ 0
+    \end{bmatrix}
+\end{equation}
+
+\paragraph{Calculul scalarului $\dot{J}_F \dot{q}$ pentru Fir}
+
+Deoarece firul generează o singură ecuație de legătură, produsul $\dot{J}_F \dot{q}$ va fi un scalar. Pentru a-l exprima compact, definim componentele vitezei relative ale punctelor de prindere:
+\begin{equation*}
+    \begin{aligned}
+        \Delta \dot{x} &= \dot{x}_A - \dot{\varphi}_A(l_{xA}\sin\varphi_A + l_{yA}\cos\varphi_A) - \left[ \dot{x}_B - \dot{\varphi}_B(l_{xB}\sin\varphi_B + l_{yB}\cos\varphi_B) \right] \\
+        \Delta \dot{y} &= \dot{y}_A + \dot{\varphi}_A(l_{xA}\cos\varphi_A - l_{yA}\sin\varphi_A) - \left[ \dot{y}_B + \dot{\varphi}_B(l_{xB}\cos\varphi_B - l_{yB}\sin\varphi_B) \right]
+    \end{aligned}
+\end{equation*}
+
+Prin derivarea analitică a constrângerii de distanță în raport cu timpul, termenul $\dot{J}_F \dot{q}$ înglobează două efecte cinematice de inerție: accelerația centrifugă datorată rotirii firului în spațiu și accelerațiile centripete ale punctelor locale de legătură care se rotesc în jurul centrelor lor de masă.
+
+Scalarul final se calculează astfel:
+\begin{equation}
+    \dot{J}_F \dot{q} = \frac{\Delta \dot{x}^2 + \Delta \dot{y}^2 - \dot{D}^2}{D} - \frac{\Delta x}{D} \left( a_{cx} \right) - \frac{\Delta y}{D} \left( a_{cy} \right)
+\end{equation}
+
+unde $\dot{D}$ reprezintă viteza de variație a lungimii firului (proiecția vitezei relative pe direcția firului):
+\begin{equation*}
+    \dot{D} = \frac{\Delta x}{D}\Delta \dot{x} + \frac{\Delta y}{D}\Delta \dot{y}
+\end{equation*}
+
+iar termenii $a_{cx}$ și $a_{cy}$ reprezintă componentele accelerațiilor centripete relative ale punctelor de legătură:
+\begin{equation*}
+    \begin{aligned}
+        a_{cx} &= -\dot{\varphi}_A^2(l_{xA}\cos\varphi_A - l_{yA}\sin\varphi_A) + \dot{\varphi}_B^2(l_{xB}\cos\varphi_B - l_{yB}\sin\varphi_B) \\
+        a_{cy} &= -\dot{\varphi}_A^2(l_{xA}\sin\varphi_A + l_{yA}\cos\varphi_A) + \dot{\varphi}_B^2(l_{xB}\sin\varphi_B + l_{yB}\cos\varphi_B)
+    \end{aligned}
+\end{equation*}
+
 \subsection{Fortele dintre corpuri}
 \subsubsection{Forte elastice}
 
@@ -1196,18 +1269,10 @@ Sistemul obținut este liniar și simetric, deci se poate rezolva eficient prin 
 \end{equation}
 
 \section{Implementare si Arhitectura Software}
-\subsection{Structura aplicatiei: C++, organizarea pe componente si OpenGL pentru randare grafica.}
-\subsection{Rezolvarea sistemului de constrângeri pe accelerații.}
-\subsection{Integrarea numerica.}
 
 \section{Rezultate si Validarea Simularii}
-\subsection{Conservarea energiei: Analiza termodinamica a sistemului in miscare.}
-\subsection{Teste de stabilitate: Prezentarea simularilor (lant articulat, pendul multiplu, stiva de corpuri).}
-\subsection{Analiza performantei: Impactul filtrului AABB asupra timpului de calcul pe cadru.}
 
 \section{Concluzii si Dezvoltari Ulterioare}
-\subsection{Obiective atinse si limitari curente.}
-\subsection{ Directii viitoare de dezvoltare.}
 
 \section*{Bibliografie}
 

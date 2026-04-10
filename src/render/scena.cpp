@@ -3,11 +3,14 @@
 #include "json.hpp"
 #include <fstream>
 #include <iostream>
+#include "sistem.h"
 using json = nlohmann::json;
 
 const float PI = 3.1415926535f;
 
 using json = nlohmann::json;
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(tipMaterial, restituire, frecareStatica, frecareDinamica, frecareRostogolireStatica , frecareRostogolireDinamica)
 
 
 void incarcaScenaInitiala(sistem &S) {
@@ -16,8 +19,10 @@ void incarcaScenaInitiala(sistem &S) {
     // 1. FUNDATIA
     // Curatam tot si ne asiguram ca elementul 0 este Lumea (fixa, masa infinita)
     S.corpuri.clear();
+    for (auto l : S.legaturi) delete l;
     S.legaturi.clear();
-    S.arcuri.clear();
+    for (auto f : S.surseForte) delete f;
+    S.surseForte.clear();
     S.p = 0;
 
     rigid lume = rigid::Fix(0.0f, 0.0f);
@@ -107,7 +112,7 @@ void salveazaScenaJSON(sistem &S, const std::string& nume_fisier){
     json scena_json;
     scena_json["corpuri"] = json::array();
 
-    for (int i = 0; i < S.corpuri.size(); i++) {
+    for (size_t i = 0; i < S.corpuri.size(); i++) {
         rigid &r = S.corpuri[i];
         
         // Ignoram corpurile sterse sau fantomele UI
@@ -154,8 +159,10 @@ void citesteScenaJSON(sistem &S, const std::string& nume_fisier){
     fisier.close();
 
     S.corpuri.clear();
+    for (auto l : S.legaturi) delete l;
     S.legaturi.clear();
-    S.arcuri.clear();
+    for (auto f : S.surseForte) delete f;
+    S.surseForte.clear();
     S.p = 0;
 
     rigid lume = rigid::Fix(0.0f, 0.0f);

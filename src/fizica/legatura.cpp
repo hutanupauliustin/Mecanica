@@ -23,7 +23,6 @@
         phi = 0.0f;
     }
 
-
     void articulatie::calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare)  {
         int idxA = contorCorpA * 3;
         int idxB = contorCorpB * 3;
@@ -51,16 +50,12 @@
         int idxA = contorCorpA * 3;
         int idxB = contorCorpB * 3;
 
-        float xA = stare(idxA + 0, 0);
-        float yA = stare(idxA + 1, 0);
         float phiA = stare(idxA + 2, 0);
 
         float vxA = stare(idxA +  offsetViteze, 0);
         float vyA = stare(idxA + 1 + offsetViteze, 0);
         float phiPunctA = stare(idxA + 2 + offsetViteze, 0);
 
-        float xB = stare(idxB + 0, 0);
-        float yB = stare(idxB + 1, 0);  
         float phiB = stare(idxB + 2, 0);
 
         float vxB = stare(idxB + offsetViteze, 0);
@@ -174,8 +169,7 @@
         return corpuri[contorCorpA].localToGlobal(l_A);
     }
 
-
-         void incastrare::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) {
+    void incastrare::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) {
         int idxA = contorCorpA * 3;
         float phiA = stare(idxA + 2, 0);
 
@@ -184,7 +178,6 @@
         height = 0.5f;
         phi = phiA; 
         }
-
 
     void incastrare::calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare)  {
         int idxA = contorCorpA * 3;
@@ -215,16 +208,12 @@
         int idxA = contorCorpA * 3;
         int idxB = contorCorpB * 3;
 
-        float xA = stare(idxA + 0, 0);
-        float yA = stare(idxA + 1, 0);
         float phiA = stare(idxA + 2, 0);
 
         float vxA = stare(idxA +  offsetViteze, 0);
         float vyA = stare(idxA + 1 + offsetViteze, 0);
         float phiPunctA = stare(idxA + 2 + offsetViteze, 0);
 
-        float xB = stare(idxB + 0, 0);
-        float yB = stare(idxB + 1, 0);  
         float phiB = stare(idxB + 2, 0);
 
         float vxB = stare(idxB + offsetViteze, 0);
@@ -285,7 +274,7 @@
         J_F(rand_start + 2, indexB + 2) = -1.0f;
     }
 
-   void incastrare::calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n)  {
+    void incastrare::calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n)  {
         int idxA = contorCorpA * 3;
         int idxB = contorCorpB * 3;
         int offsetViteze = 3 * n; 
@@ -330,3 +319,201 @@
 
         return new incastrare(A.index, B.index, local_lAx, local_lAy, local_lBx, local_lBy, phi0);
     }
+
+
+    fir::fir(int a, int b, float lxa, float lya, float lxb, float lyb, float lungime_fir)
+        : legatura(a, b), l_A(lxa, lya), l_B(lxb, lyb), lungime(lungime_fir) {}
+
+    int fir::getNumarEcuatii() const 
+    {
+        return 1;
+    }
+
+    vec2 fir::getPozitie(std::vector<rigid> &corpuri){
+    
+        vec2 poz1 = corpuri[contorCorpA].localToGlobal(l_A);
+        vec2 poz2 = corpuri[contorCorpB].localToGlobal(l_B);
+
+        vec2 med = (0.5f)*(poz1 + poz2);
+
+        return med;
+    }
+
+    void fir::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) {
+        int idxA = contorCorpA * 3;
+        int idxB = contorCorpB * 3;
+        
+        vec2 posA(stare(idxA + 0, 0), stare(idxA + 1, 0));
+        float phiA = stare(idxA + 2, 0);
+        vec2 posB(stare(idxB + 0, 0), stare(idxB + 1, 0));
+        float phiB = stare(idxB + 2, 0);
+
+        float sinA = std::sin(phiA), cosA = std::cos(phiA);
+        vec2 pA = posA + vec2(l_A.x * cosA - l_A.y * sinA, l_A.x * sinA + l_A.y * cosA);
+
+        float sinB = std::sin(phiB), cosB = std::cos(phiB);
+        vec2 pB = posB + vec2(l_B.x * cosB - l_B.y * sinB, l_B.x * sinB + l_B.y * cosB);
+
+        float phiFinal =  std::atan2( pB.y - pA.y, pB.x - pA.x ); 
+
+        type = 2;
+        widht = 0.5f;
+        height =(pB - pA).modul();
+        phi = phiFinal; 
+        }
+
+    void fir::calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare) {
+        int idxA = contorCorpA * 3;
+        int idxB = contorCorpB * 3;
+
+        float xA = stare(idxA + 0, 0), yA = stare(idxA + 1, 0), phiA = stare(idxA + 2, 0);
+        float xB = stare(idxB + 0, 0), yB = stare(idxB + 1, 0), phiB = stare(idxB + 2, 0);
+
+        float sinA = std::sin(phiA), cosA = std::cos(phiA);
+        float sinB = std::sin(phiB), cosB = std::cos(phiB);
+
+        vec2 PA(xA + l_A.x * cosA - l_A.y * sinA, yA + l_A.x * sinA + l_A.y * cosA);
+        vec2 PB(xB + l_B.x * cosB - l_B.y * sinB, yB + l_B.x * sinB + l_B.y * cosB);
+
+        float distanta = (PA - PB).modul();
+        float valoare = distanta - this->lungime;
+
+        this->tensionat = (valoare >= -0.001f);
+
+        F(rand_start, 0) = this->tensionat ? valoare : 0.0f;
+    }
+
+    void fir::calculeazaConstrangereDerivate(matrice &Fpunct, int rand_start, const matrice &stare, int n)  {
+        if (!this->tensionat) {
+            Fpunct(rand_start, 0) = 0.0f;
+            return;
+        }
+
+        int idxA = contorCorpA * 3;
+        int idxB = contorCorpB * 3;
+        int offsetViteze = 3 * n;
+
+        float xA = stare(idxA + 0, 0), yA = stare(idxA + 1, 0), phiA = stare(idxA + 2, 0);
+        float xB = stare(idxB + 0, 0), yB = stare(idxB + 1, 0), phiB = stare(idxB + 2, 0);
+
+        float vxA = stare(idxA + offsetViteze + 0, 0), vyA = stare(idxA + offsetViteze + 1, 0), omegaA = stare(idxA + offsetViteze + 2, 0);
+        float vxB = stare(idxB + offsetViteze + 0, 0), vyB = stare(idxB + offsetViteze + 1, 0), omegaB = stare(idxB + offsetViteze + 2, 0);
+
+        float sinA = std::sin(phiA), cosA = std::cos(phiA);
+        float sinB = std::sin(phiB), cosB = std::cos(phiB);
+
+        vec2 rA(l_A.x * cosA - l_A.y * sinA, l_A.x * sinA + l_A.y * cosA);
+        vec2 rB(l_B.x * cosB - l_B.y * sinB, l_B.x * sinB + l_B.y * cosB);
+
+        vec2 PA = vec2(xA, yA) + rA;
+        vec2 PB = vec2(xB, yB) + rB;
+
+        vec2 distantaVector = PA - PB;
+        float D = distantaVector.modul();
+        vec2 normala = (D > 0.0001f) ? (distantaVector / D) : vec2(1.0f, 0.0f);
+
+        vec2 vPA(vxA - omegaA * rA.y, vyA + omegaA * rA.x);
+        vec2 vPB(vxB - omegaB * rB.y, vyB + omegaB * rB.x);
+
+        Fpunct(rand_start, 0) = (vPA - vPB).scalar(normala);
+
+    }
+
+    void fir::calculeazaJacobian(matrice &J_F, int rand_start, const matrice &stare) 
+{
+    if (!this->tensionat) {
+        // matricea este deja plina de zero
+    return; 
+    }
+    
+    int idxA = contorCorpA * 3;
+    int idxB = contorCorpB * 3;
+
+    float phiA = stare(idxA + 2, 0);
+    float phiB = stare(idxB + 2, 0);
+
+    float sinA = std::sin(phiA), cosA = std::cos(phiA);
+    float sinB = std::sin(phiB), cosB = std::cos(phiB);
+
+    vec2 rA(l_A.x * cosA - l_A.y * sinA, l_A.x * sinA + l_A.y * cosA);
+    vec2 rB(l_B.x * cosB - l_B.y * sinB, l_B.x * sinB + l_B.y * cosB);
+
+    vec2 PA(stare(idxA + 0, 0) + rA.x, stare(idxA + 1, 0) + rA.y);
+    vec2 PB(stare(idxB + 0, 0) + rB.x, stare(idxB + 1, 0) + rB.y);
+
+    vec2 distantaVector = PA - PB;
+    float D = distantaVector.modul();
+    vec2 normala = (D > 0.0001f) ? (distantaVector / D) : vec2(1.0f, 0.0f);
+
+    J_F(rand_start, idxA + 0) = normala.x;
+    J_F(rand_start, idxA + 1) = normala.y;
+    J_F(rand_start, idxA + 2) = rA.x * normala.y - rA.y * normala.x;
+
+    J_F(rand_start, idxB + 0) = -normala.x;
+    J_F(rand_start, idxB + 1) = -normala.y;
+    J_F(rand_start, idxB + 2) = -(rB.x * normala.y - rB.y * normala.x);
+
+}
+
+    void fir::calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n)  {
+        if (!this->tensionat) {
+            JdotQ(rand_start, 0) = 0.0f;
+            return;
+        }
+
+    int idxA = contorCorpA * 3;
+    int idxB = contorCorpB * 3;
+    int offsetViteze = 3 * n;
+
+    float phiA = stare(idxA + 2, 0);
+    float phiB = stare(idxB + 2, 0);
+
+    float vxA = stare(idxA + offsetViteze + 0, 0), vyA = stare(idxA + offsetViteze + 1, 0), omegaA = stare(idxA + offsetViteze + 2, 0);
+    float vxB = stare(idxB + offsetViteze + 0, 0), vyB = stare(idxB + offsetViteze + 1, 0), omegaB = stare(idxB + offsetViteze + 2, 0);
+
+    float sinA = std::sin(phiA), cosA = std::cos(phiA);
+    float sinB = std::sin(phiB), cosB = std::cos(phiB);
+
+    vec2 rA(l_A.x * cosA - l_A.y * sinA, l_A.x * sinA + l_A.y * cosA);
+    vec2 rB(l_B.x * cosB - l_B.y * sinB, l_B.x * sinB + l_B.y * cosB);
+
+    vec2 PA(stare(idxA + 0, 0) + rA.x, stare(idxA + 1, 0) + rA.y);
+    vec2 PB(stare(idxB + 0, 0) + rB.x, stare(idxB + 1, 0) + rB.y);
+
+    vec2 distantaVector = PA - PB;
+    float D = distantaVector.modul();
+    vec2 normala = (D > 0.0001f) ? (distantaVector / D) : vec2(1.0f, 0.0f);
+
+    vec2 vPA(vxA - omegaA * rA.y, vyA + omegaA * rA.x);
+    vec2 vPB(vxB - omegaB * rB.y, vyB + omegaB * rB.x);
+    vec2 deltaV = vPA - vPB;
+
+    float D_punct = deltaV.scalar(normala);
+
+    vec2 ac_A = rA * (-omegaA * omegaA);
+    vec2 ac_B = rB * (-omegaB * omegaB);
+    vec2 delta_ac = ac_A - ac_B;
+
+    float efect_centrifug = (deltaV.scalar(deltaV) - D_punct * D_punct) / (D > 0.0001f ? D : 0.0001f);
+    float efect_centripet_local = delta_ac.scalar(normala);
+
+    JdotQ(rand_start, 0) = efect_centrifug - efect_centripet_local;
+}
+
+    fir* fir::Creaza(rigid& A, rigid& B, float globalX, float globalY) {
+        float dxA = globalX - A.pozitie.x;
+        float dyA = globalY - A.pozitie.y;
+        float dxB = globalX - B.pozitie.x;
+        float dyB = globalY - B.pozitie.y;
+
+        float local_lAx = dxA * std::cos(A.phi) + dyA * std::sin(A.phi);
+        float local_lAy = -dxA * std::sin(A.phi) + dyA * std::cos(A.phi);
+
+        float local_lBx = dxB * std::cos(B.phi) + dyB * std::sin(B.phi);
+        float local_lBy = -dxB * std::sin(B.phi) + dyB * std::cos(B.phi);
+
+        float lungime  = std::sqrt(  (local_lBx -  local_lAx)*(local_lBx -  local_lAx)  + (local_lBy -  local_lAy)*(local_lBy -  local_lAy));
+
+        return new fir(A.index, B.index, local_lAx, local_lAy, local_lBx, local_lBy, lungime);
+    }
+    
