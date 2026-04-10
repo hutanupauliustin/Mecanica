@@ -11,4 +11,19 @@
 #include "portable-file-dialogs.h"
 #include "scena.h"
 
+void setupFont(ImGuiIO& io);
+void setupGUI(GLFWwindow* window);
+void cleanupGUI();
+
 void startFrameGUI();
+void endFrameGUI();
+
+void renderMeniu(sistem &S, editor &E);
+
+void renderPanouInstrumente(sistem &S, editor &E);
+
+void renderInspector(sistem &S, editor &E);
+
+void renderOverlayStatus(sistem &S, editor &E);
+
+void renderToatePanourile(sistem &S, editor &E);

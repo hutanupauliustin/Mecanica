@@ -1,4 +1,5 @@
 #include "newgui.h"
+#include "instrument.h"
 
 void setupFont(ImGuiIO& io){
     ImFont* font = nullptr;
@@ -57,6 +58,16 @@ void startFrameGUI(){
 
 }
 
+void renderToarePanourile(sistem &S, editor &E){
+    renderMeniu(S, E);
+    renderOverlayStatus(S, E);
+    renderPanouInstrumente(S, E);
+
+    if (!E.corpuriSelectate.empty() || !E.legaturiSelectate.empty()) {
+        renderInspector(S, E);
+    }
+}
+
 void renderMeniu(sistem &S, editor &E){
 
     if(ImGui::BeginMainMenuBar()){
@@ -66,19 +77,80 @@ void renderMeniu(sistem &S, editor &E){
             if (ImGui::MenuItem("New Scene", "Ctrl+N")) { 
                 incarcaScenaInitiala(S);
                 E.sincronizeazaMemorie(S);
-        }
+            }
 
-        if (ImGui::MenuItem("Open...", "Ctrl+O")) { 
-            auto f = pfd::open_file("Incarca Scena", "", { "Fisiere JSON", "*.json", "Toate Fisierele", "*" });
-            if (!f.result().empty()) {
-                citesteScenaJSON(S, f.result()[0]);
-                E.sincronizeazaMemorie(S); 
+            if (ImGui::MenuItem("Open...", "Ctrl+O")) { 
+                auto f = pfd::open_file("Incarca Scena", "", { "Fisiere JSON", "*.json", "Toate Fisierele", "*" });
+                if (!f.result().empty()) {
+                    citesteScenaJSON(S, f.result()[0]);
+                    E.sincronizeazaMemorie(S); 
+                }
             }
         }
+    }
+}
+
+void renderPanouInstrumente(sistem &S, editor &E) {
+    ImGui::Begin("Instrumente");
 
 
-
-
+    if (E.stare_curenta == MOD_RULARE) {
+        ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "Opreste simularea pentru a edita.");
+        ImGui::End();
+        return; 
     }
 
+    ImGui::Text("Alege o unealta:");
+    ImGui::Separator();
+
+    bool eSelectie    = dynamic_cast<InstrumentSelectie*>(E.instrumentCurent.get()) != nullptr;
+    bool eCorp        = dynamic_cast<InstrumentAdaugareCorp*>(E.instrumentCurent.get()) != nullptr;
+    bool eArc         = dynamic_cast<InstrumentAdaugaArc*>(E.instrumentCurent.get()) != nullptr;
+    bool eArticulatie = dynamic_cast<InstrumentAdaugaArticulatie*>(E.instrumentCurent.get()) != nullptr;
+    bool eIncastrare  = dynamic_cast<InstrumentAdaugareIncastrare*>(E.instrumentCurent.get()) != nullptr;
+
+    auto deseneazaButon = [](const char* label, bool activ) -> bool {
+        if (activ) {
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.4f, 0.0f, 1.0f)); 
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.9f, 0.5f, 0.1f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8f, 0.4f, 0.0f, 1.0f));
+        }
+        
+        bool apasat = ImGui::Button(label, ImVec2(-1, 35)); // -1 face butonul cat toata latimea
+        
+        if (activ) ImGui::PopStyleColor(3); // Resetăm culorile la normal
+        
+        return apasat;
+    };
+
+    // --- 5. LOGICA BUTOANELOR --- 
+
+    if (deseneazaButon("Cursor (Selectie & Mutare)", eSelectie)) {
+        E.schimbaInstrumentCurent(new InstrumentSelectie());
+    }
+
+    ImGui::Spacing(); ImGui::Spacing();
+    ImGui::Text("Adaugare Elemente:");
+    ImGui::Separator();
+
+    if (deseneazaButon("Adauga Corp", eCorp)) {
+        E.schimbaInstrumentCurent(new InstrumentAdaugareCorp());
+    }
+    
+    if (deseneazaButon("Adauga Arc", eArc)) {
+        E.schimbaInstrumentCurent(new InstrumentAdaugaArc());
+    }
+    
+    if (deseneazaButon("Adauga Articulatie", eArticulatie)) {
+        E.schimbaInstrumentCurent(new InstrumentAdaugaArticulatie());
+    }
+    
+    if (deseneazaButon("Adauga Incastrare", eIncastrare)) {
+        E.schimbaInstrumentCurent(new InstrumentAdaugareIncastrare());
+    }
+
+    // Aici ai putea adăuga setările secundare ale uneltei (pasul 3)
+    // Ex: Dacă eArc e activ și pas == 2, desenezi sliderele de rigiditate/amortizare.
+
+    ImGui::End();
 }

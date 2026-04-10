@@ -7,22 +7,18 @@
 #include "input.h"
 #include "imgui.h"
 
-float zoomScale = 10.0f;
-float cameraX = 0.0f;
-float cameraY = 0.0f;
-float aspect_ratio = 800.0f / 600.0f;
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+void scroll_callback(GLFWwindow* window, editor &E, double xoffset, double yoffset)
 {
     (void)window;
     (void)xoffset;
     ImGuiIO& io = ImGui::GetIO();
     if(io.WantCaptureMouse)
         return;
-    zoomScale -= (float)yoffset * 0.5f; 
+    E.camera.zoom -= (float)yoffset * 0.5f; 
     
-    if (zoomScale < 1.0f) zoomScale = 1.0f; 
-    if (zoomScale > 100.0f) zoomScale = 100.0f; 
+    if (E.camera.zoom < 1.0f) E.camera.zoom = 1.0f; 
+    if (E.camera.zoom > 100.0f) E.camera.zoom = 100.0f; 
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -32,6 +28,42 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
     aspect_ratio = (float)width / (float)height; 
 }
+
+void processInput(GLFWwindow *window, sistem &S, editor &E) {
+    
+    E.updateMousePosition(window); 
+
+    if (E.instrumentCurent) {
+        
+        static bool stangaApasat = false;
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+            if (!stangaApasat) {
+                E.instrumentCurent->clickStanga(S, E, E.mouse_x, E.mouse_y);
+                stangaApasat = true;
+            } else {
+                E.instrumentCurent->miscareMouse(S, E, E.mouse_x, E.mouse_y);
+            }
+        } else {
+            if (stangaApasat) {
+                E.instrumentCurent->eliberareClickStanga(S, E);
+                stangaApasat = false;
+            }
+        }
+
+        static bool dreaptaApasat = false;
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+            if (!dreaptaApasat) {
+                E.instrumentCurent->clickDreapta(S, E);
+                dreaptaApasat = true;
+            }
+        } else {
+            dreaptaApasat = false;
+        }
+
+        E.instrumentCurent->pregatesteFantome(E.elementeUI, E.mouse_x, E.mouse_y, S);
+    }
+}
+
 
 /*void processInput(GLFWwindow *window, sistem &S, editor &E) {
 
@@ -532,17 +564,3 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
         }
     }
 }*/
-
-void handleCameraControls(GLFWwindow *window, editor &E){
-    
-}
-
-void processInput(GLFWwindow *window, sistem &S, editor &E){
-    
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-
-    E.updateMousePosition(window, zoomScale, aspect_ratio, cameraX, cameraY);
-    handleCameraControls(window,E);
-}
-

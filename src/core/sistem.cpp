@@ -405,6 +405,6 @@ void sistem::seteazaConstrangeri()
 
         this->incarcaStare();
         this->t += dt;
-        S.verificaOutOfBounds(E.corpuriSelectate, E.corpuriSubMouse);   
+        //S.verificaOutOfBounds(E.corpuriSelectate, E.corpuriSubMouse);   
 
     }

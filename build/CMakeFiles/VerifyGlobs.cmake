@@ -24,7 +24,6 @@ endif()
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "C:/Users/Paul/Desktop/Mecanica/src/*.cpp")
 set(OLD_GLOB
   "C:/Users/Paul/Desktop/Mecanica/src/core/editor.cpp"
-  "C:/Users/Paul/Desktop/Mecanica/src/core/input.cpp"
   "C:/Users/Paul/Desktop/Mecanica/src/core/main.cpp"
   "C:/Users/Paul/Desktop/Mecanica/src/core/sistem.cpp"
   "C:/Users/Paul/Desktop/Mecanica/src/fizica/colliziune.cpp"
@@ -34,7 +33,8 @@ set(OLD_GLOB
   "C:/Users/Paul/Desktop/Mecanica/src/fizica/rigid.cpp"
   "C:/Users/Paul/Desktop/Mecanica/src/mate/matrice.cpp"
   "C:/Users/Paul/Desktop/Mecanica/src/render/grafica.cpp"
-  "C:/Users/Paul/Desktop/Mecanica/src/render/gui.cpp"
+  "C:/Users/Paul/Desktop/Mecanica/src/render/input.cpp"
+  "C:/Users/Paul/Desktop/Mecanica/src/render/newgui.cpp"
   "C:/Users/Paul/Desktop/Mecanica/src/render/scena.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")

@@ -14,15 +14,18 @@ public:
 
     virtual void anuleaza(editor& E) = 0;
 
-    virtual void pregatesteFantome(std::vector<fantomaUI> &elementeUI ){}
+    virtual void miscareMouse(sistem& S, editor& E, float mouse_x, float mouse_y) {}
+    virtual void eliberareClickStanga(sistem& S, editor& E) {}
 
-}
+    virtual void pregatesteFantome(std::vector<fantomaUI> &elementeUI, float mouse_x, float mouse_y, sistem& S) {}
 
-class InstrumentAdaugaArticulatie : InstrumentEditor{
+};
+
+class InstrumentAdaugaArticulatie : public InstrumentEditor{
 public:
 
     int pas =0;
-    int id_corpA = -1;
+    int id_corp_A = -1;
     vec2 punct_A_local;
     float unghi_fantoma =0.0f;
 
@@ -109,7 +112,7 @@ public:
 
 };
 
-class InstrumentAdaugareIncastrare : InstrumentEditor {
+class InstrumentAdaugareIncastrare : public InstrumentEditor {
 private:
     int pas = 0;      
     int id_corp_A = -1;
@@ -200,7 +203,7 @@ public:
     }
 };
 
-class InstrumentAdaugaArc : InstrumentEditor {
+class InstrumentAdaugaArc : public InstrumentEditor {
 public:
     int pas = 0;
     int id_corp_A = -1;
@@ -210,7 +213,7 @@ public:
     float arc_d = 5.0f;
     float arc_l0_procent = 100.0f;
 
-    void cickStanga(sistem& S, editor& E, float mouse_x, float mouse_y) override {
+    void clickStanga(sistem& S, editor& E, float mouse_x, float mouse_y) override {
         if (pas == 0) {
             id_corp_A = E.gasesteCorpSubMouse(S);
             if (id_corp_A == -1) id_corp_A = 0; // Poate fi prins si de "Lume" (fundal)
@@ -232,23 +235,22 @@ public:
             arc arc_nou = arc::Creaza(S.corpuri[id_corp_A], S.corpuri[id_corp_B],
                                       pA_global.x, pA_global.y, pB_global.x, pB_global.y,
                                       arc_k, arc_d, l0_real);
-            S.adaugaArcuri(arc_nou);
+            S.adaugaGeneratorForte(new arc(arc_nou));
             S.actualizeazaMatriceFizica();
 
             id_arc_curent = S.arcuri.size() - 1;
         } else if (pas == 2){
-
             E.schimbaInstrumentCurent(new InstrumentSelectie());
         }
     }
 
-    void laClickDreapta(sistem& S, editor& E) override {
+    void clickDreapta(sistem& S, editor& E) override {
         if (pas == 1) {
             pas = 0;
             id_corp_A = -1;
-        } else if {
+        } else if (pas == 2) {
             S.arcuri.pop_back();
-            E.scchimbaInstrumentCurent( new InstrumentSelectie());
+            E.schimbaInstrumentCurent(new InstrumentSelectie());
 
         } else {
             anuleaza(E);
@@ -279,5 +281,72 @@ public:
             elementeUI[1].col = {0.5f, 1.0f, 0.5f, 0.8f};
         }
     }
-}
+};
 
+class InstrumentSelectie : public InstrumentEditor {
+private:
+    bool se_muta = false;
+    int id_corp_mutat = -1;
+    float offset_x = 0.0f;
+    float offset_y = 0.0f;
+
+public:
+    void clickStanga(sistem& S, editor& E, float mouse_x, float mouse_y) override {
+        int id = E.gasesteCorpSubMouse(S);
+        
+        if (id != -1) {
+            // Am dat click pe un corp -> Il selectam
+            E.corpuriSelectate.clear(); // Curatam selectia veche
+            E.corpuriSelectate.push_back(id);
+            
+            // Incepem logica de Drag & Drop
+            se_muta = true;
+            id_corp_mutat = id;
+            
+            // Calculam de unde am apucat corpul fata de centrul lui
+            offset_x = S.corpuri[id].pozitie.x - mouse_x;
+            offset_y = S.corpuri[id].pozitie.y - mouse_y;
+            
+            // Îl "înghețăm" din mișcare cât timp ținem mâna pe el
+            S.corpuri[id].viteza = vec2(0.0f, 0.0f);
+            S.corpuri[id].omega = 0.0f;
+        } else {
+            // Am dat click in gol -> Deselectam tot
+            E.corpuriSelectate.clear();
+        }
+    }
+
+    void miscareMouse(sistem& S, editor& E, float mouse_x, float mouse_y) override {
+        // Daca tinem click stanga apasat pe un corp si miscam mouse-ul
+        if (se_muta && id_corp_mutat != -1 && id_corp_mutat != 0) {
+            S.corpuri[id_corp_mutat].pozitie.x = mouse_x + offset_x;
+            S.corpuri[id_corp_mutat].pozitie.y = mouse_y + offset_y;
+            S.corpuri[id_corp_mutat].viteza = vec2(0.0f, 0.0f);
+            
+            S.actualizeazaMatriceFizica();
+        }
+    }
+
+    void eliberareClickStanga(sistem& S, editor& E) override {
+        // Cand luam degetul de pe mouse, oprim "tragerea"
+        se_muta = false;
+        id_corp_mutat = -1;
+    }
+
+    void clickDreapta(sistem& S, editor& E) override {
+        anuleaza(E);
+    }
+
+    void anuleaza(editor& E) override {
+        E.corpuriSelectate.clear();
+        se_muta = false;
+        id_corp_mutat = -1;
+    }
+
+    void pregatesteFantome(std::vector<fantomaUI>& elementeUI, float mouse_x, float mouse_y, sistem& S) override {
+        // Cat timp suntem in modul selectie, ascundem orice fantoma din UI
+        for(auto& f : elementeUI) {
+            f.activa = false;
+        }
+    }
+};

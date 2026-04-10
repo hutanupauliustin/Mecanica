@@ -5,7 +5,7 @@
 
 editor::editor(){
     mod_curent = MOD_RULARE;
-    mod_vizualizare = 0;
+    flag.mod_vizualizare = 0;
     cadru_activ = 0;
     mouse_x = 0.0f;
     mouse_y = 0.0f;
@@ -15,8 +15,7 @@ editor::editor(){
 
     elementeUI.resize(2);   //pentru fantoma de corp si de legatura
 
-    valoriSimulate.reserve(16000);
-    valoriSimulate.reserve(30); // 1000 de corpuri pre-alocate sunt arhisuficiente
+    valoriSimulate.reserve(1000); // 1000 de corpuri pre-alocate sunt arhisuficiente
 
     fisier_export.open(nume_fisier_export);
     if (fisier_export.is_open()) {
@@ -47,7 +46,7 @@ int editor::gasesteCorpSubMouse(sistem &S){
         if (S.corpuri[k].collider.obiectVirtual) continue; // Nu vrem să selectăm fantomele
         
         // Ignorăm corpul A deja selectat, pentru a putea găsi corpul B aflat sub el
-        if (this->mod_curent == MOD_ADAUGARE_LEGATURA_PAS_2 && this->adaugare_corp_A == k) continue;
+        //if (this->mod_curent == MOD_ADAUGARE_LEGATURA_PAS_2 && this->adaugare_corp_A == k) continue;
 
         // În modul Editare, putem impune să selectăm doar corpurile din layerul activ
         if (this->mod_curent == MOD_EDITARE && S.corpuri[k].collider.cadru != this->cadru_activ) continue;
@@ -66,7 +65,7 @@ int editor::gasesteCorpSubMouse(sistem &S){
             float hw = target.collider.dimensiune1 / 2.0f;
             float hh = target.collider.dimensiune2 / 2.0f;
             // Adăugăm un halo subtil doar în modul editare
-            float halo = (this->mod_curent == 1) ? std::max(0.15f, std::min(hw, hh) * 0.5f) : 0.0f;
+            float halo = (this->mod_curent == MOD_EDITARE) ? std::max(0.15f, std::min(hw, hh) * 0.5f) : 0.0f;
 
             if (std::abs(punct_local.x) <= hw + halo && std::abs(punct_local.y) <= hh + halo) {
                 lovit = true;
@@ -74,7 +73,7 @@ int editor::gasesteCorpSubMouse(sistem &S){
             }
         } else if (target.collider.tip == CERC) {
             float R = target.collider.dimensiune1;
-            float halo = (this->mod_curent == 1) ? std::max(0.15f, R * 0.3f) : 0.0f;
+            float halo = (this->mod_curent == MOD_EDITARE) ? std::max(0.15f, R * 0.3f) : 0.0f;
             float dist = std::sqrt(dx*dx + dy*dy);
             
             if (dist <= R + halo) {
@@ -132,7 +131,7 @@ void editor::incarcaDatePentruGrafic(sistem &S){
         IstoricCorp& istoric = valoriSimulate[i];
 
         if ((int) istoric.timpAfisat.size() < istoric.capacitate_maxima) {
-            istoric.timpAfisat.push_back(this->t);
+            istoric.timpAfisat.push_back(S.t);
             istoric.axe[POZITIE_X].push_back(S.corpuri[i].pozitie.x);
             istoric.axe[POZITIE_Y].push_back(S.corpuri[i].pozitie.y);
             istoric.axe[POZITIE_PHI].push_back(S.corpuri[i].phi);
@@ -143,7 +142,7 @@ void editor::incarcaDatePentruGrafic(sistem &S){
             istoric.axe[ACCELERATIE_Y].push_back(S.corpuri[i].forte_desen.acc_cadru.y);
             istoric.axe[ACCELERATIE_EPSILON].push_back(S.corpuri[i].forte_desen.eps_cadru);
         } else {
-            istoric.timpAfisat[istoric.offset] = this->t;
+            istoric.timpAfisat[istoric.offset] = S.t;
             istoric.axe[POZITIE_X][istoric.offset] = S.corpuri[i].pozitie.x;
             istoric.axe[POZITIE_Y][istoric.offset] = S.corpuri[i].pozitie.y;
             istoric.axe[POZITIE_PHI][istoric.offset] = S.corpuri[i].phi;
@@ -159,7 +158,7 @@ void editor::incarcaDatePentruGrafic(sistem &S){
         
         char linie_csv[256];
         std::snprintf(linie_csv, sizeof(linie_csv), "%.4f,%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\n",
-                      this->t, i, S.corpuri[i].pozitie.x, S.corpuri[i].pozitie.y, S.corpuri[i].phi,
+                      S.t, (int)i, S.corpuri[i].pozitie.x, S.corpuri[i].pozitie.y, S.corpuri[i].phi,
                       S.corpuri[i].viteza.x, S.corpuri[i].viteza.y, S.corpuri[i].omega,
                       S.corpuri[i].forte_desen.acc_cadru.x, S.corpuri[i].forte_desen.acc_cadru.y, S.corpuri[i].forte_desen.eps_cadru);
         csv_buffer += linie_csv;
@@ -177,10 +176,33 @@ void editor::updateMousePosition(GLFWwindow *window){
 
     int width, height;
     glfwGetWindowSize(window, &width, &height);
+    
+    if (width == 0) width = 1;
+    if (height == 0) height = 1;
 
     float ndcX = (2.0f * (float)mx) / width - 1.0f;
     float ndcY = 1.0f - (2.0f * (float)my) / height; 
     
-    this->mouse_x = ndcX * camera.zoom * camera.aspect_ratio + camera.x;
-    this->mouse_y = ndcY * camera.zoom + camera.y;    
+    this->mouse_x = ndcX * this->camera.zoom * this->camera.aspect_ratio + camera.x;
+    this->mouse_y = ndcY * this->camera.zoom + this->camera.y;    
+}
+
+void editor::proceseazaClick(sistem &S, int buton, int actiune) {
+    if (!instrumentCurent) return;
+
+    if (buton == GLFW_MOUSE_BUTTON_LEFT) {
+        if (actiune == GLFW_PRESS) {
+            instrumentCurent->clickStanga(S, *this, mouse_x, mouse_y);
+        } else if (actiune == GLFW_RELEASE) {
+            instrumentCurent->eliberareClickStanga(S, *this);
+        }
+    } else if (buton == GLFW_MOUSE_BUTTON_RIGHT && actiune == GLFW_PRESS) {
+        instrumentCurent->clickDreapta(S, *this);
+    }
+}
+
+void editor::proceseazaMiscareMouse(sistem &S) {
+    if (instrumentCurent) {
+        instrumentCurent->miscareMouse(S, *this, mouse_x, mouse_y);
+    }
 }

@@ -1,19 +1,15 @@
 #pragma once
 #include "sistem.h"
+#include "instrument.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <fstream>
+#include <memory>
 
 enum ModEditor {
     MOD_RULARE = 0,
     MOD_EDITARE = 1,
-    MOD_ADAUGARE_CORP = 2,
-    MOD_ADAUGARE_ARC_PAS_1 = 3,
-    MOD_ADAUGARE_ARC_PAS_2 = 4,
-    MOD_SETARE_ARC = 5,
-    MOD_ADAUGARE_LEGATURA_PAS_1 = 6,
-    MOD_ADAUGARE_LEGATURA_PAS_2 = 7
 };
 
 enum{
@@ -43,8 +39,9 @@ struct fantomaUI {
 struct editorFlags {
     bool arata_energie = false;
     bool arata_forte = false;
-    bool distributie_viteze = false;
-    bool distributie_acceleratie = false;
+    bool arata_grid = true;
+    int mod_vizualizare = 0; // standard, viteze, acceleratii
+    float culoare_fundal[3] = {0.1f, 0.1f, 0.1f};
 };
 
 struct IstoricCorp{
@@ -69,13 +66,15 @@ class editor{
     editor();
     ~editor();
 
-    int cadru_activ;
-    int mod_vizualizare; //0 -- normal 1--distributia vitezelor 2-- distributia acceleratiilor
+    ModEditor mod_curent;
 
+    std::unique_ptr<InstrumentEditor> instrumentCurent;
+    void schimbaInstrumentCurent(InstrumentEditor* instrumentNou);
+    
     float mouse_x;
     float mouse_y;
 
-    struct camera {
+    struct cameraType {
         float x = 0.0f;
         float y = 0.0f;
         float zoom = 10.0f;
@@ -86,7 +85,7 @@ class editor{
             float ndcY = 1.0f - (2.0f * mouseY) / screenHeight; 
             return vec2(ndcX * zoom * aspect_ratio + x, ndcY * zoom + y);
         }
-    };
+    } camera ;
 
     std::vector<int> corpuriSubMouse;
     std::vector<int> corpuriSelectate;
@@ -102,6 +101,7 @@ class editor{
     unsigned int frameCount;
 
     editorFlags flag;
+    int cadru_activ;
 
     std::vector<IstoricCorp> valoriSimulate; 
 
@@ -115,5 +115,8 @@ class editor{
     void incarcaDatePentruGrafic(sistem &S);
 
     void updateMousePosition(GLFWwindow *window);
+    
+    void proceseazaClick(sistem &S, int buton, int actiune);
+    void proceseazaMiscareMouse(sistem &S);
     
 };

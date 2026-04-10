@@ -408,12 +408,6 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 1,
-			"path" : "src/core/input.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 1,
 			"path" : "src/core/main.cpp",
 			"sourceGroupIndex" : 0
 		},
@@ -468,7 +462,13 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 1,
-			"path" : "src/render/gui.cpp",
+			"path" : "src/render/input.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "src/render/newgui.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{

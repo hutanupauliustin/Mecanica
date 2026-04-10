@@ -73,12 +73,6 @@
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\core\\input.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\core\\input.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\core\\input.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\core\\input.cpp.obj"
-},
-{
-  "directory": "C:/Users/Paul/Desktop/Mecanica/build",
   "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\core\\main.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\core\\main.cpp",
   "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\core\\main.cpp",
   "output": "CMakeFiles\\simulator.dir\\src\\core\\main.cpp.obj"
@@ -133,9 +127,15 @@
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\render\\gui.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\render\\gui.cpp",
-  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\render\\gui.cpp",
-  "output": "CMakeFiles\\simulator.dir\\src\\render\\gui.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\render\\input.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\render\\input.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\render\\input.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\render\\input.cpp.obj"
+},
+{
+  "directory": "C:/Users/Paul/Desktop/Mecanica/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb -g -std=gnu++17 -Wall -Wextra -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx -o CMakeFiles\\simulator.dir\\src\\render\\newgui.cpp.obj -c C:\\Users\\Paul\\Desktop\\Mecanica\\src\\render\\newgui.cpp",
+  "file": "C:\\Users\\Paul\\Desktop\\Mecanica\\src\\render\\newgui.cpp",
+  "output": "CMakeFiles\\simulator.dir\\src\\render\\newgui.cpp.obj"
 },
 {
   "directory": "C:/Users/Paul/Desktop/Mecanica/build",

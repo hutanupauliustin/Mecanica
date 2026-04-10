@@ -2,9 +2,9 @@
 #include "grafica.h"
 #include "fizica.h"
 #include "editor.h" 
-#include "gui.h"
+#include "newgui.h"
+#include "input.h"
 #include "scena.h"
-#include "editor.h"
 #include <cmath>
 #include <iostream>
 

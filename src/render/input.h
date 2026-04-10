@@ -5,11 +5,6 @@
 #include "sistem.h"
 #include "editor.h"
 
-extern float zoomScale;
-extern float cameraX;
-extern float cameraY;
-extern float aspect_ratio;
-
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
