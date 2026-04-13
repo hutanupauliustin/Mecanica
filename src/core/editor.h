@@ -1,11 +1,12 @@
 #pragma once
 #include "sistem.h"
-#include "instrument.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <fstream>
 #include <memory>
+
+class InstrumentEditor;
 
 enum ModEditor {
     MOD_RULARE = 0,
@@ -104,6 +105,7 @@ class editor{
     int cadru_activ;
 
     std::vector<IstoricCorp> valoriSimulate; 
+    GLFWwindow* window = nullptr;
 
     std::string nume_fisier_export = ".temp_istoric_simulare.csv";
     std::ofstream fisier_export;
@@ -114,7 +116,7 @@ class editor{
     void sincronizeazaMemorie(sistem &S);
     void incarcaDatePentruGrafic(sistem &S);
 
-    void updateMousePosition(GLFWwindow *window);
+    void updateMousePosition();
     
     void proceseazaClick(sistem &S, int buton, int actiune);
     void proceseazaMiscareMouse(sistem &S);

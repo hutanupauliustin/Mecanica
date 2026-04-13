@@ -533,16 +533,16 @@ void drawSystem(sistem &S, editor &E, unsigned int VAO, unsigned int VBO, unsign
     glPointSize(1.0f); 
 
     int scaleVertexLoc = glGetUniformLocation(shaderProgram, "scale");
-    glUniform1f(scaleVertexLoc, 1.0f / zoomScale);
+    glUniform1f(scaleVertexLoc, 1.0f / E.camera.zoom);
 
     int camOffsetLoc = glGetUniformLocation(shaderProgram, "cameraOffset");
-    glUniform2f(camOffsetLoc, cameraX, cameraY);
+    glUniform2f(camOffsetLoc, E.camera.x, E.camera.y);
 
     int aspectLoc = glGetUniformLocation(shaderProgram, "aspect_ratio");
-    glUniform1f(aspectLoc, aspect_ratio);
+    glUniform1f(aspectLoc,E.camera.aspect_ratio);
 
     int viewModeLoc = glGetUniformLocation(shaderProgram, "ViewMode");
-    glUniform1i(viewModeLoc,E.mod_vizualizare);
+    glUniform1i(viewModeLoc,E.flag.mod_vizualizare);
 
     glDrawArrays(GL_POINTS, 0, totalPoints);
     glBindVertexArray(0);

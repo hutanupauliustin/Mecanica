@@ -392,7 +392,7 @@ void sistem::seteazaConstrangeri()
         }
     }
 
-    void sistem::step(double dt) {
+    void sistem::step() {
         for(auto& corp : corpuri) {
             corp.forte_desen.reseteaza();
         }
@@ -401,7 +401,7 @@ void sistem::seteazaConstrangeri()
         this->seteazaStare();       
         this->plafonareViteze();
 
-        verificarCiocniri(*this, dt);  
+        verificarCiocniri(*this);  
 
         this->incarcaStare();
         this->t += dt;

@@ -19,7 +19,7 @@ int main() {
     incarcaScenaInitiala(S);
     E.sincronizeazaMemorie(S);
 
-    GLFWwindow* window = initializareGrafica(S,E);
+    E.window = initializareGrafica(S,E);
 
     double timp_anterior = glfwGetTime();
     //double timp_offset = 0.0f;
@@ -28,9 +28,9 @@ int main() {
     double dt_cadru;
     int iteratii;
         
-    while(!glfwWindowShouldClose(window)) {
+    while(!glfwWindowShouldClose(E.window)) {
 
-        processInput(window, S, E);
+        processInput(S, E);
         startFrameGUI();
 
         timp = glfwGetTime();
@@ -53,7 +53,7 @@ int main() {
             }
 
             while(timp_trecut >= S.dt) {  
-                S.step(E.dt);
+                S.step();
                
                 S.t += S.dt;
                 timp_trecut -= S.dt;
@@ -62,20 +62,20 @@ int main() {
 
 
             adaugaForteContinueVizuale(S);
-            salveazaDateCinematiceVizuale(S,E.dt,iteratii);
+            salveazaDateCinematiceVizuale(S,S.dt,iteratii);
             
             E.incarcaDatePentruGrafic(S);
 
             } else {
                 S.incarcaStare();
-                verificarCiocniri(S,E);
+                verificarCiocniri(S);
             }
            
             if(E.flag.arata_energie){
                 calculeazaEnergiaTotala(S);
         }
         
-        randareGrafica(S,E,window);
+        randareGrafica(S,E);
            
         }
         

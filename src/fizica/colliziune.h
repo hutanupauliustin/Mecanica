@@ -38,6 +38,6 @@ PuncteContact extrageManifold(Latura ref, Latura inc);
 
 void ciocnire(sistem &S, int corpA, int corpB, intersectie inter);
 
-void verificarCiocniri(sistem &S, editor &E);
+void verificarCiocniri(sistem &S);
 
 void adaugaFortePercutanteVizuale(sistem &S);

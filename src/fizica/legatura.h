@@ -108,5 +108,5 @@ public:
 
     void calculeazaJpunctQpunct(matrice& JdotQ, int rand_start, const matrice &stare, int n) override;
 
-    static fir* Creaza(rigid& A, rigid& B, float globalX, float globalY);
+    static fir* Creaza (rigid& A, rigid& B, float globalX_A, float globalY_A, float globalX_B, float globalY_B);
 };

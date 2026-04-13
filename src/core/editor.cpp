@@ -2,6 +2,7 @@
 #include <cmath>
 #include <algorithm>
 #include <cstdio>
+#include "instrument.h"
 
 editor::editor(){
     mod_curent = MOD_RULARE;
@@ -21,6 +22,9 @@ editor::editor(){
     if (fisier_export.is_open()) {
         fisier_export << "Timp,ID_Corp,PozitieX,PozitieY,UnghiPhi,VitezaX,VitezaY,VitezaOmega,AcceleratieX,AcceleratieY,AcceleratieEpsilon\n";
     }
+
+    instrumentCurent = std::make_unique<InstrumentSelectie>();
+
 }
 
 editor::~editor() {
@@ -45,10 +49,6 @@ int editor::gasesteCorpSubMouse(sistem &S){
         if (!S.corpuri[k].activ) continue;
         if (S.corpuri[k].collider.obiectVirtual) continue; // Nu vrem să selectăm fantomele
         
-        // Ignorăm corpul A deja selectat, pentru a putea găsi corpul B aflat sub el
-        //if (this->mod_curent == MOD_ADAUGARE_LEGATURA_PAS_2 && this->adaugare_corp_A == k) continue;
-
-        // În modul Editare, putem impune să selectăm doar corpurile din layerul activ
         if (this->mod_curent == MOD_EDITARE && S.corpuri[k].collider.cadru != this->cadru_activ) continue;
 
         rigid &target = S.corpuri[k];
@@ -98,7 +98,6 @@ void editor::sincronizeazaMemorie(sistem &S){
         size_t old_size = valoriSimulate.size();
         valoriSimulate.resize(S.corpuri.size());
         
-        // Pre-alocăm capacitatea maximă exactă pentru istoricul corpurilor noi
         for (size_t i = old_size; i < valoriSimulate.size(); i++) {
             valoriSimulate[i].timpAfisat.reserve(valoriSimulate[i].capacitate_maxima);
             for (int axa = 0; axa < TOTAL_PARAMETRII; axa++) {
@@ -169,13 +168,13 @@ void editor::incarcaDatePentruGrafic(sistem &S){
     }
 }
 
-void editor::updateMousePosition(GLFWwindow *window){
-    
+void editor::updateMousePosition(){
+
     double mx, my;
-    glfwGetCursorPos(window, &mx, &my);
+    glfwGetCursorPos(this->window, &mx, &my);
 
     int width, height;
-    glfwGetWindowSize(window, &width, &height);
+    glfwGetWindowSize(this->window, &width, &height);
     
     if (width == 0) width = 1;
     if (height == 0) height = 1;
@@ -204,5 +203,13 @@ void editor::proceseazaClick(sistem &S, int buton, int actiune) {
 void editor::proceseazaMiscareMouse(sistem &S) {
     if (instrumentCurent) {
         instrumentCurent->miscareMouse(S, *this, mouse_x, mouse_y);
+    }
+}
+
+void editor::schimbaInstrumentCurent(InstrumentEditor* instrumentNou) {
+    instrumentCurent.reset(instrumentNou);
+    
+    for(auto& f : elementeUI) {
+        f.activa = false;
     }
 }

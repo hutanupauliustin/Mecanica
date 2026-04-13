@@ -15,9 +15,9 @@ public:
     std::vector<generatorForte*> surseForte;                          
 
     
-    double t;
-    double dt;
-    float scala_timp;
+    double t = 0;
+    double dt = 0.001;
+    float scala_timp = 1;
 
     int p;                                          // p este numarul de ecuatii adaugate de legaturi (2 pt articulatii, 3 pt incastrare, etc.)
     matrice stare;                                  // am sa ma refer la ecuatiile adaugate f_1,f_2... cu numele de "constrangeri"
@@ -71,5 +71,5 @@ public:
 
     void plafonareViteze();
 
-    void step(double dt);
+    void step();
 };

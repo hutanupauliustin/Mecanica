@@ -354,7 +354,7 @@
         float sinB = std::sin(phiB), cosB = std::cos(phiB);
         vec2 pB = posB + vec2(l_B.x * cosB - l_B.y * sinB, l_B.x * sinB + l_B.y * cosB);
 
-        float phiFinal =  std::atan2( pB.y - pA.y, pB.x - pA.x ); 
+        float phiFinal =  std::atan2(pB.x - pA.x , pB.y - pA.y ); 
 
         type = 2;
         widht = 0.5f;
@@ -500,11 +500,11 @@
     JdotQ(rand_start, 0) = efect_centrifug - efect_centripet_local;
 }
 
-    fir* fir::Creaza(rigid& A, rigid& B, float globalX, float globalY) {
-        float dxA = globalX - A.pozitie.x;
-        float dyA = globalY - A.pozitie.y;
-        float dxB = globalX - B.pozitie.x;
-        float dyB = globalY - B.pozitie.y;
+    fir* fir::Creaza(rigid& A, rigid& B, float globalX_A, float globalY_A, float globalX_B, float globalY_B) {
+        float dxA = globalX_A - A.pozitie.x;
+        float dyA = globalY_A - A.pozitie.y;
+        float dxB = globalX_B - B.pozitie.x;
+        float dyB = globalY_B - B.pozitie.y;
 
         float local_lAx = dxA * std::cos(A.phi) + dyA * std::sin(A.phi);
         float local_lAy = -dxA * std::sin(A.phi) + dyA * std::cos(A.phi);

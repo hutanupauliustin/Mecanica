@@ -1,12 +1,22 @@
 #include "newgui.h"
 #include "instrument.h"
+#include "implot.h"
 
 void setupFont(ImGuiIO& io){
     ImFont* font = nullptr;
     
+    static const ImWchar ranges[] = {
+        0x0020, 0x00FF, // Basic Latin + Latin Supplement
+        0x2000, 0x206F, // General Punctuation
+        0x2100, 0x218F, // Letterlike Symbols + Number Forms
+        0x2190, 0x21FF, // Arrows 
+        0,
+    };
+
     std::ifstream font_file("assets/fonts/Inter_18pt-Medium.ttf");
     if (font_file.is_open()) {
         font_file.close();
+        
         font = io.Fonts->AddFontFromFileTTF("assets/fonts/Inter_18pt-Medium.ttf", 18.0f, NULL, ranges);
     }
 
@@ -23,13 +33,6 @@ void setupFont(ImGuiIO& io){
         }
     }
 
-    static const ImWchar ranges[] = {
-        0x0020, 0x00FF, // Basic Latin + Latin Supplement
-        0x2000, 0x206F, // General Punctuation
-        0x2100, 0x218F, // Letterlike Symbols + Number Forms
-        0x2190, 0x21FF, // Arrows 
-        0,
-    };
 }
 
 void setupGUI(GLFWwindow* window){
@@ -55,10 +58,14 @@ void startFrameGUI(){
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-
 }
 
-void renderToarePanourile(sistem &S, editor &E){
+void endFrameGUI() {
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void renderToatePanourile(sistem &S, editor &E){
     renderMeniu(S, E);
     renderOverlayStatus(S, E);
     renderPanouInstrumente(S, E);
@@ -86,28 +93,46 @@ void renderMeniu(sistem &S, editor &E){
                     E.sincronizeazaMemorie(S); 
                 }
             }
+            ImGui::EndMenu();
         }
+        ImGui::EndMainMenuBar();
     }
+}
+
+void renderInspector(sistem &S, editor &E){
+
+}
+
+void renderOverlayStatus(sistem &S, editor &E){
+
 }
 
 void renderPanouInstrumente(sistem &S, editor &E) {
     ImGui::Begin("Instrumente");
 
 
-    if (E.stare_curenta == MOD_RULARE) {
+    if (E.mod_curent == MOD_RULARE) {
+        if(ImGui::Button("Pause")){
+            E.mod_curent = MOD_EDITARE;
+        }
         ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "Opreste simularea pentru a edita.");
         ImGui::End();
         return; 
+    }
+
+    if(ImGui::Button("Play")){
+        E.mod_curent = MOD_RULARE;
     }
 
     ImGui::Text("Alege o unealta:");
     ImGui::Separator();
 
     bool eSelectie    = dynamic_cast<InstrumentSelectie*>(E.instrumentCurent.get()) != nullptr;
-    bool eCorp        = dynamic_cast<InstrumentAdaugareCorp*>(E.instrumentCurent.get()) != nullptr;
+    bool eCorp        = dynamic_cast<InstrumentAdaugaCorp*>(E.instrumentCurent.get()) != nullptr;
     bool eArc         = dynamic_cast<InstrumentAdaugaArc*>(E.instrumentCurent.get()) != nullptr;
     bool eArticulatie = dynamic_cast<InstrumentAdaugaArticulatie*>(E.instrumentCurent.get()) != nullptr;
-    bool eIncastrare  = dynamic_cast<InstrumentAdaugareIncastrare*>(E.instrumentCurent.get()) != nullptr;
+    bool eIncastrare  = dynamic_cast<InstrumentAdaugaIncastrare*>(E.instrumentCurent.get()) != nullptr;
+    bool eFir         = dynamic_cast<InstrumentAdaugaFir*>(E.instrumentCurent.get()) != nullptr;
 
     auto deseneazaButon = [](const char* label, bool activ) -> bool {
         if (activ) {
@@ -123,8 +148,6 @@ void renderPanouInstrumente(sistem &S, editor &E) {
         return apasat;
     };
 
-    // --- 5. LOGICA BUTOANELOR --- 
-
     if (deseneazaButon("Cursor (Selectie & Mutare)", eSelectie)) {
         E.schimbaInstrumentCurent(new InstrumentSelectie());
     }
@@ -134,7 +157,7 @@ void renderPanouInstrumente(sistem &S, editor &E) {
     ImGui::Separator();
 
     if (deseneazaButon("Adauga Corp", eCorp)) {
-        E.schimbaInstrumentCurent(new InstrumentAdaugareCorp());
+        E.schimbaInstrumentCurent(new InstrumentAdaugaCorp());
     }
     
     if (deseneazaButon("Adauga Arc", eArc)) {
@@ -146,11 +169,71 @@ void renderPanouInstrumente(sistem &S, editor &E) {
     }
     
     if (deseneazaButon("Adauga Incastrare", eIncastrare)) {
-        E.schimbaInstrumentCurent(new InstrumentAdaugareIncastrare());
+        E.schimbaInstrumentCurent(new InstrumentAdaugaIncastrare());
+    }
+
+    if (deseneazaButon("Adauga Fir", eFir)) {
+        E.schimbaInstrumentCurent(new InstrumentAdaugaFir());
     }
 
     // Aici ai putea adăuga setările secundare ale uneltei (pasul 3)
     // Ex: Dacă eArc e activ și pas == 2, desenezi sliderele de rigiditate/amortizare.
 
     ImGui::End();
+}
+
+ GLFWwindow*  initializareGrafica(sistem &S, editor &E){
+ 
+    std::cout << "==> Deschidere Fereastra OpenGL..." << std::endl;
+    GLFWwindow* window = openGLWindow(E.shaderProgram);
+
+    if(window != NULL){
+
+        glfwSetWindowUserPointer(window, &E);
+        initBuffers(E.VAO, E.VBO);
+
+        setupGUI(window);
+
+        E.vertexBuffer.resize(17 * (S.corpuri.size() + S.legaturi.size() + S.surseForte.size()));
+
+        std::cout << "==> Intrare in bucla de randare..." << std::endl;
+        size_t total_elemente =   S.corpuri.size() + S.legaturi.size() + S.surseForte.size();
+        E.vertexBuffer.resize(E.vertexStride * total_elemente);
+    }
+    return window;
+}
+
+void randareGrafica(sistem &S, editor &E){
+    
+    size_t nr_forte = 0;
+    if (E.flag.arata_forte) {
+        for (const auto& corp : S.corpuri) {
+            if (corp.activ && corp.M < 1e10f) {
+                nr_forte += corp.forte_desen.forte.size();
+            }
+        }
+    }
+    
+    size_t total_elemente = S.corpuri.size() + S.legaturi.size() + S.surseForte.size() + E.elementeUI.size() + nr_forte;
+
+    (E.vertexBuffer).resize(17 * total_elemente);
+    drawSystem(S,E, E.VAO, E.VBO, E.shaderProgram, E.vertexBuffer.data());
+
+    renderToatePanourile(S,E);
+    endFrameGUI(); 
+    glfwSwapBuffers(E.window);
+    glfwPollEvents();
+
+    if(E.mod_curent == MOD_RULARE)
+        (E.frameCount)++;
+ 
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void cleanupGUI() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImPlot::DestroyContext();
+    ImGui::DestroyContext();
 }

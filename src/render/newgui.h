@@ -27,3 +27,7 @@ void renderInspector(sistem &S, editor &E);
 void renderOverlayStatus(sistem &S, editor &E);
 
 void renderToatePanourile(sistem &S, editor &E);
+
+GLFWwindow*  initializareGrafica(sistem &S, editor &E);
+
+void randareGrafica(sistem &S, editor &E);

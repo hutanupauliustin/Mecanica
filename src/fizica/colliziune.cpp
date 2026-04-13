@@ -628,9 +628,8 @@ void adaugaFortePercutanteVizuale(sistem &S){
     }
 }
 
-void verificarCiocniri(sistem &S, editor &E)
+void verificarCiocniri(sistem &S)
 {
-    (void)E;
     bool aFostCiocnire = 0;
     
     for (size_t i = 0; i < S.corpuri.size(); i++)
