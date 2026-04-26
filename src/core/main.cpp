@@ -78,6 +78,48 @@ int main() {
         randareGrafica(S,E);
            
         }
+
+        if (E.flag.salveaza_log_corpuri_la_final)
+        {
+            // Inchidem fisierele pentru a ne asigura ca totul este scris pe disk
+            if (E.fisier_export.is_open()) {
+                E.fisier_export.close();
+            }
+
+            // Deschidem dialogul "Save As" pentru corpuri
+            auto f_corpuri = pfd::save_file("Salveaza log corpuri", "", {"Fisier CSV", "*.csv"}, pfd::opt::force_overwrite);
+            if (!f_corpuri.result().empty()) {
+                try {
+                    std::filesystem::copy_file(E.nume_fisier_export, f_corpuri.result(), std::filesystem::copy_options::overwrite_existing);
+
+                } catch (const std::filesystem::filesystem_error& e) {
+                    pfd::message("Eroare Salvare", std::string("Nu s-a putut salva fisierul de log pentru corpuri:\n") + e.what(), pfd::choice::ok, pfd::icon::error);
+                }
+            }
+
+        } else {
+            ;   //sterge fisierul temporar
+        }
+
+        if (E.flag.salveaza_log_legaturi_la_final)
+        {
+            // Inchidem fisierele pentru a ne asigura ca totul este scris pe disk
+
+            if (E.fisier_export_legaturi.is_open()) {
+                E.fisier_export_legaturi.close();
+            }
+            // Deschidem dialogul "Save As" pentru legaturi
+            auto f_legaturi = pfd::save_file("Salveaza log legaturi", "", {"Fisier CSV", "*.csv"}, pfd::opt::force_overwrite);
+            if (!f_legaturi.result().empty()) {
+                try {
+                    std::filesystem::copy_file(E.nume_fisier_export_legaturi, f_legaturi.result(), std::filesystem::copy_options::overwrite_existing);
+                } catch (const std::filesystem::filesystem_error& e) {
+                    pfd::message("Eroare Salvare", std::string("Nu s-a putut salva fisierul de log pentru legaturi:\n") + e.what(), pfd::choice::ok, pfd::icon::error);
+                }
+            }
+        } else {
+            ; //sterge fisierul temporar
+        }
         
         cleanupGUI();
         glDeleteVertexArrays(1, &(E.VAO));

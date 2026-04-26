@@ -91,29 +91,30 @@
     }
     
 
-    void arc::getGraphics(const matrice &stare, int &type, float &widht, float &height, float &phi, vec2 &pozitieCentru, float &r, float &g, float &b) {
-    int idxA = contorCorpA * 3;
-    int idxB = contorCorpB * 3;
+    void arc::getGraphics(const matrice &stare, int &type, float &widht, float &height, float &phi, vec2 &pozitieCentru, float &red, float &green, float &blue, float &alpha){
+        int idxA = contorCorpA * 3;
+        int idxB = contorCorpB * 3;
 
-    float phiA = stare(idxA + 2, 0);
-    float phiB = stare(idxB + 2, 0);
+        float phiA = stare(idxA + 2, 0);
+        float phiB = stare(idxB + 2, 0);
 
-    float sinA = std::sin(phiA), cosA = std::cos(phiA);
-    float sinB = std::sin(phiB), cosB = std::cos(phiB);
+        float sinA = std::sin(phiA), cosA = std::cos(phiA);
+        float sinB = std::sin(phiB), cosB = std::cos(phiB);
 
-    vec2 PA(stare(idxA + 0, 0) + l_A.x * cosA - l_A.y * sinA, stare(idxA + 1, 0) + l_A.x * sinA + l_A.y * cosA);
-    vec2 PB(stare(idxB + 0, 0) + l_B.x * cosB - l_B.y * sinB, stare(idxB + 1, 0) + l_B.x * sinB + l_B.y * cosB);
+        vec2 PA(stare(idxA + 0, 0) + l_A.x * cosA - l_A.y * sinA, stare(idxA + 1, 0) + l_A.x * sinA + l_A.y * cosA);
+        vec2 PB(stare(idxB + 0, 0) + l_B.x * cosB - l_B.y * sinB, stare(idxB + 1, 0) + l_B.x * sinB + l_B.y * cosB);
 
-    vec2 diferenta = PB - PA;
-    
-    pozitieCentru = (PA + PB) * 0.5f;
-    phi = std::atan2(diferenta.y, diferenta.x);
-    widht = diferenta.modul(); 
-    height = this->lungime_0;  
+        vec2 diferenta = PB - PA;
+        
+        pozitieCentru = (PA + PB) * 0.5f;
+        phi = std::atan2(diferenta.y, diferenta.x);
+        widht = diferenta.modul(); 
+        height = this->lungime_0;  
 
-    type = 4; 
-    
-    r = 1.0f; 
-    g = 0.62f; 
-    b = 0.0f; 
+        type = 4; 
+        
+        red = 1.0f; 
+        green = 0.62f; 
+        blue = 0.0f; 
+        alpha = 1.0f;
 }

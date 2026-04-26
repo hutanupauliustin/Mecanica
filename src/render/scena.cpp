@@ -115,14 +115,12 @@ void salveazaScenaJSON(sistem &S, const std::string& nume_fisier){
     for (size_t i = 0; i < S.corpuri.size(); i++) {
         rigid &r = S.corpuri[i];
         
-        // Ignoram corpurile sterse sau fantomele UI
         if (!r.activ || r.collider.obiectVirtual) continue; 
         
-        // Nu salvam "Lumea" (corpul fix cu masa uriasa), il generam automat la incarcare
         if (r.M > 1e10f) continue; 
 
         json corp_json;
-        corp_json["tip"] = r.collider.tip; // 1 pt Cerc, 2 pt Dreptunghi
+        corp_json["tip"] = r.collider.tip; // 1 pt Cerc 2 pt Dreptunghi
         corp_json["x"] = r.pozitie.x;
         corp_json["y"] = r.pozitie.y;
         corp_json["phi"] = r.phi;
@@ -131,10 +129,50 @@ void salveazaScenaJSON(sistem &S, const std::string& nume_fisier){
         corp_json["masa"] = r.M;
         corp_json["material"] = r.material;
         
-        // Salvam culoarea ca un array [R, G, B, A]
         corp_json["culoare"] = { r.collider.culoare.r, r.collider.culoare.g, r.collider.culoare.b, r.collider.culoare.a };
 
         scena_json["corpuri"].push_back(corp_json);
+    }
+
+    scena_json["legaturi"] = json::array();
+
+    for(size_t i = 0; i < S.legaturi.size();i++){
+        legatura *l = S.legaturi[i];
+
+        if(!l || !l->activ) continue;
+
+        json leg_json;
+
+        leg_json["contorCorpA"] = l->contorCorpA;
+        leg_json["contorCorpB"] = l->contorCorpB;
+
+
+        if (articulatie* art = dynamic_cast<articulatie*>(l)) {
+            leg_json["tip"] = "articulatie";
+            leg_json["l_A_x"] = art->l_A.x;
+            leg_json["l_A_y"] = art->l_A.y;
+            leg_json["l_B_x"] = art->l_B.x;
+            leg_json["l_B_y"] = art->l_B.y;
+            
+        }
+        else if (incastrare* inc = dynamic_cast<incastrare*>(l)) {
+            leg_json["tip"] = "incastrare";
+            leg_json["l_A_x"] = inc->l_A.x;
+            leg_json["l_A_y"] = inc->l_A.y;
+            leg_json["l_B_x"] = inc->l_B.x;
+            leg_json["l_B_y"] = inc->l_B.y;
+            leg_json["phi_0"] = inc->phi_0;
+            
+        }else if (fir* f = dynamic_cast<fir*>(l)) {
+            leg_json["tip"] = "fir";
+            leg_json["l_A_x"] = f->l_A.x;
+            leg_json["l_A_y"] = f->l_A.y;
+            leg_json["l_B_x"] = f->l_B.x;
+            leg_json["l_B_y"] = f->l_B.y;
+            leg_json["lungime"] = f->lungime; 
+        }
+
+        scena_json["legaturi"].push_back(leg_json);
     }
 
     std::ofstream fisier(nume_fisier);
@@ -145,6 +183,7 @@ void salveazaScenaJSON(sistem &S, const std::string& nume_fisier){
     } else {
         std::cerr << "Eroare la deschiderea fisierului pentru salvare!\n";
     }
+
 }
 
 void citesteScenaJSON(sistem &S, const std::string& nume_fisier){
@@ -167,6 +206,7 @@ void citesteScenaJSON(sistem &S, const std::string& nume_fisier){
 
     rigid lume = rigid::Fix(0.0f, 0.0f);
     S.adaugaCorpuri(lume);
+
     if(scena_json.contains("corpuri")){
         for(const auto& corp_json : scena_json["corpuri"]){
 
@@ -186,7 +226,6 @@ void citesteScenaJSON(sistem &S, const std::string& nume_fisier){
                 corp_nou = rigid::Bara(x,y,dim1,dim2,masa);
             }
 
-            
             corp_nou.material = corp_json["material"];
             corp_nou.phi = phi;
             corp_nou.collider.culoare = {
@@ -198,6 +237,39 @@ void citesteScenaJSON(sistem &S, const std::string& nume_fisier){
 
             S.adaugaCorpuri(corp_nou);
         }
+
+        if(scena_json.contains("legaturi")){
+        for(const auto& leg_json : scena_json["legaturi"]){
+            
+            // Extragem datele comune
+            int idA = leg_json["contorCorpA"];
+            int idB = leg_json["contorCorpB"];
+            float lAx = leg_json["l_A_x"];
+            float lAy = leg_json["l_A_y"];
+            float lBx = leg_json["l_B_x"];
+            float lBy = leg_json["l_B_y"];
+            std::string tip = leg_json["tip"];
+
+            legatura* leg_noua = nullptr;
+
+            if (tip == "articulatie") {
+                leg_noua = new articulatie(idA, idB, lAx, lAy, lBx, lBy);
+            } 
+            else if (tip == "incastrare") {
+                float phi_0 = leg_json["phi_0"].get<float>();
+                leg_noua = new incastrare(idA, idB, lAx, lAy, lBx, lBy, phi_0);
+            } 
+            else if (tip == "fir") {
+                float lungime = leg_json["lungime"].get<float>();
+                leg_noua = new fir(idA, idB, lAx, lAy, lBx, lBy, lungime);
+            }
+
+            if (leg_noua) {
+                leg_noua->activ = true;
+                S.adaugaLegaturi(leg_noua); 
+            }
+        }
+    }
 
         S.setareConstanteStabilizare(1000.0f, 500.0f);
         S.actualizeazaMatriceFizica();

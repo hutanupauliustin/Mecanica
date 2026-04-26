@@ -14,12 +14,15 @@ public:
     virtual void clickStanga(sistem& S, editor& E, float mouse_x, float mouse_y) = 0;
     virtual void clickDreapta(sistem& S, editor& E) = 0;
 
-    virtual void anuleaza(editor& E) = 0;
+    virtual void anuleaza(editor& E, sistem &S) = 0;
 
     virtual void miscareMouse(sistem& S, editor& E, float mouse_x, float mouse_y) {}
     virtual void eliberareClickStanga(sistem& S, editor& E) {}
 
     virtual void pregatesteFantome(std::vector<fantomaUI> &elementeUI, float mouse_x, float mouse_y, sistem& S) {}
+    virtual void deseneazaSetariUI(editor& E,sistem &S) {}
+
+    virtual void randeazaPanouAditional(editor& E, sistem &S) {}
 
 };
 
@@ -34,111 +37,187 @@ public:
     bool in_drag = false;
     static constexpr float PRAG_DRAG = 0.2f;
 
-    void actualizeazaSelectatVizual(sistem& S, editor& E) {
+    ObiectSelectat element_la_click = {TIP_CORP, -1};
 
-        for (auto& corp : S.corpuri) {
-        corp.collider.selectat = 0;
-    }
-    for (int id : E.corpuriSelectate) {
-        if (id >= 0 && id < (int)S.corpuri.size()) {
-            S.corpuri[id].collider.selectat = 1;
+    bool in_box_select = false;
+    vec2 box_start;
+    vec2 box_curent;
+
+    void actualizeazaSelectatVizual(sistem& S, editor& E) {
+       for (auto& corp : S.corpuri) corp.collider.selectat = 0;
+        for (auto* leg : S.legaturi) leg->selectat = 0;
+
+        for (const auto& el : E.elementeSelectate) {
+            if (el.tip == TIP_CORP && el.id >= 0 && el.id < S.corpuri.size()) {
+                S.corpuri[el.id].collider.selectat = 1;
+            }
+            else if (el.tip == TIP_LEGATURA && el.id >= 0 && el.id < S.legaturi.size()) {
+                S.legaturi[el.id]->selectat = 1;
+            }
         }
-    }
     }
 
     void clickStanga(sistem& S, editor& E, float mouse_x, float mouse_y) override {
-        
         if (ImGui::GetIO().WantCaptureMouse) return;
 
         mouse_apasat = true;
         in_drag = false;
+        in_box_select = false;
         offseturi_drag.clear();
         pozitie_click_initial = vec2(mouse_x, mouse_y);
 
-        id_corp_la_click = -1;
-        for (int i = 1; i < (int)S.corpuri.size(); i++) {
-            if (S.corpuri[i].collider.subMouse) {
-                id_corp_la_click = i;
-                break;
+        element_la_click = E.elementeSubMouse.empty() ? ObiectSelectat{TIP_CORP, -1} : E.elementeSubMouse[0];
+        bool shift_apasat = glfwGetKey(E.window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
+        auto& sel = E.elementeSelectate;
+
+        if (element_la_click.id == -1) {
+            in_box_select = true;
+            box_start = vec2(mouse_x, mouse_y);
+            box_curent = box_start;
+            
+            if (!shift_apasat) {
+                sel.clear();
+                actualizeazaSelectatVizual(S, E);
+            }
+            return; 
+        }
+
+        if (element_la_click.id != -1 && !(element_la_click.tip == TIP_CORP && element_la_click.id == 0)) {
+            auto it = std::find(sel.begin(), sel.end(), element_la_click);
+            
+            if (!shift_apasat) {
+               if (it == sel.end()) {
+                    sel.clear();
+                    sel.push_back(element_la_click);
+                }
+            } else {
+                if (it == sel.end()) sel.push_back(element_la_click);
+                else sel.erase(it);
+            }
+        } else {
+            if (!shift_apasat) {
+                sel.clear();
+            }
+        }
+
+        actualizeazaSelectatVizual(S, E);
+
+        for (const auto& el : E.elementeSelectate) {
+            if (el.tip == TIP_CORP && el.id > 0 && el.id < S.corpuri.size()) {
+                vec2 offset(S.corpuri[el.id].pozitie.x - mouse_x, S.corpuri[el.id].pozitie.y - mouse_y);
+                offseturi_drag.push_back({el.id, offset});
             }
         }
 
     }
 
     void miscareMouse(sistem& S, editor& E, float mouse_x, float mouse_y) override {
-    if (!mouse_apasat) return;
-    
-    vec2 delta = vec2(mouse_x, mouse_y) - pozitie_click_initial;
-    
-    if (!in_drag && delta.modul() > PRAG_DRAG) {
+        if (!mouse_apasat) return;
 
-        in_drag = true;
+        if (in_box_select) {
+            box_curent = vec2(mouse_x, mouse_y);
+            return; 
+        }
 
-        if (id_corp_la_click != -1 && id_corp_la_click != 0) {
-            if (std::find(E.corpuriSelectate.begin(), E.corpuriSelectate.end(), 
-                          id_corp_la_click) == E.corpuriSelectate.end()) {
-                E.corpuriSelectate.clear();
-                E.corpuriSelectate.push_back(id_corp_la_click);
-                actualizeazaSelectatVizual(S, E);
-            }
+        vec2 delta = vec2(mouse_x, mouse_y) - pozitie_click_initial;
         
-            for (int id : E.corpuriSelectate) {
-                vec2 offset(
-                    S.corpuri[id].pozitie.x - mouse_x,
-                    S.corpuri[id].pozitie.y - mouse_y
-                );
-                offseturi_drag.push_back({id, offset});
-                }
-            }
-    }
-    
-    if (in_drag) {
-    for (auto& [id, offset] : offseturi_drag) {
-        S.corpuri[id].pozitie.x = mouse_x + offset.x;
-        S.corpuri[id].pozitie.y = mouse_y + offset.y;
-        S.corpuri[id].viteza = vec2(0.0f, 0.0f);
-    }
+        float prag_real = std::max(0.05f,PRAG_DRAG * (E.camera.zoom / 10.0f));
 
-    S.actualizeazaMatriceFizica();
+        if (!in_drag && delta.modul() > prag_real) {
+            in_drag = true;
+
+            if (element_la_click.id == -1 || element_la_click.tip != TIP_CORP || element_la_click.id == 0) {
+                offseturi_drag.clear();
+            }
+        }
+        
+        if (in_drag && !offseturi_drag.empty()) {
+            for (auto& [id, offset] : offseturi_drag) {
+                S.corpuri[id].pozitie.x = mouse_x + offset.x;
+                S.corpuri[id].pozitie.y = mouse_y + offset.y;
+                S.corpuri[id].viteza = vec2(0.0f, 0.0f);
+            }
+            S.actualizeazaMatriceFizica();
+        }
     }
-}
 
    void eliberareClickStanga(sistem& S, editor& E) override {
-    if (!in_drag && id_corp_la_click != -1) {
-        bool shift_apasat = glfwGetKey(E.window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
-        if (!shift_apasat) {
-            E.corpuriSelectate.clear();
+
+        if (in_box_select) {
+            float min_x = std::min(box_start.x, box_curent.x);
+            float max_x = std::max(box_start.x, box_curent.x);
+            float min_y = std::min(box_start.y, box_curent.y);
+            float max_y = std::max(box_start.y, box_curent.y);
+
+            for (int i = 1; i < S.corpuri.size(); i++) {
+                if (!S.corpuri[i].activ || S.corpuri[i].collider.obiectVirtual) continue;
+                
+                vec2 p = S.corpuri[i].pozitie;
+                if (p.x >= min_x && p.x <= max_x && p.y >= min_y && p.y <= max_y) {
+                    ObiectSelectat obj = {TIP_CORP, i};
+                    if (std::find(E.elementeSelectate.begin(), E.elementeSelectate.end(), obj) == E.elementeSelectate.end()) {
+                        E.elementeSelectate.push_back(obj);
+                    }
+                }
+            }
+            actualizeazaSelectatVizual(S, E);
         }
-       
-        auto& sel = E.corpuriSelectate;
-        if (std::find(sel.begin(), sel.end(), id_corp_la_click) == sel.end()) {
-            sel.push_back(id_corp_la_click);
+
+        if (!in_drag && element_la_click.id != -1 && !(element_la_click.tip == TIP_CORP && element_la_click.id == 0)) {
+            bool shift_apasat = glfwGetKey(E.window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
+            if (!shift_apasat) {
+                E.elementeSelectate.clear();
+                E.elementeSelectate.push_back(element_la_click);
+                actualizeazaSelectatVizual(S, E);
+            }
         }
-    } else if (!in_drag) {
-        E.corpuriSelectate.clear();
+        
+        mouse_apasat = false;
+        in_drag = false;
+        offseturi_drag.clear();
+        element_la_click = {TIP_CORP, -1};
     }
-
-    actualizeazaSelectatVizual(S,E);
-
-    mouse_apasat = false;
-    in_drag = false;
-    id_corp_la_click = -1;
-}
 
     void clickDreapta(sistem& S, editor& E) override {
-        anuleaza(E);
+        anuleaza(E, S);
     }
 
-    void anuleaza(editor& E) override {
-        E.corpuriSelectate.clear();
+    void anuleaza(editor& E, sistem &S) override {
+        E.elementeSelectate.clear();
+        actualizeazaSelectatVizual(S, E);
     }
 
     void pregatesteFantome(std::vector<fantomaUI>& elementeUI, float mouse_x, float mouse_y, sistem& S) override {
-        // Cat timp suntem in modul selectie, ascundem orice fantoma din UI
-        for(auto& f : elementeUI) {
-            f.activa = false;
+        
+        if (in_box_select) {
+            if (elementeUI.size() < 1) elementeUI.resize(1);
+            
+            elementeUI[0].activa = true;
+            elementeUI[0].tip = 2; // Tip 2 este dreptunghi in shaderul tau
+            elementeUI[0].x = (box_start.x + box_curent.x) / 2.0f;
+            elementeUI[0].y = (box_start.y + box_curent.y) / 2.0f;
+            elementeUI[0].dim1 = std::abs(box_curent.x - box_start.x);
+            elementeUI[0].dim2 = std::abs(box_curent.y - box_start.y);
+            elementeUI[0].phi = 0.0f;
+            
+            // Un albastru sters, semi-transparent
+            elementeUI[0].col = {0.2f, 0.5f, 0.9f, 0.3f}; 
+        } else {
+            for(auto& f : elementeUI) {
+                f.activa = false;
+            }
         }
     }
+
+    void randeazaPanouAditional(editor& E, sistem &S) override {
+        ;
+    }
+
+    void deseneazaSetariUI(editor& E, sistem &S) override {
+    if (E.elementeSelectate.empty()) return;
+
+    int n = E.elementeSelectate.size();
+ 
 };
 
 class InstrumentAdaugaArticulatie : public InstrumentEditor{
@@ -151,15 +230,16 @@ public:
 
     void clickStanga(sistem& S, editor& E, float mouse_x, float mouse_y) override {
         if (pas == 0) {
-            id_corp_A = E.gasesteCorpSubMouse(S);
-            if (id_corp_A != -1) {
+            ObiectSelectat obj = E.gasesteObiectSubMouse(S);
+            if (obj.id != -1 && obj.tip == TIP_CORP) {
+                id_corp_A = obj.id;
                 punct_A_local = S.corpuri[id_corp_A].globalToLocal(vec2(mouse_x, mouse_y));
                 unghi_fantoma = S.corpuri[id_corp_A].phi;
                 pas = 1;
             }
         } else if (pas == 1){
-            int id_corp_B = E.gasesteCorpSubMouse(S);
-            if (id_corp_B == -1) id_corp_B = 0; // fundalul
+            ObiectSelectat obj = E.gasesteObiectSubMouse(S);
+            int id_corp_B = (obj.id != -1 && obj.tip == TIP_CORP) ? obj.id : 0;
 
             if (id_corp_B != id_corp_A) {
                 rigid& corpA = S.corpuri[id_corp_A];
@@ -186,11 +266,11 @@ public:
             pas = 0;
             id_corp_A = -1;
         } else {
-            anuleaza(E);
+            anuleaza(E,S);
         }
     }
 
-    void anuleaza(editor& E) override {
+    void anuleaza(editor& E, sistem &S) override {
         E.schimbaInstrumentCurent(new InstrumentSelectie());
     }
     
@@ -232,6 +312,15 @@ public:
         }
     }
 
+    void deseneazaSetariUI(editor& E,sistem &S) override {
+        ;
+    }
+
+    
+    void randeazaPanouAditional(editor& E, sistem &S) override {
+        ;
+    }
+
 };
 
 class InstrumentAdaugaIncastrare : public InstrumentEditor {
@@ -244,16 +333,17 @@ private:
 public:
     void clickStanga(sistem& S, editor& E, float mouse_x, float mouse_y) override {
         if (pas == 0) {
-            id_corp_A = E.gasesteCorpSubMouse(S);
-            if (id_corp_A != -1) {
+            ObiectSelectat obj = E.gasesteObiectSubMouse(S);
+            if (obj.id != -1 && obj.tip == TIP_CORP) {
+                id_corp_A = obj.id;
                 punct_A_local = S.corpuri[id_corp_A].globalToLocal(vec2(mouse_x, mouse_y));
                 unghi_fantoma = S.corpuri[id_corp_A].phi;
                 pas = 1;
             }
         } 
         else if (pas == 1) {
-            int id_corp_B = E.gasesteCorpSubMouse(S);
-            if (id_corp_B == -1) id_corp_B = 0; 
+            ObiectSelectat obj = E.gasesteObiectSubMouse(S);
+            int id_corp_B = (obj.id != -1 && obj.tip == TIP_CORP) ? obj.id : 0; 
 
             if (id_corp_B != id_corp_A) {
                 rigid& corpA = S.corpuri[id_corp_A];
@@ -280,11 +370,11 @@ public:
             pas = 0;
             id_corp_A = -1;
         } else {
-            anuleaza(E);
+            anuleaza(E,S);
         }
     }
 
-    void anuleaza(editor& E) override {
+    void anuleaza(editor& E, sistem&S) override {
         E.schimbaInstrumentCurent(new InstrumentSelectie());
     }
 
@@ -325,6 +415,15 @@ public:
             fantoma_leg.col = {1.0f, 1.0f, 1.0f, 0.8f};
         }
     }
+
+    void deseneazaSetariUI(editor& E,sistem &S) override {
+        ;
+    }
+    
+    void randeazaPanouAditional(editor& E, sistem &S) override {
+        ;
+    }
+
 };
 
 class InstrumentAdaugaArc : public InstrumentEditor {
@@ -337,17 +436,21 @@ public:
     float arc_d = 5.0f;
     float arc_l0_procent = 100.0f;
 
+    ImVec2 mouse_la_click;
+
     generatorForte* arc_adaugat = nullptr;
 
     void clickStanga(sistem& S, editor& E, float mouse_x, float mouse_y) override {
         if (pas == 0) {
-            id_corp_A = E.gasesteCorpSubMouse(S);
-            if (id_corp_A == -1) id_corp_A = 0; 
+            ObiectSelectat obj = E.gasesteObiectSubMouse(S);
+            id_corp_A = (obj.id != -1 && obj.tip == TIP_CORP) ? obj.id : 0;
 
             punct_A_local = S.corpuri[id_corp_A].globalToLocal(vec2(mouse_x, mouse_y));
             pas = 1;
         } else if (pas == 1) {
-            int id_corp_B = E.gasesteCorpSubMouse(S);
+            ObiectSelectat obj = E.gasesteObiectSubMouse(S);
+            int id_corp_B = (obj.id != -1 && obj.tip == TIP_CORP) ? obj.id : 0;
+
             if (id_corp_B == -1) id_corp_B = 0;
 
             vec2 punct_B_local = S.corpuri[id_corp_B].globalToLocal(vec2(mouse_x, mouse_y));
@@ -365,8 +468,14 @@ public:
             S.actualizeazaMatriceFizica();
             
             arc_adaugat = arc_nou;
+
+            mouse_la_click = ImGui::GetIO().MousePos;
+
             pas = 2;
+            
         } else if (pas == 2){
+            ;
+        } else if (pas ==3) {
             E.schimbaInstrumentCurent(new InstrumentSelectie());
         }
     }
@@ -378,13 +487,17 @@ public:
         } else if (pas == 2) {
             if (arc_adaugat) arc_adaugat->activ = 0;
             E.schimbaInstrumentCurent(new InstrumentSelectie());
-
+            
+        } else if (pas == 3) {
+            if (arc_adaugat) arc_adaugat->activ = 0;
+            E.schimbaInstrumentCurent(new InstrumentSelectie());
+            
         } else {
-            anuleaza(E);
+            anuleaza(E,S);
         }
     }
 
-    void anuleaza(editor& E) override {
+    void anuleaza(editor& E, sistem &S) override {
         E.schimbaInstrumentCurent(new InstrumentSelectie());
     }
 
@@ -408,6 +521,39 @@ public:
             elementeUI[1].col = {0.5f, 1.0f, 0.5f, 0.8f};
         }
     }
+
+    void deseneazaSetariUI(editor& E,sistem &S) override {
+        ImGui::Text("Setari Arc");
+        ImGui::Separator();
+        
+        ImGui::SliderFloat("Rigiditate (k)", &arc_k, 1.0f, 500.0f);
+        ImGui::SliderFloat("Amortizare (d)", &arc_d, 0.0f, 20.0f);
+        ImGui::SliderFloat("Lungime repaus (%)", &arc_l0_procent, 10.0f, 200.0f);
+    }
+
+    
+    void randeazaPanouAditional(editor& E, sistem &S) override {
+        if (pas == 2) {
+            ImGui::SetNextWindowPos(ImVec2(mouse_la_click.x + 15, mouse_la_click.y + 15), ImGuiCond_Always);
+            ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |ImGuiWindowFlags_NoSavedSettings;
+        
+            if (ImGui::Begin("  ", nullptr, flags)) {
+                deseneazaSetariUI(E, S);
+
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::Spacing();
+                if (ImGui::Button("Finalizeaza", ImVec2(-1, 0))) {
+                    pas = 3; 
+                }
+            }
+            ImGui::End();
+            return;
+        }
+        if (pas == 3) {
+            E.schimbaInstrumentCurent(new InstrumentSelectie());
+        }
+    }
 };
 
 class InstrumentAdaugaFir : public InstrumentEditor {
@@ -416,34 +562,43 @@ public:
     int id_corp_A = -1;
     vec2 punct_A_local;
 
+    float lungime_procent = 100.0f;
+
+    ImVec2 mouse_la_click;
+
     legatura* fir_adaugat = nullptr;
 
     void clickStanga(sistem& S, editor& E, float mouse_x, float mouse_y) override {
         if (pas == 0) {
-            id_corp_A = E.gasesteCorpSubMouse(S);
-            if (id_corp_A == -1) id_corp_A = 0; 
+            ObiectSelectat obj = E.gasesteObiectSubMouse(S);
+            id_corp_A = (obj.id != -1 && obj.tip == TIP_CORP) ? obj.id : 0;
 
             punct_A_local = S.corpuri[id_corp_A].globalToLocal(vec2(mouse_x, mouse_y));
             pas = 1;
         } else if (pas == 1) {
-            int id_corp_B = E.gasesteCorpSubMouse(S);
-            if (id_corp_B == -1) id_corp_B = 0;
+            ObiectSelectat obj = E.gasesteObiectSubMouse(S);
+            int id_corp_B = (obj.id != -1 && obj.tip == TIP_CORP) ? obj.id : 0;
 
-            vec2 punct_B_local = S.corpuri[id_corp_B].globalToLocal(vec2(mouse_x, mouse_y));
-            
             vec2 pA_global = S.corpuri[id_corp_A].localToGlobal(punct_A_local);
-            vec2 pB_global = S.corpuri[id_corp_B].localToGlobal(punct_B_local);
-            
-            float dist = (pA_global - pB_global).modul();
+            vec2 pB_global(mouse_x, mouse_y);
             
             fir* fir_nou = fir::Creaza(S.corpuri[id_corp_A], S.corpuri[id_corp_B],
                                       pA_global.x, pA_global.y, pB_global.x, pB_global.y);
+            
+            fir_nou->lungime *= (lungime_procent / 100.0f);
+
             S.adaugaLegaturi(fir_nou);
             S.actualizeazaMatriceFizica();
+            E.sincronizeazaMemorie(S);
             
             fir_adaugat = fir_nou;
+
+            mouse_la_click = ImGui::GetIO().MousePos;
+
             pas = 2;
         } else if (pas == 2){
+            ;
+        } else if (pas ==3) {
             E.schimbaInstrumentCurent(new InstrumentSelectie());
         }
     }
@@ -455,13 +610,18 @@ public:
         } else if (pas == 2) {
             if (fir_adaugat) fir_adaugat->activ = 0;
             E.schimbaInstrumentCurent(new InstrumentSelectie());
-
+            
+        } else if (pas == 3) {
+            if (fir_adaugat) fir_adaugat->activ = 0;
+            E.schimbaInstrumentCurent(new InstrumentSelectie());
+            
         } else {
-            anuleaza(E);
+            anuleaza(E,S);
         }
+
     }
 
-    void anuleaza(editor& E) override {
+    void anuleaza(editor& E, sistem &S) override {
         E.schimbaInstrumentCurent(new InstrumentSelectie());
     }
 
@@ -485,16 +645,50 @@ public:
             elementeUI[1].col = {1.0f, 1.0f, 1.0f, 0.8f};
         }
     }
+
+    void deseneazaSetariUI(editor& E,sistem &S) override {
+        ImGui::Text("Setari Fir");
+        ImGui::Separator();
+        ImGui::SliderFloat("Lungime (%)", &lungime_procent, 10.0f, 200.0f, "%.0f%%");
+    }
+
+    
+    void randeazaPanouAditional(editor& E, sistem &S) override {
+        if (pas == 2) {
+            ImGui::SetNextWindowPos(ImVec2(mouse_la_click.x + 15, mouse_la_click.y + 15), ImGuiCond_Always);
+            ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |ImGuiWindowFlags_NoSavedSettings;
+        
+            if (ImGui::Begin("  ", nullptr, flags)) {
+                deseneazaSetariUI(E, S);
+
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::Spacing();
+                if (ImGui::Button("Finalizeaza", ImVec2(-1, 0))) {
+                    pas = 3; 
+                }
+            }
+
+            ImGui::End();
+            return;
+        }
+
+        if (pas == 3) {
+            E.schimbaInstrumentCurent(new InstrumentSelectie());
+        }
+    }
+
 };
 
 class InstrumentAdaugaCorp : public InstrumentEditor {
 public:
     int tip_corp = DREPTUNGHI;      // CERC sau DREPTUNGHI
     float dimensiune1 = 2.0f;       // Lungime (bara) sau Raza (disc)
-    float dimensiune2 = 0.4f;       // Grosime (bara) — ignorat pt disc
+    float dimensiune2 = 2.0f;       // Grosime (bara) — ignorat pt disc
     float masa = 1.0f;
     culoare col = {0.4f, 0.8f, 0.4f, 1.0f};
     const char* material = "Lemn";
+    float unghi_initial = 0.0f;
 
     void clickStanga(sistem& S, editor& E, float mouse_x, float mouse_y) override {
         rigid corp_nou;
@@ -504,6 +698,8 @@ public:
             corp_nou = rigid::Bara(mouse_x, mouse_y, dimensiune1, dimensiune2, masa, material);
         }
         corp_nou.collider.culoare = col;
+        corp_nou.collider.cadru = E.cadru_activ;
+        corp_nou.phi = unghi_initial;
         S.adaugaCorpuri(corp_nou);
         S.actualizeazaMatriceFizica();
         E.sincronizeazaMemorie(S);
@@ -511,10 +707,10 @@ public:
     }
 
     void clickDreapta(sistem& S, editor& E) override {
-        anuleaza(E);
+        anuleaza(E,S);
     }
 
-    void anuleaza(editor& E) override {
+    void anuleaza(editor& E, sistem &S) override {
         E.schimbaInstrumentCurent(new InstrumentSelectie());
     }
 
@@ -526,9 +722,52 @@ public:
         fantoma.tip = tip_corp;
         fantoma.x = mouse_x;
         fantoma.y = mouse_y;
-        fantoma.phi = 0.0f;
+        fantoma.phi = unghi_initial;
         fantoma.dim1 = dimensiune1;
         fantoma.dim2 = dimensiune2;
         fantoma.col = {col.r, col.g, col.b, 0.5f}; // semi-transparent
     }
+
+    void deseneazaSetariUI(editor& E,sistem &S) override {
+        ImGui::Text("Setari Corp Nou");
+        ImGui::Separator();
+
+        // Dropdown pentru forma
+        int tip_sel = (tip_corp == 1) ? 0 : 1;
+        const char* tipuri[] = { "Disc", "Dreptunghi" };
+        if (ImGui::Combo("Forma", &tip_sel, tipuri, 2)) {
+            tip_corp = (tip_sel == 0) ? 1 : 2; 
+        }
+
+        if (tip_sel == 0) {
+            ImGui::SliderFloat("Raza", &dimensiune1, 0.1f, 10.0f);
+        } else {
+            ImGui::SliderFloat("Lungime", &dimensiune1, 0.1f, 20.0f);
+            ImGui::SliderFloat("Grosime", &dimensiune2, 0.1f, 10.0f);
+        }
+
+        ImGui::SliderFloat("Masa", &masa, 0.1f, 100.0f, "%.1f kg");
+
+        float color[4] = {col.r, col.g, col.b, col.a};
+        if (ImGui::ColorEdit4("Culoare", color)) {
+            col = {color[0], color[1], color[2], color[3]};
+        }
+
+        ImGui::Button("↺");
+            if( ImGui::IsItemActive() || ImGui::IsKeyDown(ImGuiKey_Q)){
+               unghi_initial += 0.05;
+            }
+
+        ImGui::SameLine();
+
+        ImGui::Button("↻");
+            if( ImGui::IsItemActive() || ImGui::IsKeyDown(ImGuiKey_E) ){
+                unghi_initial -= 0.05;
+            }
+    }
+
+    void randeazaPanouAditional(editor& E, sistem &S) override {
+        ;
+    }
+
 };

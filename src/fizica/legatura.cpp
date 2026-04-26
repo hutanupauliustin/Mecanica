@@ -16,11 +16,15 @@
         return corpuri[contorCorpA].localToGlobal(l_A);
     }
 
-    void articulatie::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) {
+    void articulatie::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi, float &red, float &green, float &blue, float &alpha) {
         type = 1;
         widht = 0.5f;
         height = 0.5f;
         phi = 0.0f;
+        red = this->culoare.x;
+        green = this->culoare.y;
+        blue = this->culoare.z;
+        alpha = this->culoare.w;
     }
 
     void articulatie::calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare)  {
@@ -156,6 +160,14 @@
         return new articulatie(A.index, B.index, local_lAx, local_lAy, local_lBx, local_lBy);
     }
 
+    void articulatie::extrageForta(const matrice& Lambda, int rand_start) {
+        if (Lambda.linii > rand_start + 1) { 
+            fortaReactiune.forta.x = Lambda(rand_start, 0);
+            fortaReactiune.forta.y = Lambda(rand_start + 1, 0);
+            fortaReactiune.moment = 0.0f;
+        }
+    }
+
     incastrare::incastrare(int a, int b, float lxa, float lya, float lxb, float lyb, float unghiInitial)
         : legatura(a, b), l_A(lxa, lya), l_B(lxb, lyb), phi_0(unghiInitial) {}
 
@@ -169,7 +181,7 @@
         return corpuri[contorCorpA].localToGlobal(l_A);
     }
 
-    void incastrare::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) {
+    void incastrare::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi, float &red, float &green, float &blue, float &alpha) {
         int idxA = contorCorpA * 3;
         float phiA = stare(idxA + 2, 0);
 
@@ -177,6 +189,10 @@
         widht = 0.5f;
         height = 0.5f;
         phi = phiA; 
+        red = this->culoare.x;
+        green = this->culoare.y;
+        blue = this->culoare.z;
+        alpha = this->culoare.w;
         }
 
     void incastrare::calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare)  {
@@ -320,6 +336,14 @@
         return new incastrare(A.index, B.index, local_lAx, local_lAy, local_lBx, local_lBy, phi0);
     }
 
+    void incastrare::extrageForta(const matrice& Lambda, int rand_start) {
+        if (Lambda.linii > rand_start + 2) {
+            fortaReactiune.forta.x = Lambda(rand_start, 0);
+            fortaReactiune.forta.y = Lambda(rand_start + 1, 0);
+            fortaReactiune.moment = Lambda(rand_start + 2, 0); // Efortul de rotire
+        }
+    }
+
 
     fir::fir(int a, int b, float lxa, float lya, float lxb, float lyb, float lungime_fir)
         : legatura(a, b), l_A(lxa, lya), l_B(lxb, lyb), lungime(lungime_fir) {}
@@ -339,7 +363,7 @@
         return med;
     }
 
-    void fir::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi) {
+    void fir::getGraphics(matrice &stare, int &type, float &widht, float &height, float &phi, float &red, float &green, float &blue, float &alpha) {
         int idxA = contorCorpA * 3;
         int idxB = contorCorpB * 3;
         
@@ -354,12 +378,16 @@
         float sinB = std::sin(phiB), cosB = std::cos(phiB);
         vec2 pB = posB + vec2(l_B.x * cosB - l_B.y * sinB, l_B.x * sinB + l_B.y * cosB);
 
-        float phiFinal =  std::atan2(pB.x - pA.x , pB.y - pA.y ); 
+        float phiFinal =  std::atan2(pB.y - pA.y , pB.x - pA.x ); 
 
         type = 2;
         widht = 0.5f;
         height =(pB - pA).modul();
-        phi = phiFinal; 
+        phi = phiFinal;
+        red = this->culoare.x;
+        green = this->culoare.y;
+        blue = this->culoare.z;
+        alpha = this->culoare.w;
         }
 
     void fir::calculeazaConstrangere(matrice &F, int rand_start, const matrice &stare) {
@@ -372,15 +400,38 @@
         float sinA = std::sin(phiA), cosA = std::cos(phiA);
         float sinB = std::sin(phiB), cosB = std::cos(phiB);
 
-        vec2 PA(xA + l_A.x * cosA - l_A.y * sinA, yA + l_A.x * sinA + l_A.y * cosA);
-        vec2 PB(xB + l_B.x * cosB - l_B.y * sinB, yB + l_B.x * sinB + l_B.y * cosB);
+        vec2 rA(xA + l_A.x * cosA - l_A.y * sinA, yA + l_A.x * sinA + l_A.y * cosA);
+        vec2 rB(xB + l_B.x * cosB - l_B.y * sinB, yB + l_B.x * sinB + l_B.y * cosB);
 
-        float distanta = (PA - PB).modul();
+        vec2 PA = vec2(xA,yA) + rA;
+        vec2 PB = vec2(xB, yB) + rB;
+
+        vec2 AB = PA - PB;
+        float distanta  = AB.modul();
         float valoare = distanta - this->lungime;
 
-        this->tensionat = (valoare >= -0.001f);
+       if(valoare < -0.001f){
+        this->tensionat = false;
+       } else {
+
+        int nr_corpuri = stare.linii/6;
+        int offsetViteze = 3* nr_corpuri;
+
+        float vxA = stare(idxA + offsetViteze + 0, 0), vyA = stare(idxA + offsetViteze + 1, 0), omegaA = stare(idxA + offsetViteze + 2, 0);
+        float vxB = stare(idxB + offsetViteze + 0, 0), vyB = stare(idxB + offsetViteze + 1, 0), omegaB = stare(idxB + offsetViteze + 2, 0);
+       
+        vec2 normala = (distanta > 0.0001f) ? (AB / distanta) : vec2(1.0f,0.0f);
+        vec2 vPA(vxA - omegaA * rA.y, vyA + omegaA * rA.x);
+        vec2 vPB(vxB - omegaB * rB.y, vyB + omegaB * rB.x);
+
+        float viteza_de_separare = (vPA - vPB).scalar(normala);
+
+        this->tensionat = !(viteza_de_separare < -0.2f);
 
         F(rand_start, 0) = this->tensionat ? valoare : 0.0f;
+
+    }
+
     }
 
     void fir::calculeazaConstrangereDerivate(matrice &Fpunct, int rand_start, const matrice &stare, int n)  {
@@ -497,7 +548,7 @@
     float efect_centrifug = (deltaV.scalar(deltaV) - D_punct * D_punct) / (D > 0.0001f ? D : 0.0001f);
     float efect_centripet_local = delta_ac.scalar(normala);
 
-    JdotQ(rand_start, 0) = efect_centrifug - efect_centripet_local;
+    JdotQ(rand_start, 0) = efect_centrifug + efect_centripet_local;
 }
 
     fir* fir::Creaza(rigid& A, rigid& B, float globalX_A, float globalY_A, float globalX_B, float globalY_B) {
@@ -512,8 +563,16 @@
         float local_lBx = dxB * std::cos(B.phi) + dyB * std::sin(B.phi);
         float local_lBy = -dxB * std::sin(B.phi) + dyB * std::cos(B.phi);
 
-        float lungime  = std::sqrt(  (local_lBx -  local_lAx)*(local_lBx -  local_lAx)  + (local_lBy -  local_lAy)*(local_lBy -  local_lAy));
+        float lungime = std::sqrt( (globalX_B - globalX_A)*(globalX_B - globalX_A) + (globalY_B - globalY_A)*(globalY_B - globalY_A) );
 
         return new fir(A.index, B.index, local_lAx, local_lAy, local_lBx, local_lBy, lungime);
     }
     
+    void fir::extrageForta(const matrice& Lambda, int rand_start) {
+        if (Lambda.linii > rand_start) {
+            // Valoarea din Lambda este direct modulul tensiunii din fir
+            fortaReactiune.forta.x = Lambda(rand_start, 0);
+            fortaReactiune.forta.y = 0.0f;
+            fortaReactiune.moment = 0.0f;
+        }
+    }

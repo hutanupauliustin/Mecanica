@@ -75,8 +75,30 @@ void calculeazaMultiplicatori(sistem &S, double t){                   //rezolva 
         if (nr_ec == 1) { 
             // Ex: fir sau arc impus prin matrice.
             // Valoarea reprezinta tensiunea, nu strict forta pe o axa anume.
-            S.legaturi[i]->fortaReactiune.forta.x = S.Lambda(index_rand + 0, 0); 
-        } 
+            float lambda_val = S.Lambda(index_rand + 0, 0);
+
+            // Daca este un fir, descompunem tensiunea pe axe
+            if (fir* f = dynamic_cast<fir*>(S.legaturi[i])) {
+                if (f->tensionat) {
+                    rigid& A = S.corpuri[f->contorCorpA];
+                    rigid& B = S.corpuri[f->contorCorpB];
+
+                    vec2 pA = A.localToGlobal(f->l_A);
+                    vec2 pB = B.localToGlobal(f->l_B);
+                    
+                    vec2 dir = pA - pB; // Vectorul de la B la A
+                    float lungime = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+                    if (lungime > 0.0001f) {
+                        dir.x /= lungime;
+                        dir.y /= lungime;
+                    }
+                    
+                    // Forta de reactiune este lambda * gradientul constrangerii.
+                    // Gradientul este versorul `dir`.
+                    f->fortaReactiune.forta = dir * lambda_val;
+                }
+            }
+        }
         else if (nr_ec == 2) { 
             // Ex: Articulatie simpla
             S.legaturi[i]->fortaReactiune.forta.x = S.Lambda(index_rand + 0, 0);

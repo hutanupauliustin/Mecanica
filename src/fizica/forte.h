@@ -6,6 +6,11 @@ class generatorForte{
 public:
 
     bool activ = 1;
+    
+    struct col{ 
+        float x,y,z,w;
+    } culoare;
+
 
     virtual ~generatorForte() = default;
 
@@ -13,15 +18,16 @@ public:
 
     virtual std::vector<int> getCorpuriAtasate() = 0;
 
-    virtual void getGraphics(const matrice &stare, int &type, float &widht, float &height, float &phi, vec2 &pozitieCentru, float &r, float &g, float &b) {
+    virtual void getGraphics(const matrice &stare, int &type, float &widht, float &height, float &phi, vec2 &pozitieCentru, float &red, float &green, float &blue, float &alpha) {
         (void)stare;
         (void)widht;
         (void)height;
         (void)phi;
         (void)pozitieCentru;
-        (void)r;
-        (void)g;
-        (void)b;
+        red = this->culoare.x;
+        green = this->culoare.y;
+        blue = this->culoare.z;
+        alpha = this->culoare.w;
         type = -1;
     }
 
@@ -52,6 +58,6 @@ class arc : public generatorForte{
 
     std::vector<int> getCorpuriAtasate() override;
 
-    void getGraphics(const matrice &stare, int &type, float &widht, float &height, float &phi, vec2 &pozitieCentru, float &r, float &g, float &b) override;
+    void getGraphics(const matrice &stare, int &type, float &widht, float &height, float &phi, vec2 &pozitieCentru, float &red, float &green, float &blue, float &alpha)  override;
     
 };

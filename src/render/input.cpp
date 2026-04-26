@@ -23,15 +23,25 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 }
 
 void actualizeazaSubMouseVizual(sistem& S, editor& E) {
-
-    for(size_t i = 0; i < E.corpuriSubMouse.size(); i ++)
-        S.corpuri[E.corpuriSubMouse[i]].collider.subMouse = 0;
-
-    int id = E.gasesteCorpSubMouse(S);
-    if (id != -1) {
-        S.corpuri[id].collider.subMouse = 1;
+    
+    for (const auto& el : E.elementeSubMouse) {
+        if (el.tip == TIP_CORP && el.id >= 0) S.corpuri[el.id].collider.subMouse = 0;
+        else if (el.tip == TIP_LEGATURA && el.id >= 0) S.legaturi[el.id]->subMouse = 0;
     }
+    E.elementeSubMouse.clear();
+
+    ObiectSelectat sub_cursor = E.gasesteObiectSubMouse(S);
+
+    if (sub_cursor.id != -1) {
+        if (sub_cursor.tip == TIP_CORP) {
+            S.corpuri[sub_cursor.id].collider.subMouse = 1;
+        } else if (sub_cursor.tip == TIP_LEGATURA) {
+            S.legaturi[sub_cursor.id]->subMouse = 1;
+        }
+        
+        E.elementeSubMouse.push_back(sub_cursor);
     }
+}
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -53,8 +63,10 @@ void processInput(sistem &S, editor &E) {
         static bool stangaApasat = false;
         if (glfwGetMouseButton(E.window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
             if (!stangaApasat) {
-                E.instrumentCurent->clickStanga(S, E, E.mouse_x, E.mouse_y);
-                stangaApasat = true;
+                if(!ImGui::GetIO().WantCaptureMouse){
+                    E.instrumentCurent->clickStanga(S, E, E.mouse_x, E.mouse_y);
+                    stangaApasat = true;
+                }
             } else {
                 E.instrumentCurent->miscareMouse(S, E, E.mouse_x, E.mouse_y);
             }
@@ -68,8 +80,10 @@ void processInput(sistem &S, editor &E) {
         static bool dreaptaApasat = false;
         if (glfwGetMouseButton(E.window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
             if (!dreaptaApasat) {
-                E.instrumentCurent->clickDreapta(S, E);
-                dreaptaApasat = true;
+                if(!ImGui::GetIO().WantCaptureMouse){
+                    E.instrumentCurent->clickDreapta(S, E);
+                    dreaptaApasat = true;
+                }
             }
         } else {
             dreaptaApasat = false;

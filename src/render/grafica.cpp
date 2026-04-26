@@ -6,6 +6,7 @@
 #include "input.h"
 #include "grafica.h"
 #include "editor.h"
+#include "instrument.h"
 
 // --- 1. VERTEX SHADER ---
 const char *vertexShaderSource = "#version 330 core\n"
@@ -52,7 +53,7 @@ const char *geometryShaderSource = "#version 330 core\n"
     "out float ShapeType;\n"
     "out vec4 fColor;\n"
     "out float filtru;\n"
-    "out vec3 fVel; out vec3 fAcc; out vec2 fLocalPos;\n" // Noile iesiri
+    "out vec3 fVel; out vec3 fAcc; out vec2 fLocalPos; out vec2 fGlobalPos;\n" // <-- Adaugat fGlobalPos
 
     "uniform float scale; uniform vec2 cameraOffset; uniform float aspect_ratio;\n"
 
@@ -73,8 +74,9 @@ const char *geometryShaderSource = "#version 330 core\n"
     "    vec2 uvs[4] = vec2[](vec2(-1.0, -1.0)*expand, vec2(1.0, -1.0)*expand, vec2(-1.0, 1.0)*expand, vec2(1.0, 1.0)*expand);\n"
 
     "    for(int i=0; i<4; i++) {\n"
-    "        fLocalPos = offsets[i] / expand;\n" // Vectorul r (metri) fara expansiunea de glow
+    "        fLocalPos = offsets[i] / expand;\n"
     "        vec2 pos = center + rot * offsets[i];\n"
+    "        fGlobalPos = gl_in[0].gl_Position.xy + rot * offsets[i];\n" 
     "        gl_Position = vec4((pos.x * scale)/aspect_ratio, pos.y * scale, 0.0, 1.0);\n"
     "        TexCoord = vec3(uvs[i], gs_in[0].size.y);\n"
     "        EmitVertex();\n"
@@ -86,7 +88,7 @@ const char *geometryShaderSource = "#version 330 core\n"
     const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
     "in vec3 TexCoord; in float ShapeType; in vec4 fColor; in float filtru;\n"
-    "in vec3 fVel; in vec3 fAcc; in vec2 fLocalPos;\n"
+    "in vec3 fVel; in vec3 fAcc; in vec2 fLocalPos; in vec2 fGlobalPos;\n" // <-- Adaugat fGlobalPos
     
     "uniform int ViewMode;\n"
 
@@ -135,6 +137,28 @@ const char *geometryShaderSource = "#version 330 core\n"
     "            if(y > (1.0 - factor_panta)) discard;\n"
     "        }\n"
     "    }\n"
+    "    else if (ShapeType > 5.5 && ShapeType < 6.5){\n"   //FIR
+    "        vec2 pA = fVel.xy;\n"
+    "        vec2 pB = fAcc.xy;\n"
+    "        float burta = fVel.z;\n"
+    "        vec2 fir_dir = pB - pA;\n"
+    "        float L = length(fir_dir);\n"
+    "        \n"
+    "        // t este pozitia relativa (0.0 la pA, 1.0 la pB)\n"
+    "        float t = clamp(dot(fGlobalPos - pA, fir_dir) / (L * L + 0.00001), 0.0, 1.0);\n"
+    "        // Ecuatia parabolei (4*t*(1-t) da valoarea maxima de 1.0 la mijloc)\n"
+    "        float offset_y = burta * 4.0 * t * (1.0 - t);\n"
+    "        vec2 punct_pe_curba = pA + fir_dir * t + vec2(0.0, -offset_y);\n"
+    "        \n"
+    "        float dist_la_fir = length(fGlobalPos - punct_pe_curba);\n"
+    "        float grosime_fir = 0.05;\n"
+    "        \n"
+    "        if(dist_la_fir > grosime_fir + (isSelected ? grosime_margine : 0.0)) discard;\n"
+    "        if(isSelected && dist_la_fir > grosime_fir) {\n"
+    "            outputColor = vec4(1.0, 1.0, 1.0, 1.0);\n"
+    "            inBorder = true;\n"
+    "        }\n"
+    "    }\n"
 
         // --- VIZUALIZARE STANDARD --- 
     "    if (ViewMode == 0 || ShapeType > 3.5) {\n"
@@ -163,12 +187,57 @@ const char *geometryShaderSource = "#version 330 core\n"
     "    }\n"
     "}\0";
 
+
+    const char *gridVertexShaderSource = R"(#version 330 core
+        layout (location = 0) in vec2 aPos;
+        out vec2 WorldPos;
+
+        uniform vec2 cameraOffset;
+        uniform float zoom;
+        uniform float aspect_ratio;
+
+        void main() {
+            gl_Position = vec4(aPos, 0.0, 1.0);
+            WorldPos = vec2(aPos.x * aspect_ratio * zoom + cameraOffset.x, aPos.y * zoom + cameraOffset.y);
+        }
+        )";
+
+        const char *gridFragmentShaderSource = R"(#version 330 core
+        out vec4 FragColor;
+        in vec2 WorldPos;
+        uniform float zoom;
+
+        void main() {
+            vec2 grid = fract(WorldPos);
+
+            float grosime = 0.0030 * zoom; 
+
+            vec4 color = vec4(0.0);
+
+            if (grid.x < grosime || grid.y < grosime) {
+                color = vec4(0.3, 0.3, 0.3, 0.2); 
+                }
+
+            if (abs(WorldPos.x) < grosime) color = vec4(0.8, 0.8, 0.8, 0.2); 
+            if (abs(WorldPos.y) < grosime) color = vec4(0.8, 0.8, 0.8, 0.2); 
+
+            if (color.a == 0.0) discard;
+            FragColor = color;
+        }
+        )";
+
 int updateVerticesData(sistem &S, editor &E, float* vertices){
+
+    if(E.instrumentCurent) {
+        E.instrumentCurent->pregatesteFantome(E.elementeUI, E.mouse_x, E.mouse_y, S);       //sterge cutia de selectie daca este cazul
+    }
+
     // 17 float-uri: [x, y, phi, width, height, type, r, g, b, a, selectie, viteza_x, viteza_y, omega, acc_x, acc_y, epsilon]
+    // tip 0 - punct 1- cerc 2-dreptunghi 3-triunghi
     int stride = 17;
     int pct_curent = 0; // Contor global pentru pozitia in buffer
 
-    // Gasim ordinea corecta pentru corpuri (Painter's Algorithm)
+    // Painter's Algorithm
     std::vector<int> ordine_corpuri;
     for (size_t i = 0; i < S.corpuri.size(); i++) {
         ordine_corpuri.push_back(i);
@@ -207,7 +276,7 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
             alpha *= 0.2f; 
         }
 
-        vertices[idx + 5] = (float)r.collider.tip;
+        vertices[idx + 5] = (float)r.collider.tip;      
         vertices[idx + 6] = (float)r.collider.culoare.r;
         vertices[idx + 7] = (float)r.collider.culoare.g;
         vertices[idx + 8] = (float)r.collider.culoare.b;
@@ -240,20 +309,60 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
         }
 
         vec2 poz = S.legaturi[i]->getPozitie(S.corpuri);
+        float widht, height, phi;
+        int type;
+        float r = 1.0f, g = 1.0f, b = 1.0f, alpha =1.0f;
+        S.legaturi[i]->getGraphics(S.stare,type, widht, height, phi,r,g,b,alpha); 
+
+        float v_x = 0.0f, v_y = 0.0f, v_z = 0.0f;
+        float a_x = 0.0f, a_y = 0.0f, a_z = 0.0f;
+
+        // --- PRELUCRARE SPECIALA PENTRU FIRE ---
+        if (fir* fir_ptr = dynamic_cast<fir*>(S.legaturi[i])) {
+            type = 6;
+            vec2 pA = S.corpuri[fir_ptr->contorCorpA].localToGlobal(fir_ptr->l_A);
+            vec2 pB = S.corpuri[fir_ptr->contorCorpB].localToGlobal(fir_ptr->l_B);
+            
+            float burta = 0.0f;
+            if (fir_ptr->tensionat) {
+                r = 1.0f; g = 0.4f; b = 0.4f;
+            } else {
+                r = 0.8f; g = 0.8f; b = 0.8f;
+                float L = (pB - pA).modul();
+                float max_L = std::max(L, fir_ptr->lungime);
+                // Deducem adancimea curbei din diferenta de lungime (Formula aproximativa)
+                burta = std::sqrt(std::max(0.0f, 3.0f * L * (max_L - L) / 8.0f)) * 1.3f; 
+            }
+
+            // Calculam un bounding box FARA ROTATIE care cuprinde firul
+            float padding = 0.3f;
+            float minX = std::min(pA.x, pB.x) - padding;
+            float maxX = std::max(pA.x, pB.x) + padding;
+            // Scadem 'burta' din Y-ul minim, pentru ca gravitatia trage in jos (-Y)
+            float minY = std::min(pA.y, pB.y) - burta - padding; 
+            float maxY = std::max(pA.y, pB.y) + padding;
+
+            poz.x = (minX + maxX) * 0.5f;
+            poz.y = (minY + maxY) * 0.5f;
+            widht = std::max(0.1f, maxX - minX);
+            height = std::max(0.1f, maxY - minY);
+            phi = 0.0f; // Ignoram rotatia! 
+
+            // Trimitem punctele si burta spre placa video folosind atributele ramase libere
+            v_x = pA.x; v_y = pA.y; v_z = burta;
+            a_x = pB.x; a_y = pB.y;
+        }
 
         vertices[idx + 0] = poz.x;
         vertices[idx + 1] = poz.y;
-        float widht, height, phi;
-        int type;
-        S.legaturi[i]->getGraphics(S.stare,type, widht, height, phi); 
         vertices[idx + 2] = phi; 
         vertices[idx + 3] = widht; 
         vertices[idx + 4] = height; 
-        vertices[idx + 5] = type; 
-        vertices[idx + 6] = 1.0f;
-        vertices[idx + 7] = 1.0f;
-        vertices[idx + 8] = 1.0f;
-        vertices[idx + 9] = 1.0f;
+        vertices[idx + 5] = (float)type; 
+        vertices[idx + 6] = r;
+        vertices[idx + 7] = g;
+        vertices[idx + 8] = b;
+        vertices[idx + 9] = alpha; 
 
         float stare_filtru = 0.0f;
         if (S.legaturi[i]->subMouse) stare_filtru += 1.0f; 
@@ -261,12 +370,12 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
         
         vertices[idx + 10] = stare_filtru; 
 
-        vertices[idx + 11] = 0;
-        vertices[idx + 12] = 0;
-        vertices[idx + 13] = 0;
-        vertices[idx + 14] = 0;
-        vertices[idx + 15] = 0;
-        vertices[idx + 16] = 0;
+        vertices[idx + 11] = v_x;
+        vertices[idx + 12] = v_y;
+        vertices[idx + 13] = v_z; 
+        vertices[idx + 14] = a_x;
+        vertices[idx + 15] = a_y;
+        vertices[idx + 16] = 0.0f;
         
         pct_curent++;
     }
@@ -276,10 +385,11 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
         int idx = pct_curent * stride;
 
         int type = -1;
-        float widht = 0.0f, height = 0.0f, phi = 0.0f, col_r = 0.0f, col_g = 0.0f, col_b = 0.0f;
+        float widht = 0.0f, height = 0.0f, phi = 0.0f;
+        float r = 1.0f, g = 1.0f, b = 1.0f, alpha =1.0f;
         vec2 poz;
 
-        S.surseForte[i]->getGraphics(S.stare, type, widht, height, phi, poz, col_r, col_g, col_b);
+        S.surseForte[i]->getGraphics(S.stare, type, widht, height, phi, poz, r, g, b,alpha);
 
         if (type == -1  || !S.surseForte[i]->activ) {
             for(int k=0; k<11; k++) vertices[idx + k] = 0;
@@ -293,10 +403,10 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
         vertices[idx + 3] = widht; 
         vertices[idx + 4] = height;       
         vertices[idx + 5] = (float)type;
-        vertices[idx + 6] = col_r;
-        vertices[idx + 7] = col_g;
-        vertices[idx + 8] = col_b;
-        vertices[idx + 9] = 1.0f; // Alpha
+        vertices[idx + 6] = r;
+        vertices[idx + 7] = g;
+        vertices[idx + 8] = b;
+        vertices[idx + 9] = alpha; // Alpha
         
         vertices[idx + 10] = 0.0f; // Filtru/Selectie
 
@@ -397,14 +507,14 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
 }
 
 
-GLFWwindow* openGLWindow(unsigned int &shaderProgram){
+GLFWwindow* openGLWindow(unsigned int &shaderProgram, unsigned int &gridProgram){
 
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Proiect", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1000, 800, "Motor de fizica 2D", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -481,10 +591,49 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram){
     glEnable(GL_BLEND);                 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    unsigned int gridVertex, gridFragment;
+
+    gridVertex = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(gridVertex, 1, &gridVertexShaderSource, NULL);
+    glCompileShader(gridVertex);
+
+    glGetShaderiv(gridVertex, GL_COMPILE_STATUS, &success);
+    if(!success) {
+        glGetShaderInfoLog(gridVertex, 512, NULL, infoLog);
+        std::cout << "Eroare la Vertex Shader Grid:\n" << infoLog << std::endl;
+    }
+
+    gridFragment = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(gridFragment, 1, &gridFragmentShaderSource, NULL);
+    glCompileShader(gridFragment);
+
+    glGetShaderiv(gridFragment, GL_COMPILE_STATUS, &success);
+    if(!success) {
+        glGetShaderInfoLog(gridFragment, 512, NULL, infoLog);
+        std::cout << "Eroare la Fragment Shader Grid:\n" << infoLog << std::endl;
+    }
+
+    gridProgram = glCreateProgram();
+    glAttachShader(gridProgram, gridVertex);
+    glAttachShader(gridProgram, gridFragment);
+    glLinkProgram(gridProgram);
+
+    glGetProgramiv(gridProgram, GL_LINK_STATUS, &success);
+    if(!success) {
+        glGetProgramInfoLog(gridProgram, 512, NULL, infoLog);
+        std::cout << "Eroare la Linkare Program Grid:\n" << infoLog << std::endl;
+    }
+
+    glDeleteShader(gridVertex);
+    glDeleteShader(gridFragment);
+
+    glEnable(GL_BLEND);                 
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     return window;
 }
 
-void initBuffers(unsigned int &VAO, unsigned int &VBO) {
+void initBuffers(unsigned int &VAO, unsigned int &VBO, unsigned int &gridVAO, unsigned int &gridVBO) {
     glGenVertexArrays(1, &VAO);  
     glGenBuffers(1, &VBO);   
     
@@ -518,6 +667,41 @@ void initBuffers(unsigned int &VAO, unsigned int &VBO) {
     glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, stride, (void*)(14 * sizeof(float)));
     glEnableVertexAttribArray(7);
 
+    float quadVertices[] = {
+        // x, y 
+        -1.0f,  1.0f, 
+        -1.0f, -1.0f, 
+         1.0f, -1.0f, 
+        -1.0f,  1.0f, 
+         1.0f, -1.0f, 
+         1.0f,  1.0f  
+    };
+
+    glGenVertexArrays(1, &gridVAO);
+    glGenBuffers(1, &gridVBO);
+    glBindVertexArray(gridVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+
+    glBindVertexArray(0);
+}
+
+void drawGrid(editor &E) {
+    if (!E.flag.arata_grid) return; // Desenam doar daca bifa din UI e activa
+
+    glUseProgram(E.gridShaderProgram);
+    glBindVertexArray(E.gridVAO);
+
+    // Trimitem datele camerei
+    glUniform2f(glGetUniformLocation(E.gridShaderProgram, "cameraOffset"), E.camera.x, E.camera.y);
+    glUniform1f(glGetUniformLocation(E.gridShaderProgram, "zoom"), E.camera.zoom);
+    glUniform1f(glGetUniformLocation(E.gridShaderProgram, "aspect_ratio"), E.camera.aspect_ratio);
+
+    // Desenam dreptunghiul care acopera ecranul (6 varfuri)
+    glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 }
 

@@ -13,6 +13,21 @@ enum ModEditor {
     MOD_EDITARE = 1,
 };
 
+enum TipObiect {
+    TIP_CORP,
+    TIP_LEGATURA,
+    TIP_GENERATOR_FORTA
+};
+
+struct ObiectSelectat {
+    TipObiect tip;
+    int id;
+
+    bool operator==(const ObiectSelectat& altul) const {
+        return tip == altul.tip && id == altul.id;
+    }
+};
+
 enum{
     POZITIE_X = 0,
     POZITIE_Y,
@@ -43,6 +58,10 @@ struct editorFlags {
     bool arata_grid = true;
     int mod_vizualizare = 0; // standard, viteze, acceleratii
     float culoare_fundal[3] = {0.1f, 0.1f, 0.1f};
+    bool salveaza_log_legaturi_la_final = false;
+    bool salveaza_log_corpuri_la_final = false;
+    bool inregistreaza_date = false;
+
 };
 
 struct IstoricCorp{
@@ -58,6 +77,26 @@ struct IstoricCorp{
         }
     }
 
+};
+
+struct IstoricLegatura {
+    std::vector<float> timpAfisat;
+    
+    std::vector<float> fortaModul; 
+    std::vector<float> fortaX;
+    std::vector<float> fortaY;
+    std::vector<float> moment;
+    
+    int offset = 0;
+    int capacitate_maxima = 7200; // 60 FPS * 120 de secunde = 2 minute
+
+    IstoricLegatura() {
+        timpAfisat.reserve(capacitate_maxima);
+        fortaModul.reserve(capacitate_maxima);
+        fortaX.reserve(capacitate_maxima);
+        fortaY.reserve(capacitate_maxima);
+        moment.reserve(capacitate_maxima);
+    }
 };
 
 class editor{
@@ -88,33 +127,43 @@ class editor{
         }
     } camera ;
 
-    std::vector<int> corpuriSubMouse;
-    std::vector<int> corpuriSelectate;
-    std::vector<int> legaturiSelectate;
+    
     std::vector<fantomaUI> elementeUI;
+    std::vector<ObiectSelectat> elementeSubMouse;
+    std::vector<ObiectSelectat> elementeSelectate;
 
     unsigned int VAO, VBO;
     std::vector<float> vertexBuffer;
     size_t total_elemente;
 
     unsigned int shaderProgram;
-    unsigned int vertexStride;
+    unsigned int vertexStride = 17;
     unsigned int frameCount;
+
+    unsigned int gridVAO, gridVBO;
+    unsigned int gridShaderProgram;
 
     editorFlags flag;
     int cadru_activ;
 
-    std::vector<IstoricCorp> valoriSimulate; 
+    std::vector<IstoricCorp> valoriSimulate;
+    std::vector<IstoricLegatura> valoriLegaturi;
     GLFWwindow* window = nullptr;
 
-    std::string nume_fisier_export = ".temp_istoric_simulare.csv";
-    std::ofstream fisier_export;
+    std::string nume_fisier_export = "temp_log_corpuri.csv";
+    std::string nume_fisier_export_legaturi = "temp_log_legaturi.csv";
 
-    int gasesteCorpSubMouse(sistem &S);
+    std::ofstream fisier_export;
+    std::ofstream fisier_export_legaturi;
+
+    ObiectSelectat gasesteObiectSubMouse(sistem &S);
     void mutaCorp(sistem &S, int idCorp, float offsetX, float offsetY);
 
     void sincronizeazaMemorie(sistem &S);
     void incarcaDatePentruGrafic(sistem &S);
+
+    void salveazaLogCorpuri();
+    void salveazaLogLegaturi();
 
     void updateMousePosition();
     
