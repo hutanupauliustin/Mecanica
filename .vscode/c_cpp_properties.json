@@ -1,10 +1,14 @@
 {
     "configurations": [
         {
-            "name": "GCC ucrt64",
-            "compilerPath": "C:/msys64/ucrt64/bin/g++.exe",
+            "name": "MinGW",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "compilerPath": "C:/msys64/mingw64/bin/g++.exe",
             "cStandard": "c17",
-            "cppStandard": "gnu++17",
+            "cppStandard": "c++17",
             "intelliSenseMode": "windows-gcc-x64",
             "compileCommands": "${workspaceFolder}/build/compile_commands.json"
         }

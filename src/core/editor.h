@@ -56,6 +56,7 @@ struct editorFlags {
     bool arata_energie = false;
     bool arata_forte = false;
     bool arata_grid = true;
+    bool arata_grafic = true;
     int mod_vizualizare = 0; // standard, viteze, acceleratii
     float culoare_fundal[3] = {0.1f, 0.1f, 0.1f};
     bool salveaza_log_legaturi_la_final = false;
@@ -150,8 +151,8 @@ class editor{
     std::vector<IstoricLegatura> valoriLegaturi;
     GLFWwindow* window = nullptr;
 
-    std::string nume_fisier_export = "temp_log_corpuri.csv";
-    std::string nume_fisier_export_legaturi = "temp_log_legaturi.csv";
+    std::string nume_fisier_export = ".temp_log_corpuri.csv";
+    std::string nume_fisier_export_legaturi = ".temp_log_legaturi.csv";
 
     std::ofstream fisier_export;
     std::ofstream fisier_export_legaturi;

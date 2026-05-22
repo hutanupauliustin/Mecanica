@@ -54,8 +54,6 @@ int main() {
 
             while(timp_trecut >= S.dt) {  
                 S.step();
-               
-                S.t += S.dt;
                 timp_trecut -= S.dt;
                 iteratii++;
             }

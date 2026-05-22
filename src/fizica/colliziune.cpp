@@ -473,12 +473,12 @@ void ciocnire(sistem &S, int corpA, int corpB, intersectie inter)
         vec2 Ft_viz = t * (Jt_final * scala);
 
         if (invM_A > 0.0f) {
-            A.forte_desen.forte.push_back({FORTA_IMPACT_NORMAL, Fn_viz * (-1.0f), contacte.puncte[i]});
-            A.forte_desen.forte.push_back({FORTA_IMPACT_FRECARE, Ft_viz * (-1.0f), contacte.puncte[i]});
+            A.forte_desen.forte.push_back({FORTA_IMPACT_NORMAL, Fn_viz * (-1.0f), 0.0f, contacte.puncte[i]});
+            A.forte_desen.forte.push_back({FORTA_IMPACT_FRECARE, Ft_viz * (-1.0f), 0.0f, contacte.puncte[i]});
         }
         if (invM_B > 0.0f) {
-            B.forte_desen.forte.push_back({FORTA_IMPACT_NORMAL, Fn_viz, contacte.puncte[i]});
-            B.forte_desen.forte.push_back({FORTA_IMPACT_FRECARE, Ft_viz, contacte.puncte[i]});
+            B.forte_desen.forte.push_back({FORTA_IMPACT_NORMAL, Fn_viz, 0.0f, contacte.puncte[i]});
+            B.forte_desen.forte.push_back({FORTA_IMPACT_FRECARE, Ft_viz, 0.0f, contacte.puncte[i]});
         }
         
     }
@@ -592,38 +592,43 @@ void adaugaFortePercutanteVizuale(sistem &S){
     if (S.p == 0) return;
 
     int index_forta = 0;
-    // Transformam impulsul P intr-o forta "aparenta". 
-    // Daca sagetile sunt prea mari/mici, ajusteaza aceasta scala.
     float scala = 60.0f; 
 
     for(int i = 0; i < (int) S.legaturi.size(); i++) {
-
         if (S.legaturi[i]->activ == 0) continue;
-
         int nr_ecuatii = S.legaturi[i]->getNumarEcuatii();
 
-        if(nr_ecuatii >= 2){
-        
-        float Px = S.LambdaPerc(index_forta + 0, 0);
-        float Py = S.LambdaPerc(index_forta + 1, 0);
-        
-        vec2 forta_aparenta = vec2(Px, Py) * scala;
-
-        // Desenam sageata doar daca socul a fost semnificativ (filtram zgomotul de 0.0001)
-        if (forta_aparenta.modul() > 1.0f) { 
+        if(nr_ecuatii >= 2) {
+            float Px = S.LambdaPerc(index_forta + 0, 0);
+            float Py = S.LambdaPerc(index_forta + 1, 0);
+            vec2 forta_aparenta = vec2(Px, Py) * scala;
             vec2 punct_global = S.legaturi[i]->getPozitie(S.corpuri);
             int idA = S.legaturi[i]->contorCorpA;
             int idB = S.legaturi[i]->contorCorpB;
 
-            if (S.corpuri[idA].M < 1e10f) {
-                S.corpuri[idA].forte_desen.forte.push_back({FORTA_IMPACT_NORMAL, forta_aparenta, punct_global});
+            // 1. Forta de Impact (Cyan)
+            if (forta_aparenta.modul() > 1.0f) { 
+                if (S.corpuri[idA].M < 1e10f) S.corpuri[idA].forte_desen.forte.push_back({FORTA_IMPACT_NORMAL, forta_aparenta, 0.0f , punct_global});
+                if (S.corpuri[idB].M < 1e10f) S.corpuri[idB].forte_desen.forte.push_back({FORTA_IMPACT_NORMAL, forta_aparenta * (-1.0f), 0.0f , punct_global});
             }
-            if (S.corpuri[idB].M < 1e10f) {
-                S.corpuri[idB].forte_desen.forte.push_back({FORTA_IMPACT_NORMAL, forta_aparenta * (-1.0f), punct_global});
+
+            // 2. Adaugam MOMENTUL
+            if (nr_ecuatii == 3) {
+                float moment_reactiune = S.Lambda(index_forta + 2, 0);
+                
+                if (std::abs(moment_reactiune) > 0.1f) {
+                    // Daca primul corp e mobil, desenam pe el
+                    if (S.corpuri[idA].M < 1e10f) {
+                        S.corpuri[idA].forte_desen.forte.push_back({MOMENT_REACTIUNE, vec2(0.0f,0.0f), moment_reactiune, punct_global});
+                    } 
+                    // Daca primul corp e fix (Lumea), dar al doilea e mobil, desenam pe al doilea!
+                    else if (S.corpuri[idB].M < 1e10f) {
+                        // Nu uita ca pe corpul B fortele si momentele actioneaza in sens opus (-1)
+                        S.corpuri[idB].forte_desen.forte.push_back({MOMENT_REACTIUNE, vec2(0.0f,0.0f), -moment_reactiune, punct_global});
+                    }
+                }
             }
         }
-
-    }
         index_forta += nr_ecuatii;
     }
 }

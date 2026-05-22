@@ -8,7 +8,7 @@ public:
     bool activ = 1;
     
     struct col{ 
-        float x,y,z,w;
+       float x = 1.0f, y = 1.0f, z = 1.0f, w = 1.0f;
     } culoare;
 
 
@@ -60,4 +60,25 @@ class arc : public generatorForte{
 
     void getGraphics(const matrice &stare, int &type, float &widht, float &height, float &phi, vec2 &pozitieCentru, float &red, float &green, float &blue, float &alpha)  override;
     
+};
+
+class motor : public generatorForte{
+
+    public:
+    int contorCorp;
+
+    vec2 l;
+    float moment_generat;
+
+    motor();
+    motor(int corp, float l_X, float l_Y, float moment);
+
+    static motor* Creaza(rigid&A , float globalX, float globalY, float moment);
+
+    void aplicaForta(std::vector<rigid> &corpuri) override;
+
+    std::vector<int> getCorpuriAtasate() override;
+
+    void getGraphics(const matrice &stare, int &type, float &widht, float &height, float &phi, vec2 &pozitieCentru, float &red, float &green, float &blue, float &alpha)  override;
+
 };

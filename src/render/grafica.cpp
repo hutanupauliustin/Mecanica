@@ -53,22 +53,36 @@ const char *geometryShaderSource = "#version 330 core\n"
     "out float ShapeType;\n"
     "out vec4 fColor;\n"
     "out float filtru;\n"
-    "out vec3 fVel; out vec3 fAcc; out vec2 fLocalPos; out vec2 fGlobalPos;\n" // <-- Adaugat fGlobalPos
+    "out float fSens;\n" // <-- NOU: Trimitem sensul catre Fragment
+    "out vec3 fVel; out vec3 fAcc; out vec2 fLocalPos; out vec2 fGlobalPos;\n" 
 
     "uniform float scale; uniform vec2 cameraOffset; uniform float aspect_ratio;\n"
 
     "void main() {\n"
     "    if(gs_in[0].type < 0.5) return;\n"
-    "    mat2 rot = mat2(cos(gs_in[0].phi), sin(gs_in[0].phi), -sin(gs_in[0].phi), cos(gs_in[0].phi));\n"
+    
+    // Anulam rotatia bounding-box-ului daca este moment (tip 7)
+    "    float rot_phi = (gs_in[0].type > 6.5 && gs_in[0].type < 7.5) ? 0.0 : gs_in[0].phi;\n"
+    "    mat2 rot = mat2(cos(rot_phi), sin(rot_phi), -sin(rot_phi), cos(rot_phi));\n"
     "    vec2 center = gl_in[0].gl_Position.xy - cameraOffset;\n"
     
     "    ShapeType = gs_in[0].type;\n"
     "    fColor = gs_in[0].color;\n"
     "    filtru = gs_in[0].filtru;\n"
+    "    fSens = gs_in[0].phi;\n" 
     "    fVel = gs_in[0].vVel; fAcc = gs_in[0].vAcc;\n"
 
     "    float expand = (filtru > 0.5 && ShapeType < 3.5) ? 1.15 : 1.0;\n"
-    "    vec2 halfSize = (ShapeType > 3.5 && ShapeType < 4.5) ? vec2(gs_in[0].size.x / 2.0, 0.15) : (gs_in[0].size / 2.0) * expand;\n"
+    "    vec2 halfSize;\n"
+    
+    // Ajustare cutie in functie de forma
+    "    if (ShapeType > 3.5 && ShapeType < 4.5) {\n"
+    "        halfSize = vec2(gs_in[0].size.x / 2.0, 0.15);\n"
+    "    } else if (ShapeType > 6.5 && ShapeType < 7.5) {\n"
+    "        halfSize = vec2(gs_in[0].size.x + gs_in[0].size.y);\n"
+    "    } else {\n"
+    "        halfSize = (gs_in[0].size / 2.0) * expand;\n"
+    "    }\n"
 
     "    vec2 offsets[4] = vec2[](vec2(-halfSize.x, -halfSize.y), vec2(halfSize.x, -halfSize.y), vec2(-halfSize.x, halfSize.y), vec2(halfSize.x, halfSize.y));\n"
     "    vec2 uvs[4] = vec2[](vec2(-1.0, -1.0)*expand, vec2(1.0, -1.0)*expand, vec2(-1.0, 1.0)*expand, vec2(1.0, 1.0)*expand);\n"
@@ -85,106 +99,128 @@ const char *geometryShaderSource = "#version 330 core\n"
     "}\0";
 
 // --- 3. FRAGMENT SHADER ---      
-    const char *fragmentShaderSource = "#version 330 core\n"
+const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
     "in vec3 TexCoord; in float ShapeType; in vec4 fColor; in float filtru;\n"
-    "in vec3 fVel; in vec3 fAcc; in vec2 fLocalPos; in vec2 fGlobalPos;\n" // <-- Adaugat fGlobalPos
+    "in float fSens;\n" // <-- NOU: Primim sensul
+    "in vec3 fVel; in vec3 fAcc; in vec2 fLocalPos; in vec2 fGlobalPos;\n" 
     
     "uniform int ViewMode;\n"
 
     "void main() {\n"
     "   vec4 outputColor = fColor;\n"
     "   bool inBorder = false;\n"
-    "    bool isHovered = (filtru > 0.5 && filtru < 1.5) || (filtru > 2.5);\n" // E sub mouse
-    "    bool isSelected = (filtru > 1.5);\n" // E selectat din click
+    "   bool isHovered = (filtru > 0.5 && filtru < 1.5) || (filtru > 2.5);\n" 
+    "   bool isSelected = (filtru > 1.5);\n" 
     //
-    "    float raza_curenta = isHovered ? 1.06 : 1.0;\n" 
-    "    float grosime_margine = 0.08;\n" // Cat de groasa e linia alba
+    "   float raza_curenta = isHovered ? 1.06 : 1.0;\n" 
+    "   float grosime_margine = 0.08;\n" 
     //
         // --- DECUPARE FORME (DISCARD) --- 
-    "    if(ShapeType < 1.5) {\n" // CERC
-    "        float d = length(TexCoord.xy);\n"
-    "        if (d > raza_curenta + (isSelected ? grosime_margine : 0.0)) discard;\n" // Taiem ce e in afara
+    "   if(ShapeType < 1.5) {\n" // CERC
+    "       float d = length(TexCoord.xy);\n"
+    "       if (d > raza_curenta + (isSelected ? grosime_margine : 0.0)) discard;\n" 
     
-    "        if (isSelected && d > raza_curenta) {\n"
-    "            outputColor = vec4(1.0, 1.0, 1.0, 1.0); // Alb pentru margine\n"
-    "            inBorder = true;\n"
-    "        }\n"
-    "    }\n"
-    "    else if (ShapeType > 1.5 && ShapeType < 3.5 ) {\n" // DREPTUNGHI
-    "        float d = max(abs(TexCoord.x), abs(TexCoord.y));\n"
-    "        if (d > raza_curenta + (isSelected ? grosime_margine : 0.0)) discard;\n"
-    "        if (isSelected && d > raza_curenta) {\n"
-    "            outputColor = vec4(1.0, 1.0, 1.0, 1.0);\n"
-    "            inBorder = true;\n"
-    "        }\n"
-    "    }\n"
-    "    else if (ShapeType > 3.5 && ShapeType < 4.5) {\n" // ARC
-    "        float l_0 = TexCoord.z;\n"
-    "        float spire = l_0 * 8.0;\n"
-    "        float unda = sin(TexCoord.x * 3.1415 * spire) * (1.0 - TexCoord.x * TexCoord.x);\n"
-    "        if(abs(TexCoord.y - unda) > 0.35) discard;\n"
-    "    }\n"
-    "    else if (ShapeType > 4.5 && ShapeType < 5.5){\n" // SAGEATA
-    "        float x = TexCoord.x;\n"
-    "        float y = abs(TexCoord.y);\n"
-    "        float start_varf = 0.5;\n"
-    "        float grosime_coada = 0.35;\n"
-    "        if(x < start_varf){\n"
-    "            if(y > grosime_coada) discard;\n"
-    "        } else {\n"
-    "            float factor_panta = (x - start_varf) / (1.0 - start_varf);\n"
-    "            if(y > (1.0 - factor_panta)) discard;\n"
-    "        }\n"
-    "    }\n"
-    "    else if (ShapeType > 5.5 && ShapeType < 6.5){\n"   //FIR
-    "        vec2 pA = fVel.xy;\n"
-    "        vec2 pB = fAcc.xy;\n"
-    "        float burta = fVel.z;\n"
-    "        vec2 fir_dir = pB - pA;\n"
-    "        float L = length(fir_dir);\n"
-    "        \n"
-    "        // t este pozitia relativa (0.0 la pA, 1.0 la pB)\n"
-    "        float t = clamp(dot(fGlobalPos - pA, fir_dir) / (L * L + 0.00001), 0.0, 1.0);\n"
-    "        // Ecuatia parabolei (4*t*(1-t) da valoarea maxima de 1.0 la mijloc)\n"
-    "        float offset_y = burta * 4.0 * t * (1.0 - t);\n"
-    "        vec2 punct_pe_curba = pA + fir_dir * t + vec2(0.0, -offset_y);\n"
-    "        \n"
-    "        float dist_la_fir = length(fGlobalPos - punct_pe_curba);\n"
-    "        float grosime_fir = 0.05;\n"
-    "        \n"
-    "        if(dist_la_fir > grosime_fir + (isSelected ? grosime_margine : 0.0)) discard;\n"
-    "        if(isSelected && dist_la_fir > grosime_fir) {\n"
-    "            outputColor = vec4(1.0, 1.0, 1.0, 1.0);\n"
-    "            inBorder = true;\n"
-    "        }\n"
-    "    }\n"
+    "       if (isSelected && d > raza_curenta) {\n"
+    "           outputColor = vec4(1.0, 1.0, 1.0, 1.0);\n"
+    "           inBorder = true;\n"
+    "       }\n"
+    "   }\n"
+    "   else if (ShapeType > 1.5 && ShapeType < 3.5 ) {\n" // DREPTUNGHI
+    "       float d = max(abs(TexCoord.x), abs(TexCoord.y));\n"
+    "       if (d > raza_curenta + (isSelected ? grosime_margine : 0.0)) discard;\n"
+    "       if (isSelected && d > raza_curenta) {\n"
+    "           outputColor = vec4(1.0, 1.0, 1.0, 1.0);\n"
+    "           inBorder = true;\n"
+    "       }\n"
+    "   }\n"
+    "   else if (ShapeType > 3.5 && ShapeType < 4.5) {\n" // ARC
+    "       float l_0 = TexCoord.z;\n"
+    "       float spire = l_0 * 8.0;\n"
+    "       float unda = sin(TexCoord.x * 3.1415 * spire) * (1.0 - TexCoord.x * TexCoord.x);\n"
+    "       if(abs(TexCoord.y - unda) > 0.35) discard;\n"
+    "   }\n"
+    "   else if (ShapeType > 4.5 && ShapeType < 5.5){\n" // SAGEATA LINIALA
+    "       float x = TexCoord.x;\n"
+    "       float y = abs(TexCoord.y);\n"
+    "       float start_varf = 0.5;\n"
+    "       float grosime_coada = 0.35;\n"
+    "       if(x < start_varf){\n"
+    "           if(y > grosime_coada) discard;\n"
+    "       } else {\n"
+    "           float factor_panta = (x - start_varf) / (1.0 - start_varf);\n"
+    "           if(y > (1.0 - factor_panta)) discard;\n"
+    "       }\n"
+    "   }\n"
+    "   else if (ShapeType > 5.5 && ShapeType < 6.5){\n"   // FIR
+    "       vec2 pA = fVel.xy;\n"
+    "       vec2 pB = fAcc.xy;\n"
+    "       float burta = fVel.z;\n"
+    "       vec2 fir_dir = pB - pA;\n"
+    "       float L = length(fir_dir);\n"
+    "       \n"
+    "       float t = clamp(dot(fGlobalPos - pA, fir_dir) / (L * L + 0.00001), 0.0, 1.0);\n"
+    "       float offset_y = burta * 4.0 * t * (1.0 - t);\n"
+    "       vec2 punct_pe_curba = pA + fir_dir * t + vec2(0.0, -offset_y);\n"
+    "       \n"
+    "       float dist_la_fir = length(fGlobalPos - punct_pe_curba);\n"
+    "       float grosime_fir = 0.05;\n"
+    "       \n"
+    "       if(dist_la_fir > grosime_fir + (isSelected ? grosime_margine : 0.0)) discard;\n"
+    "       if(isSelected && dist_la_fir > grosime_fir) {\n"
+    "           outputColor = vec4(1.0, 1.0, 1.0, 1.0);\n"
+    "           inBorder = true;\n"
+    "       }\n"
+    "   }\n"
+    "   else if (ShapeType > 6.5 && ShapeType < 7.5) {\n"  // SAGEATA CIRCULARA (MOMENT)
+    "       float r = length(TexCoord.xy);\n"
+    "       vec2 uv_head = TexCoord.xy - vec2(0.0, 0.65);\n" // Centrul triunghiului (sus)
+    "       bool is_ccw = (fSens > 0.0);\n" // 1 = Trigonometric, -1 = Orar
+    "       \n"
+    "       // Construim triunghiurile indreptate spre stanga sau dreapta\n"
+    "       bool in_head_ccw = (uv_head.x > 0.0 && uv_head.x < 0.25 && abs(uv_head.y) < uv_head.x * 1.2);\n"
+    "       bool in_head_cw  = (uv_head.x < 0.0 && uv_head.x > -0.25 && abs(uv_head.y) < -uv_head.x * 1.2);\n"
+    "       \n"
+    "       bool in_ring = (r > 0.55 && r < 0.75);\n"
+    "       bool in_gap_ccw = (TexCoord.x < 0.0 && TexCoord.y > 0.0);\n"
+    "       bool in_gap_cw = (TexCoord.x > 0.0 && TexCoord.y > 0.0);\n" 
+    "       \n"
+    "       if (is_ccw) {\n"
+    "           if (in_gap_ccw) discard;\n" 
+    "           if (!in_ring && !in_head_ccw) discard;\n" 
+    "       } else {\n"
+    "           if (in_gap_cw) discard;\n"
+    "           if (!in_ring && !in_head_cw) discard;\n"
+    "       }\n"
+    "   }\n"
 
         // --- VIZUALIZARE STANDARD --- 
-    "    if (ViewMode == 0 || ShapeType > 3.5) {\n"
-    "        FragColor =outputColor;\n"
-    "        if(filtru > 1.5f && filtru < 2.5f){\n}"
-    "           return;\n"
-    "    }\n"
+    "   if (ViewMode == 0 || ShapeType > 3.5) {\n"
+    "       FragColor = outputColor;\n"
+    "       if (filtru > 1.5f && filtru < 2.5f) {\n"
+    "           // Poti adauga un efect extra pentru selectie aici\n"
+    "       }\n"
+    "       return;\n"
+    "   }\n"
 
-    "    // --- HEATMAP (VITEZE SAU ACCELERATII) --- \n"
-    "    float mag = 0.0;\n"
-    "    if (ViewMode == 1) {\n" // vM = vO + w x r
-    "        vec2 vM = fVel.xy + vec2(-fVel.z * fLocalPos.y, fVel.z * fLocalPos.x);\n"
-    "        mag = length(vM);\n"
-    "    } else if (ViewMode == 2) {\n" // aM = aO + eps x r - w^2 * r
-    "        vec2 a_tang = vec2(-fAcc.z * fLocalPos.y, fAcc.z * fLocalPos.x);\n"
-    "        vec2 a_norm = -(fVel.z * fVel.z) * fLocalPos;\n"
-    "        mag = length(fAcc.xy + a_tang + a_norm);\n"
-    "    }\n"
+    "   // --- HEATMAP (VITEZE SAU ACCELERATII) --- \n"
+    "   float mag = 0.0;\n"
+    "   if (ViewMode == 1) {\n" 
+    "       vec2 vM = fVel.xy + vec2(-fVel.z * fLocalPos.y, fVel.z * fLocalPos.x);\n"
+    "       mag = length(vM);\n"
+    "   } else if (ViewMode == 2) {\n" 
+    "       vec2 a_tang = vec2(-fAcc.z * fLocalPos.y, fAcc.z * fLocalPos.x);\n"
+    "       vec2 a_norm = -(fVel.z * fVel.z) * fLocalPos;\n"
+    "       mag = length(fAcc.xy + a_tang + a_norm);\n"
+    "   }\n"
 
-    "    float t = clamp(mag / (ViewMode == 1 ? 20.0 : 150.0), 0.0, 1.0);\n"
-    "    vec3 heat = (t < 0.5) ? mix(vec3(0.1, 0.3, 0.8), vec3(1.0, 0.8, 0.0), t*2.0) : mix(vec3(1.0, 0.8, 0.0), vec3(1.0, 0.0, 0.0), (t-0.5)*2.0);\n"
-    "    if (inBorder) {\n"
-    "        FragColor = vec4(1.0, 1.0, 1.0, outputColor.a);\n"
-    "    } else {\n"
-    "        FragColor = vec4(heat, outputColor.a);\n"
-    "    }\n"
+    "   float t = clamp(mag / (ViewMode == 1 ? 20.0 : 150.0), 0.0, 1.0);\n"
+    "   vec3 heat = (t < 0.5) ? mix(vec3(0.1, 0.3, 0.8), vec3(1.0, 0.8, 0.0), t*2.0) : mix(vec3(1.0, 0.8, 0.0), vec3(1.0, 0.0, 0.0), (t-0.5)*2.0);\n"
+    "   if (inBorder) {\n"
+    "       FragColor = vec4(1.0, 1.0, 1.0, outputColor.a);\n"
+    "   } else {\n"
+    "       FragColor = vec4(heat, outputColor.a);\n"
+    "   }\n"
     "}\0";
 
 
@@ -454,35 +490,65 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
         pct_curent++;
     }
    
+    
     // 5. Forte (Desenate separat pe culori)
     if (E.flag.arata_forte) {
         for (size_t i = 0; i < S.corpuri.size(); i++) {
             if (!S.corpuri[i].activ || S.corpuri[i].M > 1e10f) continue;
 
+            // --- 1. Lambda pentru sageti liniare (Tip 5) ---
             auto adaugaSageata = [&](vec2 forta, vec2 origine,  float r, float g, float b) {
-                    
-                    float magnitudine = forta.modul(); 
-                    if (magnitudine < 0.1f) return;
+                float magnitudine = forta.modul(); 
+                if (magnitudine < 0.1f) return;
 
-                    int idx = pct_curent * stride;
-                    float unghi = std::atan2(forta.y, forta.x);
-                    float L = std::log10(1.0f + magnitudine) * 0.4f;
-                    float grosime = 0.15f + (L *0.1f);
+                int idx = pct_curent * E.vertexStride; 
+                float unghi = std::atan2(forta.y, forta.x);
+                float L = std::log10(1.0f + magnitudine) * 0.4f;
+                float grosime = 0.15f + (L * 0.1f);
 
-                    vertices[idx + 0] = origine.x + (L / 2.0f) * std::cos(unghi);
-                    vertices[idx + 1] = origine.y + (L / 2.0f) * std::sin(unghi);
-                    vertices[idx + 2] = unghi;
-                    vertices[idx + 3] = L; 
-                    vertices[idx + 4] = grosime; // grosimea sagetii
-                    vertices[idx + 5] = 5.0f;  // Tip = SAGEATA
-                    vertices[idx + 6] = r;
-                    vertices[idx + 7] = g;
-                    vertices[idx + 8] = b; 
-                    vertices[idx + 9] = 0.8f; // Alpha
-                    vertices[idx + 10] = 0.0f; // Selectat
+                vertices[idx + 0] = origine.x + (L / 2.0f) * std::cos(unghi);
+                vertices[idx + 1] = origine.y + (L / 2.0f) * std::sin(unghi);
+                vertices[idx + 2] = unghi;
+                vertices[idx + 3] = L; 
+                vertices[idx + 4] = grosime; // grosimea sagetii
+                vertices[idx + 5] = 5.0f;  // Tip = SAGEATA LINIALA
+                vertices[idx + 6] = r;
+                vertices[idx + 7] = g;
+                vertices[idx + 8] = b; 
+                vertices[idx + 9] = 0.8f;  // Alpha
+                vertices[idx + 10] = 0.0f; // Selectat
 
-                    pct_curent++;
-                };
+                pct_curent++;
+            };
+
+            // --- 2. Lambda pentru sageti rotative de moment (Tip 7) ---
+            auto adaugaMoment = [&](float moment, vec2 origine, float r, float g, float b) {
+                float magnitudine = std::abs(moment);
+                if (magnitudine < 0.1f) return;
+
+                int idx = pct_curent * E.vertexStride;
+                
+                // Determinam sensul: 1.0f pentru trigonometric (CCW), -1.0f pentru orar (CW)
+                float sens = (moment > 0.0f) ? 1.0f : -1.0f; 
+                
+                // Calculam o raza vizuala pentru cerc (putin mai mica decat la forta ca sa nu acopere corpul)
+                float raza = 0.05f + std::log10(1.0f + magnitudine) * 0.2f;
+                float grosime = 0.05f + (raza * 0.1f);
+
+                vertices[idx + 0] = origine.x;
+                vertices[idx + 1] = origine.y;
+                vertices[idx + 2] = sens;      // Aici trimitem SENSUL rotatiei in loc de unghi
+                vertices[idx + 3] = raza;      // Folosim parametrul de lungime pentru raza cercului
+                vertices[idx + 4] = grosime;   // Grosimea liniei
+                vertices[idx + 5] = 7.0f;      // Tip = SAGEATA ROTATIVA
+                vertices[idx + 6] = r;
+                vertices[idx + 7] = g;
+                vertices[idx + 8] = b; 
+                vertices[idx + 9] = 0.8f;      // Alpha
+                vertices[idx + 10] = 0.0f;     // Selectat
+
+                pct_curent++;
+            };
 
             for (const auto& f : S.corpuri[i].forte_desen.forte) {
                 
@@ -495,10 +561,13 @@ int updateVerticesData(sistem &S, editor &E, float* vertices){
                     case FORTA_REACTIUNE:      r = 1.0f; g = 0.5f; b = 0.0f; break; // Portocaliu
                     case FORTA_IMPACT_NORMAL:  r = 0.0f; g = 1.0f; b = 1.0f; break; // Cyan
                     case FORTA_IMPACT_FRECARE: r = 1.0f; g = 1.0f; b = 0.0f; break; // Galben
+                    case MOMENT_IMPACT:        r = 1.0f; g = 0.0f; b = 1.0f; break; // Magenta
+                    case MOMENT_REACTIUNE:     r = 0.8f; g = 0.2f; b = 0.8f; break; // Violet
                 }
 
-                // Trimitem forta.valoare si folosim f.punct_aplicare in loc de centrul corpului
                 adaugaSageata(f.valoare, f.punct_aplicare, r, g, b); 
+                
+                adaugaMoment(f.moment, f.punct_aplicare, r, g, b);
             }
         }
     }

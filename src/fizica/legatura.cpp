@@ -400,10 +400,10 @@
         float sinA = std::sin(phiA), cosA = std::cos(phiA);
         float sinB = std::sin(phiB), cosB = std::cos(phiB);
 
-        vec2 rA(xA + l_A.x * cosA - l_A.y * sinA, yA + l_A.x * sinA + l_A.y * cosA);
-        vec2 rB(xB + l_B.x * cosB - l_B.y * sinB, yB + l_B.x * sinB + l_B.y * cosB);
+        vec2 rA(l_A.x * cosA - l_A.y * sinA, l_A.x * sinA + l_A.y * cosA);
+        vec2 rB(l_B.x * cosB - l_B.y * sinB, l_B.x * sinB + l_B.y * cosB);
 
-        vec2 PA = vec2(xA,yA) + rA;
+        vec2 PA = vec2(xA, yA) + rA;  
         vec2 PB = vec2(xB, yB) + rB;
 
         vec2 AB = PA - PB;

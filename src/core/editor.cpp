@@ -236,6 +236,10 @@ void editor::incarcaDatePentruGrafic(sistem &S)
     std::string csv_buffer;
     csv_buffer.reserve(S.corpuri.size() * 100);
 
+    if (valoriSimulate.size() < S.corpuri.size()) {
+        valoriSimulate.resize(S.corpuri.size());
+    }
+
     for (size_t i = 0; i < S.corpuri.size(); i++)
     {
 
@@ -288,6 +292,10 @@ void editor::incarcaDatePentruGrafic(sistem &S)
 
     std::string csv_legaturi;
     csv_legaturi.reserve(S.legaturi.size() * 100);
+
+    if (valoriLegaturi.size() < S.legaturi.size()) {
+        valoriLegaturi.resize(S.legaturi.size());
+    }
 
     for (size_t i = 0; i < S.legaturi.size(); i++)
     {

@@ -1,8 +1,10 @@
 #pragma once
+#include <imgui.h>
+#include <GLFW/glfw3.h>
+#include <vector>
+#include <cmath>
 #include "sistem.h"
 #include "editor.h"
-#include <vector>
-#include "imgui.h"
 
 class editor;
 struct fantomaUI;
@@ -218,6 +220,7 @@ public:
 
     int n = E.elementeSelectate.size();
  
+    }
 };
 
 class InstrumentAdaugaArticulatie : public InstrumentEditor{
@@ -771,3 +774,107 @@ public:
     }
 
 };
+
+
+class InstrumentAdaugaMotor : public InstrumentEditor {
+public:
+    int pas = 0;
+    int id_corp = -1;
+    vec2 punct_local;
+    vec2 punct_global;
+
+    ImVec2 mouse_la_click;
+
+    generatorForte* motor_adaugat = nullptr;
+
+    float moment_tinta = 50.0f;
+
+    void clickStanga(sistem& S, editor& E, float mouse_x, float mouse_y) override {
+        if (pas == 0) {
+
+            ObiectSelectat obj = E.gasesteObiectSubMouse(S);
+            id_corp = (obj.id != -1 && obj.tip == TIP_CORP) ? obj.id : 0;
+
+            punct_global =  vec2(mouse_x,mouse_y);
+            punct_local = S.corpuri[id_corp].globalToLocal(punct_global); 
+            
+            motor* motor_nou = motor::Creaza(S.corpuri[id_corp], punct_global.x,  punct_global.y, moment_tinta);
+            S.adaugaGeneratorForte(motor_nou);
+            S.actualizeazaMatriceFizica();
+            
+            motor_adaugat = motor_nou;
+
+            mouse_la_click = ImGui::GetIO().MousePos;
+            pas = 1;
+            
+        } else if (pas == 1){
+            E.schimbaInstrumentCurent(new InstrumentSelectie());
+        }
+    }
+
+    void clickDreapta(sistem& S, editor& E) override {
+        anuleaza(E,S);
+    }
+
+    void anuleaza(editor& E, sistem &S) override {
+        E.elementeUI.clear();
+    }
+
+    void pregatesteFantome(std::vector<fantomaUI>& elementeUI, float mouse_x, float mouse_y, sistem& S) override {
+        if (elementeUI.size() < 2) elementeUI.resize(2);
+        elementeUI[0].activa = false;
+        elementeUI[1].activa = false;
+
+        if (pas == 1) {
+            
+            elementeUI[1].phi = 0.0f;
+            elementeUI[1].dim1 = 1.0f ;
+            elementeUI[1].dim2 = 1.0f  ;
+            elementeUI[1].x = punct_global.x; 
+            elementeUI[1].y = punct_global.y;
+            elementeUI[1].tip = 1; 
+            elementeUI[1].col = {0.5f, 1.0f, 0.5f, 0.8f};
+        }
+    }
+
+    void deseneazaSetariUI(editor& E, sistem &S) override {
+        ImGui::Text("Setari Instrument Motor");
+        ImGui::Separator();
+        ImGui::Spacing();
+        
+        // Un slider care permite și valori negative pentru a schimba sensul de rotație implicit
+        ImGui::SliderFloat("Cuplu Motor (Nm)", &moment_tinta, -500.0f, 500.0f, "%.1f Nm");
+        
+        ImGui::Spacing();
+        ImGui::TextDisabled("Click stanga pe un corp pentru a-i\ninstala acest motor.");
+    }
+
+    
+    void randeazaPanouAditional(editor& E, sistem &S) override {
+        if (pas == 1) {
+            ImGui::SetNextWindowPos(ImVec2(mouse_la_click.x + 15, mouse_la_click.y + 15), ImGuiCond_Always);
+            ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |ImGuiWindowFlags_NoSavedSettings;
+        
+            if (ImGui::Begin("  ", nullptr, flags)) {
+                deseneazaSetariUI(E, S);
+
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::Spacing();
+                if (ImGui::Button("Finalizeaza", ImVec2(-1, 0))) {
+                    pas = 2; 
+                }
+            }
+            ImGui::End();
+            return;
+        }
+        if (pas == 2) {
+            E.schimbaInstrumentCurent(new InstrumentSelectie());
+        }
+    }
+};
+
+
+
+
+

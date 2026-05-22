@@ -12,7 +12,7 @@
 
 # =============================================================================
 # Project: SimulatorMecanica
-# Configurations: Debug
+# Configurations: Release
 # =============================================================================
 
 #############################################
@@ -24,7 +24,7 @@ ninja_required_version = 1.8
 #############################################
 # Set configuration variable for custom commands.
 
-CONFIGURATION = Debug
+CONFIGURATION = Release
 # =============================================================================
 # Include auxiliary files.
 
@@ -49,72 +49,72 @@ cmake_ninja_workdir = C$:/Users/Paul/Desktop/Mecanica/build/
 
 build cmake_object_order_depends_target_vendor: phony || .
 
-build CMakeFiles/vendor.dir/vendor/glad/glad.c.obj: C_COMPILER__vendor_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/vendor/glad/glad.c || cmake_object_order_depends_target_vendor
+build CMakeFiles/vendor.dir/vendor/glad/glad.c.obj: C_COMPILER__vendor_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/vendor/glad/glad.c || cmake_object_order_depends_target_vendor
   DEP_FILE = CMakeFiles\vendor.dir\vendor\glad\glad.c.obj.d
-  FLAGS = -g -w
+  FLAGS = -O3 -DNDEBUG -w
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\vendor.dir
   OBJECT_FILE_DIR = CMakeFiles\vendor.dir\vendor\glad
 
-build CMakeFiles/vendor.dir/vendor/imgui/imgui.cpp.obj: CXX_COMPILER__vendor_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/vendor/imgui/imgui.cpp || cmake_object_order_depends_target_vendor
+build CMakeFiles/vendor.dir/vendor/imgui/imgui.cpp.obj: CXX_COMPILER__vendor_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/vendor/imgui/imgui.cpp || cmake_object_order_depends_target_vendor
   DEP_FILE = CMakeFiles\vendor.dir\vendor\imgui\imgui.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -w
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -w
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\vendor.dir
   OBJECT_FILE_DIR = CMakeFiles\vendor.dir\vendor\imgui
 
-build CMakeFiles/vendor.dir/vendor/imgui/imgui_demo.cpp.obj: CXX_COMPILER__vendor_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/vendor/imgui/imgui_demo.cpp || cmake_object_order_depends_target_vendor
+build CMakeFiles/vendor.dir/vendor/imgui/imgui_demo.cpp.obj: CXX_COMPILER__vendor_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/vendor/imgui/imgui_demo.cpp || cmake_object_order_depends_target_vendor
   DEP_FILE = CMakeFiles\vendor.dir\vendor\imgui\imgui_demo.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -w
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -w
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\vendor.dir
   OBJECT_FILE_DIR = CMakeFiles\vendor.dir\vendor\imgui
 
-build CMakeFiles/vendor.dir/vendor/imgui/imgui_draw.cpp.obj: CXX_COMPILER__vendor_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/vendor/imgui/imgui_draw.cpp || cmake_object_order_depends_target_vendor
+build CMakeFiles/vendor.dir/vendor/imgui/imgui_draw.cpp.obj: CXX_COMPILER__vendor_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/vendor/imgui/imgui_draw.cpp || cmake_object_order_depends_target_vendor
   DEP_FILE = CMakeFiles\vendor.dir\vendor\imgui\imgui_draw.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -w
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -w
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\vendor.dir
   OBJECT_FILE_DIR = CMakeFiles\vendor.dir\vendor\imgui
 
-build CMakeFiles/vendor.dir/vendor/imgui/imgui_impl_glfw.cpp.obj: CXX_COMPILER__vendor_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/vendor/imgui/imgui_impl_glfw.cpp || cmake_object_order_depends_target_vendor
+build CMakeFiles/vendor.dir/vendor/imgui/imgui_impl_glfw.cpp.obj: CXX_COMPILER__vendor_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/vendor/imgui/imgui_impl_glfw.cpp || cmake_object_order_depends_target_vendor
   DEP_FILE = CMakeFiles\vendor.dir\vendor\imgui\imgui_impl_glfw.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -w
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -w
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\vendor.dir
   OBJECT_FILE_DIR = CMakeFiles\vendor.dir\vendor\imgui
 
-build CMakeFiles/vendor.dir/vendor/imgui/imgui_impl_opengl3.cpp.obj: CXX_COMPILER__vendor_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/vendor/imgui/imgui_impl_opengl3.cpp || cmake_object_order_depends_target_vendor
+build CMakeFiles/vendor.dir/vendor/imgui/imgui_impl_opengl3.cpp.obj: CXX_COMPILER__vendor_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/vendor/imgui/imgui_impl_opengl3.cpp || cmake_object_order_depends_target_vendor
   DEP_FILE = CMakeFiles\vendor.dir\vendor\imgui\imgui_impl_opengl3.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -w
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -w
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\vendor.dir
   OBJECT_FILE_DIR = CMakeFiles\vendor.dir\vendor\imgui
 
-build CMakeFiles/vendor.dir/vendor/imgui/imgui_tables.cpp.obj: CXX_COMPILER__vendor_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/vendor/imgui/imgui_tables.cpp || cmake_object_order_depends_target_vendor
+build CMakeFiles/vendor.dir/vendor/imgui/imgui_tables.cpp.obj: CXX_COMPILER__vendor_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/vendor/imgui/imgui_tables.cpp || cmake_object_order_depends_target_vendor
   DEP_FILE = CMakeFiles\vendor.dir\vendor\imgui\imgui_tables.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -w
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -w
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\vendor.dir
   OBJECT_FILE_DIR = CMakeFiles\vendor.dir\vendor\imgui
 
-build CMakeFiles/vendor.dir/vendor/imgui/imgui_widgets.cpp.obj: CXX_COMPILER__vendor_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/vendor/imgui/imgui_widgets.cpp || cmake_object_order_depends_target_vendor
+build CMakeFiles/vendor.dir/vendor/imgui/imgui_widgets.cpp.obj: CXX_COMPILER__vendor_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/vendor/imgui/imgui_widgets.cpp || cmake_object_order_depends_target_vendor
   DEP_FILE = CMakeFiles\vendor.dir\vendor\imgui\imgui_widgets.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -w
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -w
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\vendor.dir
   OBJECT_FILE_DIR = CMakeFiles\vendor.dir\vendor\imgui
 
-build CMakeFiles/vendor.dir/vendor/implot/implot.cpp.obj: CXX_COMPILER__vendor_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/vendor/implot/implot.cpp || cmake_object_order_depends_target_vendor
+build CMakeFiles/vendor.dir/vendor/implot/implot.cpp.obj: CXX_COMPILER__vendor_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/vendor/implot/implot.cpp || cmake_object_order_depends_target_vendor
   DEP_FILE = CMakeFiles\vendor.dir\vendor\implot\implot.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -w
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -w
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\vendor.dir
   OBJECT_FILE_DIR = CMakeFiles\vendor.dir\vendor\implot
 
-build CMakeFiles/vendor.dir/vendor/implot/implot_items.cpp.obj: CXX_COMPILER__vendor_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/vendor/implot/implot_items.cpp || cmake_object_order_depends_target_vendor
+build CMakeFiles/vendor.dir/vendor/implot/implot_items.cpp.obj: CXX_COMPILER__vendor_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/vendor/implot/implot_items.cpp || cmake_object_order_depends_target_vendor
   DEP_FILE = CMakeFiles\vendor.dir\vendor\implot\implot_items.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -w
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -w
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\vendor.dir
   OBJECT_FILE_DIR = CMakeFiles\vendor.dir\vendor\implot
@@ -127,8 +127,8 @@ build CMakeFiles/vendor.dir/vendor/implot/implot_items.cpp.obj: CXX_COMPILER__ve
 #############################################
 # Link the static library libvendor.a
 
-build libvendor.a: CXX_STATIC_LIBRARY_LINKER__vendor_Debug CMakeFiles/vendor.dir/vendor/glad/glad.c.obj CMakeFiles/vendor.dir/vendor/imgui/imgui.cpp.obj CMakeFiles/vendor.dir/vendor/imgui/imgui_demo.cpp.obj CMakeFiles/vendor.dir/vendor/imgui/imgui_draw.cpp.obj CMakeFiles/vendor.dir/vendor/imgui/imgui_impl_glfw.cpp.obj CMakeFiles/vendor.dir/vendor/imgui/imgui_impl_opengl3.cpp.obj CMakeFiles/vendor.dir/vendor/imgui/imgui_tables.cpp.obj CMakeFiles/vendor.dir/vendor/imgui/imgui_widgets.cpp.obj CMakeFiles/vendor.dir/vendor/implot/implot.cpp.obj CMakeFiles/vendor.dir/vendor/implot/implot_items.cpp.obj
-  LANGUAGE_COMPILE_FLAGS = -g
+build libvendor.a: CXX_STATIC_LIBRARY_LINKER__vendor_Release CMakeFiles/vendor.dir/vendor/glad/glad.c.obj CMakeFiles/vendor.dir/vendor/imgui/imgui.cpp.obj CMakeFiles/vendor.dir/vendor/imgui/imgui_demo.cpp.obj CMakeFiles/vendor.dir/vendor/imgui/imgui_draw.cpp.obj CMakeFiles/vendor.dir/vendor/imgui/imgui_impl_glfw.cpp.obj CMakeFiles/vendor.dir/vendor/imgui/imgui_impl_opengl3.cpp.obj CMakeFiles/vendor.dir/vendor/imgui/imgui_tables.cpp.obj CMakeFiles/vendor.dir/vendor/imgui/imgui_widgets.cpp.obj CMakeFiles/vendor.dir/vendor/implot/implot.cpp.obj CMakeFiles/vendor.dir/vendor/implot/implot_items.cpp.obj
+  LANGUAGE_COMPILE_FLAGS = -O3 -DNDEBUG
   OBJECT_DIR = CMakeFiles\vendor.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
@@ -144,100 +144,100 @@ build libvendor.a: CXX_STATIC_LIBRARY_LINKER__vendor_Debug CMakeFiles/vendor.dir
 
 build cmake_object_order_depends_target_simulator: phony || cmake_object_order_depends_target_vendor
 
-build CMakeFiles/simulator.dir/cmake_pch.hxx.gch: CXX_COMPILER__simulator_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx.cxx | CMakeFiles/simulator.dir/cmake_pch.hxx || cmake_object_order_depends_target_simulator
+build CMakeFiles/simulator.dir/cmake_pch.hxx.gch: CXX_COMPILER__simulator_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx.cxx | CMakeFiles/simulator.dir/cmake_pch.hxx || cmake_object_order_depends_target_simulator
   DEP_FILE = CMakeFiles\simulator.dir\cmake_pch.hxx.gch.d
-  FLAGS = -g -std=gnu++17 -Winvalid-pch -x c++-header -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -O3 -ffast-math -march=native -Winvalid-pch -x c++-header -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\simulator.dir
 
-build CMakeFiles/simulator.dir/src/core/editor.cpp.obj: CXX_COMPILER__simulator_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/src/core/editor.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
+build CMakeFiles/simulator.dir/src/core/editor.cpp.obj: CXX_COMPILER__simulator_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/src/core/editor.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
   DEP_FILE = CMakeFiles\simulator.dir\src\core\editor.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -O3 -ffast-math -march=native -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\simulator.dir\src\core
 
-build CMakeFiles/simulator.dir/src/core/main.cpp.obj: CXX_COMPILER__simulator_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/src/core/main.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
+build CMakeFiles/simulator.dir/src/core/main.cpp.obj: CXX_COMPILER__simulator_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/src/core/main.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
   DEP_FILE = CMakeFiles\simulator.dir\src\core\main.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -O3 -ffast-math -march=native -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\simulator.dir\src\core
 
-build CMakeFiles/simulator.dir/src/core/sistem.cpp.obj: CXX_COMPILER__simulator_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/src/core/sistem.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
+build CMakeFiles/simulator.dir/src/core/sistem.cpp.obj: CXX_COMPILER__simulator_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/src/core/sistem.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
   DEP_FILE = CMakeFiles\simulator.dir\src\core\sistem.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -O3 -ffast-math -march=native -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\simulator.dir\src\core
 
-build CMakeFiles/simulator.dir/src/fizica/colliziune.cpp.obj: CXX_COMPILER__simulator_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/src/fizica/colliziune.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
+build CMakeFiles/simulator.dir/src/fizica/colliziune.cpp.obj: CXX_COMPILER__simulator_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/src/fizica/colliziune.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
   DEP_FILE = CMakeFiles\simulator.dir\src\fizica\colliziune.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -O3 -ffast-math -march=native -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\simulator.dir\src\fizica
 
-build CMakeFiles/simulator.dir/src/fizica/fizica.cpp.obj: CXX_COMPILER__simulator_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/src/fizica/fizica.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
+build CMakeFiles/simulator.dir/src/fizica/fizica.cpp.obj: CXX_COMPILER__simulator_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/src/fizica/fizica.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
   DEP_FILE = CMakeFiles\simulator.dir\src\fizica\fizica.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -O3 -ffast-math -march=native -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\simulator.dir\src\fizica
 
-build CMakeFiles/simulator.dir/src/fizica/forte.cpp.obj: CXX_COMPILER__simulator_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/src/fizica/forte.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
+build CMakeFiles/simulator.dir/src/fizica/forte.cpp.obj: CXX_COMPILER__simulator_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/src/fizica/forte.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
   DEP_FILE = CMakeFiles\simulator.dir\src\fizica\forte.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -O3 -ffast-math -march=native -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\simulator.dir\src\fizica
 
-build CMakeFiles/simulator.dir/src/fizica/legatura.cpp.obj: CXX_COMPILER__simulator_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/src/fizica/legatura.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
+build CMakeFiles/simulator.dir/src/fizica/legatura.cpp.obj: CXX_COMPILER__simulator_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/src/fizica/legatura.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
   DEP_FILE = CMakeFiles\simulator.dir\src\fizica\legatura.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -O3 -ffast-math -march=native -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\simulator.dir\src\fizica
 
-build CMakeFiles/simulator.dir/src/fizica/rigid.cpp.obj: CXX_COMPILER__simulator_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/src/fizica/rigid.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
+build CMakeFiles/simulator.dir/src/fizica/rigid.cpp.obj: CXX_COMPILER__simulator_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/src/fizica/rigid.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
   DEP_FILE = CMakeFiles\simulator.dir\src\fizica\rigid.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -O3 -ffast-math -march=native -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\simulator.dir\src\fizica
 
-build CMakeFiles/simulator.dir/src/mate/matrice.cpp.obj: CXX_COMPILER__simulator_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/src/mate/matrice.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
+build CMakeFiles/simulator.dir/src/mate/matrice.cpp.obj: CXX_COMPILER__simulator_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/src/mate/matrice.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
   DEP_FILE = CMakeFiles\simulator.dir\src\mate\matrice.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -O3 -ffast-math -march=native -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\simulator.dir\src\mate
 
-build CMakeFiles/simulator.dir/src/render/grafica.cpp.obj: CXX_COMPILER__simulator_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/src/render/grafica.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
+build CMakeFiles/simulator.dir/src/render/grafica.cpp.obj: CXX_COMPILER__simulator_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/src/render/grafica.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
   DEP_FILE = CMakeFiles\simulator.dir\src\render\grafica.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -O3 -ffast-math -march=native -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\simulator.dir\src\render
 
-build CMakeFiles/simulator.dir/src/render/input.cpp.obj: CXX_COMPILER__simulator_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/src/render/input.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
+build CMakeFiles/simulator.dir/src/render/input.cpp.obj: CXX_COMPILER__simulator_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/src/render/input.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
   DEP_FILE = CMakeFiles\simulator.dir\src\render\input.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -O3 -ffast-math -march=native -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\simulator.dir\src\render
 
-build CMakeFiles/simulator.dir/src/render/newgui.cpp.obj: CXX_COMPILER__simulator_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/src/render/newgui.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
+build CMakeFiles/simulator.dir/src/render/newgui.cpp.obj: CXX_COMPILER__simulator_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/src/render/newgui.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
   DEP_FILE = CMakeFiles\simulator.dir\src\render\newgui.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -O3 -ffast-math -march=native -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\simulator.dir\src\render
 
-build CMakeFiles/simulator.dir/src/render/scena.cpp.obj: CXX_COMPILER__simulator_unscanned_Debug C$:/Users/Paul/Desktop/Mecanica/src/render/scena.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
+build CMakeFiles/simulator.dir/src/render/scena.cpp.obj: CXX_COMPILER__simulator_unscanned_Release C$:/Users/Paul/Desktop/Mecanica/src/render/scena.cpp | CMakeFiles/simulator.dir/cmake_pch.hxx CMakeFiles/simulator.dir/cmake_pch.hxx.gch || cmake_object_order_depends_target_simulator
   DEP_FILE = CMakeFiles\simulator.dir\src\render\scena.cpp.obj.d
-  FLAGS = -g -std=gnu++17 -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -O3 -ffast-math -march=native -Winvalid-pch -include C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir/cmake_pch.hxx
   INCLUDES = -IC:/Users/Paul/Desktop/Mecanica/src -IC:/Users/Paul/Desktop/Mecanica/src/core -IC:/Users/Paul/Desktop/Mecanica/src/fizica -IC:/Users/Paul/Desktop/Mecanica/src/render -IC:/Users/Paul/Desktop/Mecanica/src/mate -IC:/Users/Paul/Desktop/Mecanica/vendor -IC:/Users/Paul/Desktop/Mecanica/vendor/glad -IC:/Users/Paul/Desktop/Mecanica/vendor/glfw -IC:/Users/Paul/Desktop/Mecanica/vendor/imgui -IC:/Users/Paul/Desktop/Mecanica/vendor/implot -IC:/Users/Paul/Desktop/Mecanica/vendor/json -IC:/Users/Paul/Desktop/Mecanica/vendor/KHR -IC:/Users/Paul/Desktop/Mecanica/vendor/pfd -IC:/Users/Paul/Desktop/Mecanica/vendor/stb
   OBJECT_DIR = CMakeFiles\simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\simulator.dir\src\render
@@ -250,8 +250,9 @@ build CMakeFiles/simulator.dir/src/render/scena.cpp.obj: CXX_COMPILER__simulator
 #############################################
 # Link the executable simulator.exe
 
-build simulator.exe: CXX_EXECUTABLE_LINKER__simulator_Debug CMakeFiles/simulator.dir/src/core/editor.cpp.obj CMakeFiles/simulator.dir/src/core/main.cpp.obj CMakeFiles/simulator.dir/src/core/sistem.cpp.obj CMakeFiles/simulator.dir/src/fizica/colliziune.cpp.obj CMakeFiles/simulator.dir/src/fizica/fizica.cpp.obj CMakeFiles/simulator.dir/src/fizica/forte.cpp.obj CMakeFiles/simulator.dir/src/fizica/legatura.cpp.obj CMakeFiles/simulator.dir/src/fizica/rigid.cpp.obj CMakeFiles/simulator.dir/src/mate/matrice.cpp.obj CMakeFiles/simulator.dir/src/render/grafica.cpp.obj CMakeFiles/simulator.dir/src/render/input.cpp.obj CMakeFiles/simulator.dir/src/render/newgui.cpp.obj CMakeFiles/simulator.dir/src/render/scena.cpp.obj | libvendor.a || libvendor.a
-  FLAGS = -g
+build simulator.exe: CXX_EXECUTABLE_LINKER__simulator_Release CMakeFiles/simulator.dir/src/core/editor.cpp.obj CMakeFiles/simulator.dir/src/core/main.cpp.obj CMakeFiles/simulator.dir/src/core/sistem.cpp.obj CMakeFiles/simulator.dir/src/fizica/colliziune.cpp.obj CMakeFiles/simulator.dir/src/fizica/fizica.cpp.obj CMakeFiles/simulator.dir/src/fizica/forte.cpp.obj CMakeFiles/simulator.dir/src/fizica/legatura.cpp.obj CMakeFiles/simulator.dir/src/fizica/rigid.cpp.obj CMakeFiles/simulator.dir/src/mate/matrice.cpp.obj CMakeFiles/simulator.dir/src/render/grafica.cpp.obj CMakeFiles/simulator.dir/src/render/input.cpp.obj CMakeFiles/simulator.dir/src/render/newgui.cpp.obj CMakeFiles/simulator.dir/src/render/scena.cpp.obj | libvendor.a || libvendor.a
+  FLAGS = -O3 -DNDEBUG
+  LINK_FLAGS = -mwindows
   LINK_LIBRARIES = libvendor.a  -lglfw3  -lopengl32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   LINK_PATH = -LC:/Users/Paul/Desktop/Mecanica/lib,   -LC:/Users/Paul/Desktop/Mecanica/vendor/glfw
   OBJECT_DIR = CMakeFiles\simulator.dir

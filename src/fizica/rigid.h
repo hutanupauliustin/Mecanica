@@ -69,7 +69,8 @@ struct torsor{
 struct fortaExterna{
     vec2 u;                         //coordonatele versorului suport
     vec2 punct_aplicatie;           //coordonatele punctului de aplicare in coordonate globale
-    float modul;
+    float modul = 0.0f;
+    float moment = 0.0f;
 };
 
 enum TipFortaVizuala {
@@ -77,12 +78,15 @@ enum TipFortaVizuala {
     FORTA_ELASTICA,
     FORTA_REACTIUNE,
     FORTA_IMPACT_NORMAL,
-    FORTA_IMPACT_FRECARE
+    FORTA_IMPACT_FRECARE,
+    MOMENT_IMPACT,
+    MOMENT_REACTIUNE
 };
 
 struct fortaVizuala {
     TipFortaVizuala tip;
     vec2 valoare;
+    float moment;
     vec2 punct_aplicare; 
 };
 
@@ -131,7 +135,7 @@ public:
     rigid();
     rigid (float x_initial, float y_initial, float phi_initial, float masa, float momentInertie);
     
-    void adauagaForte(float modul_forta, float x_aplicare, float y_aplicare, float u_x, float u_y);
+    void adauagaForte(float modul_forta,float moment, float x_aplicare, float y_aplicare, float u_x, float u_y);
 
     void aflaForteProprii(float g);
 

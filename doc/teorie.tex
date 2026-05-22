@@ -3,6 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[romanian]{babel}
 \usepackage[hidelinks]{hyperref}
+\usepackage[T1]{fontenc}      
 \usepackage{tikz}
 \usetikzlibrary{patterns, arrows.meta, decorations.pathmorphing}
 \geometry{a4paper, margin=2cm}
@@ -470,78 +471,6 @@ Prin urmare, atunci când calculăm produsul $\dot{J}_F \dot{q}$, componenta cor
     \end{bmatrix}
 \end{equation}
 
-\subsubsection{Firul de legătură}
-Introducerea unui fir între corpurile $A$ și $B$ forțează ca distanța dintre punctele de legătură să nu depășească lungimea firului $d$: $\sqrt{ (x_{PA} - x_{PB})^2 + (y_{PA} - y_{PB})^2 } \leq d$. Aceasta adaugă o constrângere la sistem:
-
-\begin{equation}
-    f_{p+1} = \sqrt{ (x_{PA} - x_{PB})^2 + (y_{PA} - y_{PB})^2 } - d \leq 0
-\end{equation}
-
-Calculăm derivatele parțiale ale funcțiilor $f_{p+1}$ și $f_{p+2}$ pentru a le adăuga în Jacobian:
-Notăm:
-\begin{equation*}
-    \begin{aligned}
-        \Delta x &= x_{PA} - x_{PB} \\
-        \Delta y &= y_{PA} - y_{PB} \\
-        D &= \sqrt{\Delta x^2 + \Delta y^2}
-    \end{aligned}
-\end{equation*}
-
-Aplicând regula de derivare a funcțiilor compuse, obținem componentele Jacobianului pentru corpul $A$:
-\begin{equation}
-    \begin{aligned}
-        \frac{\partial f}{\partial x_A} &= \frac{1}{2D} \cdot 2\Delta x \cdot \frac{\partial (\Delta x)}{\partial x_A} = \frac{\Delta x}{D} \\[1ex]
-        \frac{\partial f}{\partial y_A} &= \frac{1}{2D} \cdot 2\Delta y \cdot \frac{\partial (\Delta y)}{\partial y_A} = \frac{\Delta y}{D} \\[1ex]
-        \frac{\partial f}{\partial \varphi_A} &= \frac{\Delta x}{D} \left( -l_{xA}\sin\varphi_A - l_{yA}\cos\varphi_A \right) + \frac{\Delta y}{D} \left( l_{xA}\cos\varphi_A - l_{yA}\sin\varphi_A \right)
-    \end{aligned}
-\end{equation}
-
-În mod similar, pentru corpul $B$, derivatele își schimbă semnul deoarece coordonatele punctului $P_B$ sunt scăzute din cele ale punctului $P_A$:
-\begin{equation}
-    \begin{aligned}
-        \frac{\partial f}{\partial x_B} &= -\frac{\Delta x}{D} \\[1ex]
-        \frac{\partial f}{\partial y_B} &= -\frac{\Delta y}{D} \\[1ex]
-        \frac{\partial f}{\partial \varphi_B} &= \frac{\Delta x}{D} \left( l_{xB}\sin\varphi_B + l_{yB}\cos\varphi_B \right) - \frac{\Delta y}{D} \left( l_{xB}\cos\varphi_B - l_{yB}\sin\varphi_B \right)
-    \end{aligned}
-\end{equation}
-
-Firul adaugă o singură linie în matricea Jacobiană:
-\begin{equation}
-    \begin{bmatrix}
-        0 \\ \vdots \\ \frac{\Delta x}{D} \\ \frac{\Delta y}{D} \\ \frac{\Delta x}{D} \left( -l_{xA}\sin\varphi_A - l_{yA}\cos\varphi_A \right) + \frac{\Delta y}{D} \left( l_{xA}\cos\varphi_A - l_{yA}\sin\varphi_A \right) \\ \vdots \\ -\frac{\Delta x}{D} \\ -\frac{\Delta y}{D} \\ \frac{\Delta x}{D} \left( l_{xB}\sin\varphi_B + l_{yB}\cos\varphi_B \right) - \frac{\Delta y}{D} \left( l_{xB}\cos\varphi_B - l_{yB}\sin\varphi_B \right) \\ \vdots \\ 0
-    \end{bmatrix}
-\end{equation}
-
-\paragraph{Calculul scalarului $\dot{J}_F \dot{q}$ pentru Fir}
-
-Deoarece firul generează o singură ecuație de legătură, produsul $\dot{J}_F \dot{q}$ va fi un scalar. Pentru a-l exprima compact, definim componentele vitezei relative ale punctelor de prindere:
-\begin{equation*}
-    \begin{aligned}
-        \Delta \dot{x} &= \dot{x}_A - \dot{\varphi}_A(l_{xA}\sin\varphi_A + l_{yA}\cos\varphi_A) - \left[ \dot{x}_B - \dot{\varphi}_B(l_{xB}\sin\varphi_B + l_{yB}\cos\varphi_B) \right] \\
-        \Delta \dot{y} &= \dot{y}_A + \dot{\varphi}_A(l_{xA}\cos\varphi_A - l_{yA}\sin\varphi_A) - \left[ \dot{y}_B + \dot{\varphi}_B(l_{xB}\cos\varphi_B - l_{yB}\sin\varphi_B) \right]
-    \end{aligned}
-\end{equation*}
-
-Prin derivarea analitică a constrângerii de distanță în raport cu timpul, termenul $\dot{J}_F \dot{q}$ înglobează două efecte cinematice de inerție: accelerația centrifugă datorată rotirii firului în spațiu și accelerațiile centripete ale punctelor locale de legătură care se rotesc în jurul centrelor lor de masă.
-
-Scalarul final se calculează astfel:
-\begin{equation}
-    \dot{J}_F \dot{q} = \frac{\Delta \dot{x}^2 + \Delta \dot{y}^2 - \dot{D}^2}{D} - \frac{\Delta x}{D} \left( a_{cx} \right) - \frac{\Delta y}{D} \left( a_{cy} \right)
-\end{equation}
-
-unde $\dot{D}$ reprezintă viteza de variație a lungimii firului (proiecția vitezei relative pe direcția firului):
-\begin{equation*}
-    \dot{D} = \frac{\Delta x}{D}\Delta \dot{x} + \frac{\Delta y}{D}\Delta \dot{y}
-\end{equation*}
-
-iar termenii $a_{cx}$ și $a_{cy}$ reprezintă componentele accelerațiilor centripete relative ale punctelor de legătură:
-\begin{equation*}
-    \begin{aligned}
-        a_{cx} &= -\dot{\varphi}_A^2(l_{xA}\cos\varphi_A - l_{yA}\sin\varphi_A) + \dot{\varphi}_B^2(l_{xB}\cos\varphi_B - l_{yB}\sin\varphi_B) \\
-        a_{cy} &= -\dot{\varphi}_A^2(l_{xA}\sin\varphi_A + l_{yA}\cos\varphi_A) + \dot{\varphi}_B^2(l_{xB}\sin\varphi_B + l_{yB}\cos\varphi_B)
-    \end{aligned}
-\end{equation*}
-
 \subsection{Fortele dintre corpuri}
 \subsubsection{Forte elastice}
 
@@ -801,7 +730,16 @@ Acest scenariu reprezintă situația fizică în care doar "aerul" din cele dou�
 
 \subsection{Faza de detecție exactă (Narrow-Phase)}
 
-\subsubsection{Algoritmul de detectare}
+\subsubsection{Algoritmul de detectare (Teorema Axelor de Separare)}
+
+Pentru formele poligonale (bare dreptunghiulare) și circulare din simulator, faza de detecție exactă utilizează Teorema Axelor de Separare (Separating Axis Theorem - SAT). Principiul fundamental afirmă că două corpuri rigide convexe nu se intersectează dacă și numai dacă există cel puțin o axă în plan pe care proiecțiile celor două corpuri nu se suprapun.
+
+În cazul a două bare dreptunghiulare, axele candidate pentru testare sunt normalele fețelor celor două corpuri (2 axe unice per dreptunghi, în total 4 axe de testat). Pentru interacțiunea dintre un disc și o bară, axele candidate sunt cele 2 normale ale barei, la care se adaugă axa orientată de la centrul discului către cel mai apropiat vârf al dreptunghiului.
+
+Pentru fiecare axă $\vec{a}$, se calculează proiecțiile intervalelor $[min_A, max_A]$ și $[min_B, max_B]$. Suprapunerea (overlap) pe o axă este dată de:
+$$ \text{overlap} = \min(max_A, max_B) - \max(min_A, min_B) $$
+
+Dacă pe oricare dintre axele testate suprapunerea este mai mică sau egală cu zero, algoritmul se oprește instantaneu, raportând absența coliziunii. Dacă toate axele înregistrează suprapuneri pozitive, corpurile se află în stare de intersecție. Axa care înregistrează cea mai mică valoare a suprapunerii este declarată \textit{normală de coliziune} ($\vec{n}$), iar valoarea suprapunerii reprezintă \textit{adâncimea de penetrare} ($l$).
 
 \subsubsection{Algoritmul de clipping }
 
@@ -1268,11 +1206,40 @@ Sistemul obținut este liniar și simetric, deci se poate rezolva eficient prin 
     \dot{q}'' = \dot{q}^* + A^{-1}J_F^T \Lambda_{perc}
 \end{equation}
 
-\section{Implementare si Arhitectura Software}
+\section{Implementare și Arhitectura Software}
 
-\section{Rezultate si Validarea Simularii}
+Aplicația este structurată sub forma unui motor de simulare modularizat, scris în C++, utilizând OpenGL pentru randarea grafică și Dear ImGui împreună cu ImPlot pentru interfața grafică interactivă.
 
-\section{Concluzii si Dezvoltari Ulterioare}
+Arhitectura software este împărțită în patru module principale:
+\begin{enumerate}
+    \item \textbf{Modulul Matematic (mate):} Implementat în jurul clasei \texttt{matrice}. Aceasta gestionează dinamic alocările de memorie pentru sistemul liniar, oferind operatori redefiniți algebrici (adunare, înmulțire, transpunere prin operatorul \texttt{\^{} "T"}) necesari rezolvării ecuațiilor macroscopice.
+    \item \textbf{Modulul Fizic (fizica):} Nucleul simulatorului. Funcția \texttt{calculeazaMultiplicatori} asamblează matricea de masă inversă $A^{-1}$, Jacobianul global $J_F$ și vectorul forțelor exterioare $Q$. Sistemul simetric pozitiv definit rezultat $(J_F A^{-1} J_F^T)\Lambda = B$ este rezolvat stabil la fiecare pas utilizând o descompunere de tip Cholesky ($L L^T \Lambda = B$), prevenind singularitățile matematice prin regularizare numerică Tikhonov pe diagonală ($+1e-7f$). Integrarea în timp a stării se face numeric prin algoritmul Runge-Kutta de ordinul 4 (\texttt{RK4}).
+    \item \textbf{Modulul de Gestiune (core):} Clasa \texttt{sistem} centralizează vectorii de obiecte (\texttt{std::vector<rigid>}, \texttt{std::vector<legatura*>}), coordonează pașii de timp (\texttt{step()}) și se ocupă de curățarea corectă a memoriei din heap pentru pointerii polimorfici ai constrângerilor cinematice.
+    \item \textbf{Modulul Grafic (render / editor):} Clasa \texttt{editor} decuplează logica fizică de cea vizuală. Aceasta stochează istoricul simulării sub formă de structuri tip ring-buffer de dimensiune fixă (\texttt{IstoricCorp}, \texttt{IstoricLegatura}), mapate dinamic prin intermediul \texttt{ImPlot::PlotLine} pentru a expune diagramele de eforturi (forțe de reacțiune $X, Y$ și momente $Nm$).
+\end{enumerate}
+
+\section{Rezultate și Validarea Simulării}
+
+Validarea consistenței matematice a algoritmilor s-a efectuat prin rularea a trei scenarii distincte de test, concepute pentru a verifica componentele macro-structurale ale solver-ului:
+
+\subsection{Pendulul Triplu Caotic}
+Scenariul evaluează stabilitatea pe termen lung a integratorului \texttt{RK4} și conservarea legăturilor rigide în prezența unor viteze unghiulare extreme și mișcări puternic nelineare. Sistemul din trei bare înseriate prin articulații s-a comportat strict caotic, conform teoriei sistemelor dinamice complexe, fără a manifesta drift numeric (segmentele nu s-au desprins, dovedind eficiența corecției Baumgarte introduse prin constantele de stabilizare $k_s$ și $k_d$).
+
+\subsection{Grinda în Consolă Încastrată}
+Testul validează componenta de efort rotațional din încastrări. O bară fixată la un capăt de perete prin legătura \texttt{incastrare} este supusă unei forțe gravitaționale concentrate mari aplicate la capătul liber. Diagramele generate live în interfață au demonstrat că solverul calculează un multiplicator Lagrange pe rândul al treilea al Jacobianului care corespunde exact momentului teoretic de încastrare $M = F \cdot L$. Vizualizarea grafică randează corect torsorul de reacțiune, stabilizând bara în poziție perfect orizontală.
+
+\subsection{Leagănul lui Newton și Podul Articulat}
+Acest scenariu testează faza de detecție exactă (SAT + clipping) combinată cu rezolvarea numerică a percuțiilor post-impact ($\Lambda_{perc}$). Transferul de impuls prin sferele adiacente arată că energia cinetică este transmisă curat dintr-un capăt în celălalt, demonstrând că ecuațiile de impact implementate respectă legile de conservare a impulsului și că manifold-ul de contact extras prin decuparea segmentelor (clipping) este geometric corect.
+
+\section{Concluzii și Dezvoltări Ulterioare}
+
+Lucrarea demonstrează succesul modelării matematice a sistemelor mecanice multicorp utilizând formularea analitică Lagrange de speța întâi combinată cu multiplicatori direcți. Decizia de proiectare de a reduce arhitectura la elemente fundamentale (corpuri geometrice de bază, articulații rezistente și încastrări rigide) a oferit un grad ridicat de robustețe numerică, ideal pentru aplicații didactice și analiză structurală bidimensională rapidă.
+
+Ca dezvoltări ulterioare, proiectul poate fi extins în următoarele direcții:
+\begin{itemize}
+    \item \textbf{Implementarea unui solver LCP (Linear Complementarity Problem):} Pentru a integra coliziunile și frecările direct în matricea mare de constrângeri, eliminând faza secundară de impulsuri separate și permițând modelarea jocurilor sau a legăturilor cu limite (articulații cu unghi maxim impus).
+    \item \textbf{Paralelizarea solverului pe GPU:} Utilizarea Compute Shaders sau CUDA pentru recalcularea matricelor Jacobian în scenarii cu mii de corpuri simultan (simulări de medii granulare sau fluide discrete).
+\end{itemize}
 
 \section*{Bibliografie}
 

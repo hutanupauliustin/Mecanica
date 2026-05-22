@@ -146,7 +146,8 @@ void renderMeniu(sistem &S, editor &E)
 
             ImGui::MenuItem("Arata Grid", nullptr, &E.flag.arata_grid);
             ImGui::MenuItem("Arata Forte", nullptr, &E.flag.arata_forte);
-            ImGui::MenuItem("Arata Energie", nullptr, &E.flag.arata_energie);
+            //ImGui::MenuItem("Arata Energie", nullptr, &E.flag.arata_energie);
+            //ImGui::MenuItem("Arata Grafic", nullptr, &E.flag.arata_forte);
 
             ImGui::Separator();
             ImGui::TextDisabled("Mod Vizualizare:");
@@ -212,7 +213,7 @@ void renderInspector(sistem &S, editor &E)
 
     if (!E.elementeSelectate.empty())
     {
-        ImGui::Text("Corpuri selectate: %d", (int)E.elementeSelectate.size());
+        ImGui::Text("Obiecte selectate: %d", (int)E.elementeSelectate.size());
         ImGui::Spacing();
         ImGui::Separator();
         ImGui::Spacing();
@@ -266,11 +267,10 @@ void renderInspector(sistem &S, editor &E)
                     }
                 }
             }
-        
             // --- 2. EDITARE LEGATURI ---
             else if (el.tip == TIP_LEGATURA && el.id < S.legaturi.size()) {
                 legatura* l = S.legaturi[el.id];
-                ImGui::TextColored(ImVec4(0.7f, 1.0f, 0.7f, 1.0f), "Proprietati Legatura");
+                ImGui::TextColored(ImVec4(0.7f, 1.0f, 0.7f, 1.0f), "Proprietati Legatura [#%d]", el.id);
 
                 float colL[4] = { l->culoare.x, l->culoare.y, l->culoare.z, l->culoare.w };
                 if (ImGui::ColorEdit4("Culoare Linie", colL)) {
@@ -288,11 +288,10 @@ void renderInspector(sistem &S, editor &E)
                     }
                 }
             }
-        
             // --- 3. EDITARE GENERATORI DE FORTE ---
             else if (el.tip == TIP_GENERATOR_FORTA && el.id < S.surseForte.size()) {
                 auto* gen = S.surseForte[el.id];
-                ImGui::TextColored(ImVec4(1.0f, 0.7f, 0.7f, 1.0f), "Sursa de Forta");
+                ImGui::TextColored(ImVec4(1.0f, 0.7f, 0.7f, 1.0f), "Sursa de Forta [#%d]", el.id);
             
                 float colG[4] = { gen->culoare.x, gen->culoare.y, gen->culoare.z, gen->culoare.w };
                 if (ImGui::ColorEdit4("Culoare Forta", colG)) {
@@ -301,10 +300,11 @@ void renderInspector(sistem &S, editor &E)
 
                 // Aici poti adauga si magnitudinea fortei daca ai acces la ea
             }
+            ImGui::NewLine();
+
         
             ImGui::Spacing();
             ImGui::Separator();
-
             if (el.tip == TIP_LEGATURA && el.id >= 0 && el.id < E.valoriLegaturi.size())
             {
                 ImGui::Spacing();
@@ -387,24 +387,30 @@ void renderOverlayStatus(sistem &S, editor &E)
 
 void renderPanouInstrumente(sistem &S, editor &E)
 {
-    ImGui::Begin("Instrumente");
+ ImGui::Begin("Instrumente");
 
     if (E.mod_curent == MOD_RULARE)
     {
-        if (ImGui::Button("Pause"))
-        {
+        if (ImGui::Button("Pause", ImVec2(80, 0))) {
             E.mod_curent = MOD_EDITARE;
-            E.
         }
+        
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(150.0f);
+        ImGui::SliderFloat("Viteza", &S.scala_timp, 0.1f, 5.0f, "%.1fx");
+
         ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "Opreste simularea pentru a edita.");
         ImGui::End();
         return;
     }
 
-    if (ImGui::Button("Play"))
-    {
+    if (ImGui::Button("Play", ImVec2(80, 0))) {
         E.mod_curent = MOD_RULARE;
     }
+    
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(150.0f);
+    ImGui::SliderFloat("Viteza", &S.scala_timp, 0.1f, 5.0f, "%.1fx");
 
     ImGui::Text("Alege o unealta:");
     ImGui::Separator();
@@ -415,6 +421,7 @@ void renderPanouInstrumente(sistem &S, editor &E)
     bool eArticulatie = dynamic_cast<InstrumentAdaugaArticulatie *>(E.instrumentCurent.get()) != nullptr;
     bool eIncastrare = dynamic_cast<InstrumentAdaugaIncastrare *>(E.instrumentCurent.get()) != nullptr;
     bool eFir = dynamic_cast<InstrumentAdaugaFir *>(E.instrumentCurent.get()) != nullptr;
+    bool eMotor = dynamic_cast<InstrumentAdaugaMotor *>(E.instrumentCurent.get()) != nullptr;
 
     auto deseneazaButon = [](const char *label, bool activ) -> bool
     {
@@ -463,10 +470,17 @@ void renderPanouInstrumente(sistem &S, editor &E)
         E.schimbaInstrumentCurent(new InstrumentAdaugaIncastrare());
     }
 
-    if (deseneazaButon("Adauga Fir", eFir))
+    /*if (deseneazaButon("Adauga Fir", eFir))
     {
         E.schimbaInstrumentCurent(new InstrumentAdaugaFir());
-    }
+    }*/
+
+    /*if(deseneazaButon("Adauga Motor", eMotor))
+    {
+        E.schimbaInstrumentCurent(new InstrumentAdaugaMotor());
+    }*/
+
+
 
     // Aici ai putea adăuga setările secundare ale uneltei (pasul 3)
     // Ex: Dacă eArc e activ și pas == 2, desenezi sliderele de rigiditate/amortizare.

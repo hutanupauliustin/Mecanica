@@ -62,8 +62,8 @@
         vec2 vector_forta_A = directie * (-valoare_forta);
         vec2 vector_forta_B = directie * (valoare_forta);
         
-        A.adauagaForte(-valoare_forta,poz1.x, poz1.y,directie.x,directie.y);
-        B.adauagaForte( valoare_forta,poz2.x, poz2.y,directie.x,directie.y);
+        A.adauagaForte(-valoare_forta,0.0f,poz1.x, poz1.y,directie.x,directie.y);
+        B.adauagaForte( valoare_forta,0.0f,poz2.x, poz2.y,directie.x,directie.y);
 
         if (A.M < 1e10f) {
             fortaVizuala fA;
@@ -118,3 +118,70 @@
         blue = 0.0f; 
         alpha = 1.0f;
 }
+
+
+ motor::motor(){
+        contorCorp = 0;
+        l.x = 0.0f;
+        l.y = 0.0f;
+        moment_generat = 0.0f;
+
+}
+
+motor::motor(int corp, float l_X, float l_Y, float moment)
+: contorCorp(corp), l(l_X,l_Y), moment_generat(moment) {}
+
+
+motor* motor::Creaza(rigid&A , float globalX, float globalY, float moment){
+
+        vec2 global_l (globalX, globalY);
+
+        vec2 localA = A.globalToLocal(global_l);
+        
+
+        return new  motor(A.index,localA.x,localA.y,moment);
+}
+    
+
+    void motor::aplicaForta(std::vector<rigid> &corpuri) {    
+        
+        vec2 poz;
+
+        rigid& A = corpuri[contorCorp];
+
+        poz = A.localToGlobal(l);
+
+        A.adauagaForte(0,moment_generat, 0.0f, 0.0f, 1.0f, 1.0f);
+
+    }
+
+    std::vector<int> motor::getCorpuriAtasate(){
+
+        std::vector<int> corpuriAtasate;
+        corpuriAtasate.push_back(this->contorCorp);
+
+        return corpuriAtasate;
+    }
+    
+
+    void motor::getGraphics(const matrice &stare, int &type, float &widht, float &height, float &phi, vec2 &pozitieCentru, float &red, float &green, float &blue, float &alpha){
+        
+        int idx = contorCorp * 3;
+        float xA   = stare(idx + 0, 0);
+        float yA   = stare(idx + 1, 0);
+        float phiA = stare(idx + 2, 0);
+        float cosA = std::cos(phiA), sinA = std::sin(phiA);
+
+        pozitieCentru.x = xA + l.x * cosA - l.y * sinA;
+        pozitieCentru.y = yA + l.x * sinA + l.y * cosA;
+
+
+        type = 1;
+        widht = 0.5f;
+        height = 0.5f;
+        phi = 0.0f;
+        red = 0.902f;
+        green = 0.71f;
+        blue = 0.902f;
+        alpha = 1.0f;
+    }

@@ -40,13 +40,19 @@ target_include_directories(vendor PUBLIC
 )
 
 # Cream executabilul final
-add_executable(simulator ${PROJECT_SOURCES})
+add_executable(simulator WIN32 ${PROJECT_SOURCES})
 
 # --- OPTIMIZARE 3: Flag-uri de avertizare (Warnings) ---
 # Ne ajută să scriem cod mai sigur și previn bug-uri subtile.
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(simulator PRIVATE ) #-Wall -Wextra
     target_compile_options(vendor PRIVATE -w) # Oprim warning-urile pentru librariile externe
+
+    target_compile_options(simulator PRIVATE
+        $<$<CONFIG:Release>:-O3>
+        $<$<CONFIG:Release>:-ffast-math>
+        $<$<CONFIG:Release>:-march=native>
+    ) # <--- Această paranteză lipsea
 endif()
 
 # --- OPTIMIZARE 2: Precompiled Headers ---

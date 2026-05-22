@@ -26,9 +26,10 @@ rigid::rigid() : pozitie(0.0f, 0.0f), phi(0.0f), viteza(0.0f, 0.0f), omega(0.0f)
             material = materiale::Lemn;
         }
         
-    void rigid::adauagaForte(float modul_forta, float x_aplicare, float y_aplicare, float u_x, float u_y ){
+    void rigid::adauagaForte(float modul_forta,float moment, float x_aplicare, float y_aplicare, float u_x, float u_y ){
         fortaExterna F;
         F.modul = modul_forta;
+        F.moment = moment;
         F.u = vec2(u_x, u_y);
         F.punct_aplicatie = vec2(x_aplicare, y_aplicare);
         forte.push_back(F);
@@ -89,6 +90,7 @@ rigid::rigid() : pozitie(0.0f, 0.0f), phi(0.0f), viteza(0.0f, 0.0f), omega(0.0f)
             gravitatie.u.y = 1;
             gravitatie.modul =  (-1)*M*g;
             gravitatie.punct_aplicatie = this->pozitie;
+            gravitatie.moment = 0.0f;
             this->forte.push_back(gravitatie);
 
             float drag = collider.coeficientAerodinamic;
@@ -107,6 +109,7 @@ rigid::rigid() : pozitie(0.0f, 0.0f), phi(0.0f), viteza(0.0f, 0.0f), omega(0.0f)
 
             this->tau.forta += vector_forta;
             this->tau.moment += r.vectorial(vector_forta);
+            this->tau.moment += F.moment;
         }
 
         this->forte_desen.tau.forta = this->tau.forta;

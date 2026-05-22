@@ -3,7 +3,7 @@
 #include "colliziune.h"
 #include "fizica.h"
 
-float forta_maxima = 10000.0f;
+float forta_maxima = 10000000.0f;
 
 //rezolva sisteme olonoame scleronome, cu legaturi bilaterale
 
@@ -157,8 +157,13 @@ matrice derivata(sistem &S, const matrice &stare_curenta, double t)      //facut
     }
 
     // 6. Restauram starea originala a sistemului.
+    
     S.stare = stare_originala;
-    S.seteazaStare();               // pune in coordonatele fiecarui corp valorile din vectorul stare
+    S.seteazaStare();
+    S.seteazaForteExterne();   
+    S.seteazaConstrangeri();
+    S.seteazaJacobian();
+    calculeazaMultiplicatori(S, t);  
 
     return stare_derivata;
 }
@@ -179,43 +184,44 @@ matrice RK4(sistem &S, double dt, double t) {
 }
 
 void adaugaForteContinueVizuale(sistem &S){
- int index_forta = 0;
-
+    int index_forta = 0;
     if (S.p == 0 || S.Lambda.linii != S.p) return;
 
     for(int i = 0; i < (int) S.legaturi.size(); i++) {
-
         if(S.legaturi[i]->activ == 0) continue;
-        
         int nr_ecuatii = S.legaturi[i]->getNumarEcuatii();
 
-        if(nr_ecuatii >= 2){
-        float fx = S.Lambda(index_forta + 0, 0);
-        float fy = S.Lambda(index_forta + 1, 0);
-        vec2 forta_reactiune(fx,fy);
+        if(nr_ecuatii >= 2) {
+            float fx = S.Lambda(index_forta + 0, 0);
+            float fy = S.Lambda(index_forta + 1, 0);
+            vec2 forta_reactiune(fx,fy);
+            vec2 punct_global = S.legaturi[i]->getPozitie(S.corpuri);
 
-        vec2 punct_global = S.legaturi[i]->getPozitie(S.corpuri);
+            int idA = S.legaturi[i]->contorCorpA;
+            int idB = S.legaturi[i]->contorCorpB;
 
-        int idA = S.legaturi[i]->contorCorpA;
-        int idB = S.legaturi[i]->contorCorpB;
+            // 1. Adaugam FORTA LINIARA 
+            if (S.corpuri[idA].M < 1e10f) {
+                S.corpuri[idA].forte_desen.forte.push_back({FORTA_REACTIUNE, forta_reactiune, 0.0f, punct_global});
+            }
+            if (S.corpuri[idB].M < 1e10f) {
+                S.corpuri[idB].forte_desen.forte.push_back({FORTA_REACTIUNE, forta_reactiune * (-1.0f), 0.0f, punct_global});
+            }
 
-        if (S.corpuri[idA].M < 1e10f) {
-            fortaVizuala fA;
-            fA.tip = FORTA_REACTIUNE;
-            fA.valoare = forta_reactiune; 
-            fA.punct_aplicare = punct_global;
-            S.corpuri[idA].forte_desen.forte.push_back(fA);
+            // 2. Adaugam MOMENTUL
+            if (nr_ecuatii == 3) {
+                float moment_reactiune = S.Lambda(index_forta + 2, 0);
+                
+                if (std::abs(moment_reactiune) > 0.001f) {
+                    if (S.corpuri[idA].M < 1e10f) {
+                        S.corpuri[idA].forte_desen.forte.push_back({MOMENT_REACTIUNE, vec2(0.0f,0.0f), moment_reactiune, punct_global});
+                    } 
+                    else if (S.corpuri[idB].M < 1e10f) {
+                        S.corpuri[idB].forte_desen.forte.push_back({MOMENT_REACTIUNE, vec2(0.0f,0.0f), -moment_reactiune, punct_global});
+                    }
+                }
+            }
         }
-
-        if (S.corpuri[idB].M < 1e10f) {
-            fortaVizuala fB;
-            fB.tip = FORTA_REACTIUNE;
-            fB.valoare = (-1)*forta_reactiune; // Sens opus!
-            fB.punct_aplicare = punct_global;
-            S.corpuri[idB].forte_desen.forte.push_back(fB);
-        }
-    }
-
         index_forta += nr_ecuatii;
     }
 }

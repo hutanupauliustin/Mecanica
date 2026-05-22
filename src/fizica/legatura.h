@@ -15,7 +15,7 @@ public:
     bool selectat = false;
     bool subMouse = false;
     struct col{ 
-        float x,y,z,w;
+        float x = 1.0f, y = 1.0f, z = 1.0f, w = 1.0f;
     } culoare;
 
 

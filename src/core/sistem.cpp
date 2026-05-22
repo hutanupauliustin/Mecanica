@@ -60,23 +60,25 @@
         r.activ = 1;
         r.index = corpuri.size();
         corpuri.push_back(r);
+        actualizeazaMatriceFizica();
     }
 
     void sistem::adaugaLegaturi(legatura *l)
     {
         for(size_t i = 0; i < legaturi.size(); i++){
             if(legaturi[i]->activ == 0){
-                delete legaturi[i]; // Eliberam memoria vechii legaturi
+                delete legaturi[i];
                 l->activ = 1;
-                legaturi[i] = l;    // Inlocuim cu legatura noua
+                legaturi[i] = l;    
                 p += l->getNumarEcuatii();
-                return;             // Iesim din functie
+                return;             
             }
         }
-        // Daca nu am gasit niciun loc liber, adaugam la capat
+       
         l->activ = 1;
         legaturi.push_back(l);
         p += l->getNumarEcuatii();
+        actualizeazaMatriceFizica();
     }
 
     void sistem::adaugaGeneratorForte(generatorForte *F)
@@ -92,6 +94,7 @@
         // Daca nu am gasit niciun loc liber, adaugam la capat
        F->activ = 1;
        surseForte.push_back(F);
+       actualizeazaMatriceFizica();
     }
 
     void sistem::eliminaCorp(int index){
@@ -121,6 +124,13 @@
     }
 
     void sistem::actualizeazaMatriceFizica() {
+        this->p = 0; 
+        for (auto* leg : legaturi) {
+            if (leg && leg->activ) { // Adaugă verificarea de nullptr aici!
+                this->p += leg->getNumarEcuatii();
+            }
+        }
+
         incarcaStare();
         seteazaMatriceInertie();
         seteazaJacobian();
@@ -157,7 +167,6 @@
             corpuriSubMouse.erase(std::remove(corpuriSubMouse.begin(), corpuriSubMouse.end(), i), corpuriSubMouse.end());
         }
     }
-
 
     void sistem::incarcaStare(){
 
@@ -355,7 +364,7 @@ void sistem::seteazaConstrangeri()
             corpuri[i].forte_desen.forte.clear();
             corpuri[i].aflaForteProprii(g); 
         }
-        // 2. Adaugam fortele elastice 
+        // 2. Adaugam generatorii de forte
 
         for (size_t i = 0; i < surseForte.size(); i++) {
             if(surseForte[i]->activ == 0) continue; 
