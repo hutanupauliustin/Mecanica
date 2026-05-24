@@ -9,13 +9,13 @@ Un motor fizic bidimensional scris de la zero în **C++17**, capabil să simulez
 <table>
   <tr>
     <td align="center">
-      <img src="doc/gifuri2/demolare.gif" width="200">
+      <img src="doc/gifuri/demolare.gif" width="200">
     </td>
     <td align="center">
-      <img src="doc/gifuri2/newton.gif" width="200" >
+      <img src="doc/gifuri/newton.gif" width="200" >
     </td>
     <td align="center">
-      <img src="doc/gifuri2/pendul.gif" width="200" >
+      <img src="doc/gifuri/pendul.gif" width="200" >
     </td>
   </tr>
 </table>
