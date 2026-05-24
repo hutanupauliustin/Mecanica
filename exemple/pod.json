@@ -1,0 +1,18 @@
+{
+    "corpuri": [
+        { "tip": 2, "x": 2.5, "y": 4.0, "phi": 0.0, "dimensiune1": 1.0, "dimensiune2": 0.2, "masa": 2.0, "material": {"restituire": 0.2, "frecareStatica": 0.5, "frecareDinamica": 0.4, "frecareRostogolireStatica": 0.02, "frecareRostogolireDinamica": 0.05}, "culoare": [0.6, 0.4, 0.2, 1.0] },
+        { "tip": 2, "x": 3.5, "y": 4.0, "phi": 0.0, "dimensiune1": 1.0, "dimensiune2": 0.2, "masa": 2.0, "material": {"restituire": 0.2, "frecareStatica": 0.5, "frecareDinamica": 0.4, "frecareRostogolireStatica": 0.02, "frecareRostogolireDinamica": 0.05}, "culoare": [0.6, 0.4, 0.2, 1.0] },
+        { "tip": 2, "x": 4.5, "y": 4.0, "phi": 0.0, "dimensiune1": 1.0, "dimensiune2": 0.2, "masa": 2.0, "material": {"restituire": 0.2, "frecareStatica": 0.5, "frecareDinamica": 0.4, "frecareRostogolireStatica": 0.02, "frecareRostogolireDinamica": 0.05}, "culoare": [0.6, 0.4, 0.2, 1.0] },
+        { "tip": 2, "x": 5.5, "y": 4.0, "phi": 0.0, "dimensiune1": 1.0, "dimensiune2": 0.2, "masa": 2.0, "material": {"restituire": 0.2, "frecareStatica": 0.5, "frecareDinamica": 0.4, "frecareRostogolireStatica": 0.02, "frecareRostogolireDinamica": 0.05}, "culoare": [0.6, 0.4, 0.2, 1.0] },
+        { "tip": 2, "x": 6.5, "y": 4.0, "phi": 0.0, "dimensiune1": 1.0, "dimensiune2": 0.2, "masa": 2.0, "material": {"restituire": 0.2, "frecareStatica": 0.5, "frecareDinamica": 0.4, "frecareRostogolireStatica": 0.02, "frecareRostogolireDinamica": 0.05}, "culoare": [0.6, 0.4, 0.2, 1.0] },
+        { "tip": 2, "x": 4.5, "y": 6.5, "phi": 0.0, "dimensiune1": 1.0, "dimensiune2": 1.0, "masa": 15.0, "material": {"restituire": 0.2, "frecareStatica": 0.5, "frecareDinamica": 0.4, "frecareRostogolireStatica": 0.02, "frecareRostogolireDinamica": 0.05}, "culoare": [0.3, 0.7, 0.5, 1.0] }
+    ],
+    "legaturi": [
+        {"tip": "articulatie", "contorCorpA": 0, "contorCorpB": 1, "l_A_x": 2.0, "l_A_y": 4.0, "l_B_x": -0.5, "l_B_y": 0.0},
+        {"tip": "articulatie", "contorCorpA": 1, "contorCorpB": 2, "l_A_x": 0.5, "l_A_y": 0.0, "l_B_x": -0.5, "l_B_y": 0.0},
+        {"tip": "articulatie", "contorCorpA": 2, "contorCorpB": 3, "l_A_x": 0.5, "l_A_y": 0.0, "l_B_x": -0.5, "l_B_y": 0.0},
+        {"tip": "articulatie", "contorCorpA": 3, "contorCorpB": 4, "l_A_x": 0.5, "l_A_y": 0.0, "l_B_x": -0.5, "l_B_y": 0.0},
+        {"tip": "articulatie", "contorCorpA": 4, "contorCorpB": 5, "l_A_x": 0.5, "l_A_y": 0.0, "l_B_x": -0.5, "l_B_y": 0.0},
+        {"tip": "articulatie", "contorCorpA": 0, "contorCorpB": 5, "l_A_x": 7.0, "l_A_y": 4.0, "l_B_x": 0.5, "l_B_y": 0.0}
+    ]
+}

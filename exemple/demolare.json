@@ -1,0 +1,25 @@
+{
+    "corpuri": [
+        {
+            "tip": 2, "x": 2.5, "y": 8.0, "phi": 0.0, "dimensiune1": 5.0, "dimensiune2": 0.1, "masa": 0.5,
+            "material": {"restituire": 0.1, "frecareStatica": 0.3, "frecareDinamica": 0.2, "frecareRostogolireStatica": 0.0, "frecareRostogolireDinamica": 0.0},
+            "culoare": [0.5, 0.5, 0.5, 1.0]
+        },
+        {
+            "tip": 1, "x": 0.0, "y": 8.0, "phi": 0.0, "dimensiune1": 0.8, "dimensiune2": 0.8, "masa": 25.0,
+            "material": {"restituire": 0.4, "frecareStatica": 0.8, "frecareDinamica": 0.5, "frecareRostogolireStatica": 0.1, "frecareRostogolireDinamica": 0.05},
+            "culoare": [0.2, 0.2, 0.2, 1.0]
+        },
+        { "tip": 2, "x": 7.0, "y": 0.5, "phi": 0.0, "dimensiune1": 2.0, "dimensiune2": 1.0, "masa": 2.0, "material": {"restituire": 0.1, "frecareStatica": 0.6, "frecareDinamica": 0.5, "frecareRostogolireStatica": 0.01, "frecareRostogolireDinamica": 0.01}, "culoare": [0.8, 0.4, 0.2, 1.0] },
+        { "tip": 2, "x": 7.0, "y": 1.5, "phi": 0.0, "dimensiune1": 2.0, "dimensiune2": 1.0, "masa": 2.0, "material": {"restituire": 0.1, "frecareStatica": 0.6, "frecareDinamica": 0.5, "frecareRostogolireStatica": 0.01, "frecareRostogolireDinamica": 0.01}, "culoare": [0.8, 0.5, 0.3, 1.0] },
+        { "tip": 2, "x": 7.0, "y": 2.5, "phi": 0.0, "dimensiune1": 2.0, "dimensiune2": 1.0, "masa": 2.0, "material": {"restituire": 0.1, "frecareStatica": 0.6, "frecareDinamica": 0.5, "frecareRostogolireStatica": 0.01, "frecareRostogolireDinamica": 0.01}, "culoare": [0.8, 0.4, 0.2, 1.0] },
+        { "tip": 2, "x": 7.0, "y": 3.5, "phi": 0.0, "dimensiune1": 2.0, "dimensiune2": 1.0, "masa": 2.0, "material": {"restituire": 0.1, "frecareStatica": 0.6, "frecareDinamica": 0.5, "frecareRostogolireStatica": 0.01, "frecareRostogolireDinamica": 0.01}, "culoare": [0.8, 0.5, 0.3, 1.0] },
+        { "tip": 2, "x": 7.0, "y": 4.5, "phi": 0.0, "dimensiune1": 2.0, "dimensiune2": 1.0, "masa": 2.0, "material": {"restituire": 0.1, "frecareStatica": 0.6, "frecareDinamica": 0.5, "frecareRostogolireStatica": 0.01, "frecareRostogolireDinamica": 0.01}, "culoare": [0.8, 0.4, 0.2, 1.0] },
+        { "tip": 2, "x": 5.0, "y": -0.5, "phi": 0.0, "dimensiune1": 20.0, "dimensiune2": 1.0, "masa": 1000000.0, "material": {"restituire": 0.1, "frecareStatica": 0.9, "frecareDinamica": 0.8, "frecareRostogolireStatica": 0.1, "frecareRostogolireDinamica": 0.1}, "culoare": [0.3, 0.3, 0.3, 1.0] }
+    ],
+    "legaturi": [
+        {"tip": "articulatie", "contorCorpA": 0, "contorCorpB": 1, "l_A_x": 5.0, "l_A_y": 8.0, "l_B_x": 2.5, "l_B_y": 0.0},
+        {"tip": "articulatie", "contorCorpA": 1, "contorCorpB": 2, "l_A_x": -2.5, "l_A_y": 0.0, "l_B_x": 0.0, "l_B_y": 0.0},
+        {"tip": "incastrare", "contorCorpA": 0, "contorCorpB": 8, "l_A_x": 5.0, "l_A_y": -0.5, "l_B_x": 0.0, "l_B_y": 0.0, "phi_0": 0.0}
+    ]
+}
