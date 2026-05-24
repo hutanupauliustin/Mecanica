@@ -40,7 +40,11 @@ target_include_directories(vendor PUBLIC
 )
 
 # Cream executabilul final
-add_executable(simulator WIN32 ${PROJECT_SOURCES})
+if(WIN32 AND NOT EMSCRIPTEN)
+    add_executable(simulator WIN32 ${PROJECT_SOURCES})
+else()
+    add_executable(simulator ${PROJECT_SOURCES})
+endif()
 
 # --- OPTIMIZARE 3: Flag-uri de avertizare (Warnings) ---
 # Ne ajută să scriem cod mai sigur și previn bug-uri subtile.
@@ -48,11 +52,15 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(simulator PRIVATE ) #-Wall -Wextra
     target_compile_options(vendor PRIVATE -w) # Oprim warning-urile pentru librariile externe
 
-    target_compile_options(simulator PRIVATE
+   target_compile_options(simulator PRIVATE
         $<$<CONFIG:Release>:-O3>
         $<$<CONFIG:Release>:-ffast-math>
-        $<$<CONFIG:Release>:-march=native>
-    ) # <--- Această paranteză lipsea
+    )
+    
+    # Adaugam -march=native doar daca NU suntem pe Web
+    if(NOT EMSCRIPTEN)
+        target_compile_options(simulator PRIVATE $<$<CONFIG:Release>:-march=native>)
+    endif()
 endif()
 
 # --- OPTIMIZARE 2: Precompiled Headers ---
@@ -75,4 +83,22 @@ target_link_directories(simulator PRIVATE
 )
 
 # Legam biblioteca de "vendor" impreuna cu bibliotecile de sistem
-target_link_libraries(simulator PRIVATE vendor glfw3 opengl32)
+if(EMSCRIPTEN)
+    # Pentru Web, librariile de grafica sunt gestionate automat de flag-urile USE_GLFW si USE_WEBGL2
+    target_link_libraries(simulator PRIVATE vendor)
+else()
+    # Pentru Windows normal
+    target_link_libraries(simulator PRIVATE vendor glfw3 opengl32)
+endif()
+
+if(EMSCRIPTEN)
+    set(CMAKE_EXECUTABLE_SUFFIX ".html")
+    
+    target_link_options(simulator PRIVATE
+        "-sUSE_GLFW=3"
+        "-sUSE_WEBGL2=1"
+        "-sALLOW_MEMORY_GROWTH=1"
+        "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/exemple@/exemple"
+        "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets@/assets"
+    )
+endif()
