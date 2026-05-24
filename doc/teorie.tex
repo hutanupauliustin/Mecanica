@@ -23,9 +23,6 @@
 
 \newpage
 
-\section{Introducere și obiectivele lucrarii}
-
-    % Scopul lucrarii este de a face un program care sa permita simularea miscarii unor sisteme mecanice care se studieaza la cursul de Mecanica din semsetrul I. 
 \section{ Dinamica Sitemelor cu Legături}
 
 \subsection{Cinematica sistemului de corpuri}
@@ -183,10 +180,10 @@ Energia cinetică se poate scrie ca o formă pătratică:
 \begin{equation}
     E = \frac{1}{2}\dot{q}^T A \dot{q}
 \end{equation}
-unde $A$ este matricea maselor, o matrice diagonală de forma:
+unde $A$ este matricea inerției, o matrice diagonală de forma:
 \begin{equation}
     A = \begin{bmatrix}
-        M_1 & 0 & 0 & \dots & 0 & 0 & 0 \\
+        M_1 & 0 & 0 & \dots & 0 & 0 & 0 \\  
         0 & M_1 & 0 & \dots & 0 & 0 & 0 \\
         0 & 0 & J_{z1} & \dots & 0 & 0 & 0 \\
         \vdots & \vdots & \vdots & \ddots & \vdots & \vdots & \vdots \\
@@ -210,9 +207,9 @@ Fie ecuațiile lui Lagrange în cazul sistemelor cu variabile dependente, introd
 Notăm $F(q,t) = \big( f_1(q,t), f_2(q,t), \dots, f_p(q,t) \big)^T$. 
 Putem rescrie legăturile sub forma compactă $F(q,t) = \mathbf{0}$.
 
-Ecuațiile lui Lagrange de speța întâi iau forma:
+Ecuațiile lui Lagrange iau forma:
 \begin{equation}
-    \frac{d}{dt}\left(\frac{\partial E}{\partial \dot{q}_k}\right) - \frac{\partial E}{\partial q_k} = Q_k + \sum_{j=1}^{p} \lambda_j \frac{\partial f_j}{\partial q_k}
+    \frac{d}{dt}\left(\frac{\partial E}{\partial \dot{q}_k}\right) - \frac{\partial E}{\partial q_k} = Q_k + \sum_{j=1}^{p} \lambda_j \frac{\partial f_j}{\partial q_k} 
 \end{equation}
 
 Calculăm Jacobianul funcțiilor de legătură $F$:
@@ -292,7 +289,7 @@ Acest lucru se întâmplă deoarece vitezele $\dot{q}$ și matricea constantă $
 
 Notăm vectorul forțelor generalizate cu $Q = \begin{bmatrix} Q_1 \\ \vdots \\ Q_K \end{bmatrix}$. 
 
-Înlocuind toate acestea în ecuațiile lui Lagrange de speța întâi, ajungem la forma finală:
+Înlocuind toate acestea în ecuațiile lui Lagrange , ajungem la forma finală:
 \begin{equation}
     A\ddot{q} = Q + J_F^T \Lambda
 \end{equation}
@@ -1233,7 +1230,7 @@ Acest scenariu testează faza de detecție exactă (SAT + clipping) combinată c
 
 \section{Concluzii și Dezvoltări Ulterioare}
 
-Lucrarea demonstrează succesul modelării matematice a sistemelor mecanice multicorp utilizând formularea analitică Lagrange de speța întâi combinată cu multiplicatori direcți. Decizia de proiectare de a reduce arhitectura la elemente fundamentale (corpuri geometrice de bază, articulații rezistente și încastrări rigide) a oferit un grad ridicat de robustețe numerică, ideal pentru aplicații didactice și analiză structurală bidimensională rapidă.
+Lucrarea demonstrează succesul modelării matematice a sistemelor mecanice multicorp utilizând formularea analitică Lagrange combinată cu multiplicatori direcți. Decizia de proiectare de a reduce arhitectura la elemente fundamentale (corpuri geometrice de bază, articulații rezistente și încastrări rigide) a oferit un grad ridicat de robustețe numerică, ideal pentru aplicații didactice și analiză structurală bidimensională rapidă.
 
 Ca dezvoltări ulterioare, proiectul poate fi extins în următoarele direcții:
 \begin{itemize}
