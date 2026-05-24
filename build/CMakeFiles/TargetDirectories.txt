@@ -1,4 +1,0 @@
-C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/vendor.dir
-C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/simulator.dir
-C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/edit_cache.dir
-C:/Users/Paul/Desktop/Mecanica/build/CMakeFiles/rebuild_cache.dir
