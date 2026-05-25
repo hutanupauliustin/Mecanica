@@ -31,6 +31,7 @@ if(EMSCRIPTEN)
         "-sALLOW_MEMORY_GROWTH=1"
         "-sASSERTIONS=2"
         "-sSTACK_SIZE=1mb"
+            "SHELL:--shell-file ${CMAKE_SOURCE_DIR}/src/shell.html"  
         "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/exemple@/exemple"
         "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets@/assets"
     )
