@@ -419,6 +419,7 @@ void editor::schimbaInstrumentCurent(InstrumentEditor *instrumentNou)
 }
 
 void editor::salveazaLogCorpuri() {
+    #ifndef __EMSCRIPTEN__
     if (fisier_export.is_open()) {
         fisier_export.flush();
     }
@@ -431,9 +432,13 @@ void editor::salveazaLogCorpuri() {
             pfd::message("Eroare Salvare", std::string("Nu s-a putut salva fisierul de log pentru corpuri:\n") + e.what(), pfd::choice::ok, pfd::icon::error);
         }
     }
+    #else
+    std::cout << "[Web] Salvarea fisierelor pe disk nu este suportata inca.\n";
+    #endif
 }
 
 void editor::salveazaLogLegaturi() {
+    #ifndef __EMSCRIPTEN__
     if (fisier_export_legaturi.is_open()) {
         fisier_export_legaturi.flush();
     }
@@ -446,4 +451,8 @@ void editor::salveazaLogLegaturi() {
             pfd::message("Eroare Salvare", std::string("Nu s-a putut salva fisierul de log pentru legaturi:\n") + e.what(), pfd::choice::ok, pfd::icon::error);
         }
     }
+
+    #else
+    std::cout << "[Web] Salvarea fisierelor pe disk nu este suportata inca.\n";
+    #endif
 }

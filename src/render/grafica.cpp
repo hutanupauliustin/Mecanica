@@ -1,4 +1,13 @@
-#include <glad/glad.h>
+#ifndef __EMSCRIPTEN__
+  #include <glad/glad.h>
+#endif
+
+#ifdef __EMSCRIPTEN__
+  #include <GLES3/gl3.h>
+  #include <emscripten.h>
+  #include <emscripten/html5.h>
+#endif 
+
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
@@ -344,11 +353,14 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram, unsigned int &gridProgram)
     glfwSetScrollCallback(window, scroll_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+    #ifndef __EMSCRIPTEN__
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
+    {   
         std::cout << "Failed to initialize GLAD" << std::endl;
         return NULL;
     }    
+    #endif
+
 
     unsigned int vertexShader;  
     vertexShader = glCreateShader(GL_VERTEX_SHADER);  
@@ -535,7 +547,10 @@ void drawSystem(sistem &S, editor &E, unsigned int VAO, unsigned int VBO, unsign
     
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    glPointSize(1.0f); 
+    
+    #ifndef __EMSCRIPTEN__
+    glPointSize(1.0f);
+    #endif 
 
     int scaleVertexLoc = glGetUniformLocation(shaderProgram, "scale");
     glUniform1f(scaleVertexLoc, 1.0f / E.camera.zoom);

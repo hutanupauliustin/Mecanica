@@ -1,33 +1,47 @@
 cmake_minimum_required(VERSION 3.16)
-
-# Numele executabilului si limbajele folosite
 project(SimulatorMecanica LANGUAGES CXX C)
 
-# Folosim standardul C++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Găsim recursiv toate fișierele sursă pentru executabil
 file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "src/*.cpp" "src/*.c")
-
-# Colectăm sursele externe (vendor, ImGui, etc.) separat
 file(GLOB_RECURSE IMGUI_SOURCES CONFIGURE_DEPENDS "ImGuiSrc/*.cpp")
 file(GLOB_RECURSE VENDOR_SOURCES CONFIGURE_DEPENDS "vendor/*.cpp" "vendor/*.c")
 
-# Ne asigurăm că sursele externe nu sunt compilate de două ori în proiectul principal
+# Pe Emscripten, excludem Glad complet (WebGL nu are nevoie de el)
+if(EMSCRIPTEN)
+    list(FILTER VENDOR_SOURCES EXCLUDE REGEX ".*glad.*")
+    list(FILTER PROJECT_SOURCES EXCLUDE REGEX ".*glad.*")
+endif()
+
 if(VENDOR_SOURCES OR IMGUI_SOURCES)
     list(REMOVE_ITEM PROJECT_SOURCES ${VENDOR_SOURCES} ${IMGUI_SOURCES})
 endif()
 
-# --- OPTIMIZARE 1: Bibliotecă statică pentru codul extern ---
-# ImGui, ImPlot si Glad sunt separate in target-ul "vendor".
-# Ele vor fi compilate o singura data, iar apoi refolosite.
-add_library(vendor STATIC 
+# Flaguri comune Emscripten - folosite PESTE TOT
+if(EMSCRIPTEN)
+    set(EM_COMPILE_FLAGS
+        "-sUSE_GLFW=3"
+        "-sUSE_WEBGL2=1"
+    )
+    set(EM_LINK_FLAGS
+        "-sUSE_GLFW=3"
+        "-sUSE_WEBGL2=1"
+        "-sFULL_ES3=1"
+        "-sALLOW_MEMORY_GROWTH=1"
+        "-sASSERTIONS=2"
+        "-sSTACK_SIZE=1mb"
+        "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/exemple@/exemple"
+        "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets@/assets"
+    )
+endif()
+
+add_library(vendor STATIC
     ${IMGUI_SOURCES}
     ${VENDOR_SOURCES}
 )
-target_include_directories(vendor PUBLIC 
 
+target_include_directories(vendor PUBLIC
     ${CMAKE_SOURCE_DIR}/vendor
     ${CMAKE_SOURCE_DIR}/vendor/glad
     ${CMAKE_SOURCE_DIR}/vendor/glfw
@@ -39,66 +53,52 @@ target_include_directories(vendor PUBLIC
     ${CMAKE_SOURCE_DIR}/vendor/stb
 )
 
-# Cream executabilul final
+target_compile_options(vendor PRIVATE -w)
+
+if(EMSCRIPTEN)
+    target_compile_options(vendor PUBLIC ${EM_COMPILE_FLAGS})
+    # ACUM dupa add_library — corect
+    target_compile_definitions(vendor PUBLIC IMGUI_IMPL_OPENGL_ES3)
+endif()
+
+target_compile_options(vendor PRIVATE -w)
+
 if(WIN32 AND NOT EMSCRIPTEN)
     add_executable(simulator WIN32 ${PROJECT_SOURCES})
 else()
     add_executable(simulator ${PROJECT_SOURCES})
 endif()
 
-# --- OPTIMIZARE 3: Flag-uri de avertizare (Warnings) ---
-# Ne ajută să scriem cod mai sigur și previn bug-uri subtile.
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(simulator PRIVATE ) #-Wall -Wextra
-    target_compile_options(vendor PRIVATE -w) # Oprim warning-urile pentru librariile externe
-
-   target_compile_options(simulator PRIVATE
+    target_compile_options(simulator PRIVATE
         $<$<CONFIG:Release>:-O3>
         $<$<CONFIG:Release>:-ffast-math>
     )
-    
-    # Adaugam -march=native doar daca NU suntem pe Web
     if(NOT EMSCRIPTEN)
         target_compile_options(simulator PRIVATE $<$<CONFIG:Release>:-march=native>)
     endif()
 endif()
 
-# --- OPTIMIZARE 2: Precompiled Headers ---
-# Compilatorul analizeaza aceste biblioteci o singura data pentru intreg proiectul
 target_precompile_headers(simulator PRIVATE <vector> <cmath> <iostream> <string>)
 
-# Ii spunem compilatorului unde sa caute fisierele header (.h)
-target_include_directories(simulator PRIVATE 
-    ${CMAKE_SOURCE_DIR}/src 
+target_include_directories(simulator PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/src/core
     ${CMAKE_SOURCE_DIR}/src/fizica
     ${CMAKE_SOURCE_DIR}/src/render
     ${CMAKE_SOURCE_DIR}/src/mate
 )
 
-# Ii spunem compilatorului unde sa caute fisierele de biblioteca precompilate (.a, .lib)
 target_link_directories(simulator PRIVATE
-    ${CMAKE_SOURCE_DIR}/lib,
+    ${CMAKE_SOURCE_DIR}/lib
     ${CMAKE_SOURCE_DIR}/vendor/glfw
 )
 
-# Legam biblioteca de "vendor" impreuna cu bibliotecile de sistem
-if(EMSCRIPTEN)
-    # Pentru Web, librariile de grafica sunt gestionate automat de flag-urile USE_GLFW si USE_WEBGL2
-    target_link_libraries(simulator PRIVATE vendor)
-else()
-    # Pentru Windows normal
-    target_link_libraries(simulator PRIVATE vendor glfw3 opengl32)
-endif()
-
 if(EMSCRIPTEN)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
-    
-    target_link_options(simulator PRIVATE
-        "-sUSE_GLFW=3"
-        "-sUSE_WEBGL2=1"
-        "-sALLOW_MEMORY_GROWTH=1"
-        "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/exemple@/exemple"
-        "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets@/assets"
-    )
+    target_compile_options(simulator PRIVATE ${EM_COMPILE_FLAGS})
+    target_link_options(simulator PRIVATE ${EM_LINK_FLAGS})
+    target_link_libraries(simulator PRIVATE vendor)
+else()
+    target_link_libraries(simulator PRIVATE vendor glfw3 opengl32)
 endif()

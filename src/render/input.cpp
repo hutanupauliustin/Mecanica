@@ -1,4 +1,11 @@
-#include <glad/glad.h>
+#ifndef __EMSCRIPTEN__
+  #include <glad/glad.h>
+#endif
+
+#ifdef __EMSCRIPTEN__
+  #include <GLES3/gl3.h>
+  #include <emscripten.h>
+#endif  
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <algorithm>

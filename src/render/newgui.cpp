@@ -59,7 +59,13 @@ void setupGUI(GLFWwindow *window)
     setupFont(io);
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
+
+    #ifdef __EMSCRIPTEN__
+    ImGui_ImplOpenGL3_Init("#version 300 es");  
+    #else
+    ImGui_ImplOpenGL3_Init("#version 330 core");
+    #endif
+
 }
 
 void startFrameGUI()
@@ -92,11 +98,12 @@ void renderMeniu(sistem &S, editor &E)
 {
 
     if (ImGui::BeginMainMenuBar())
-    {
-
+    {   
         // FILE
         if (ImGui::BeginMenu("File"))
         {
+            #ifndef __EMSCRIPTEN__
+
             if (ImGui::MenuItem("New Scene"))
             {
                 incarcaScenaInitiala(S);
@@ -138,6 +145,13 @@ void renderMeniu(sistem &S, editor &E)
                 E.flag.salveaza_log_legaturi_la_final = 1;
                 E.salveazaLogLegaturi();
             }
+
+            #else
+            ImGui::MenuItem("Open... (Indisponibil pe Web)", nullptr, false, false);
+            ImGui::MenuItem("Save... (Indisponibil pe Web)", nullptr, false, false);
+            ImGui::MenuItem("Salveaza log corpuri... (Indisponibil pe Web)", nullptr, false, false);
+            ImGui::MenuItem("Salveaza log legaturi... (Indisponibil pe Web)", nullptr, false, false);
+            #endif
 
             ImGui::EndMenu();
         }

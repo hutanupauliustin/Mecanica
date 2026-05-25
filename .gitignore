@@ -1,5 +1,6 @@
 # Fisiere de build si cache CMake
 build/
+build_web/
 CMakeCache.txt
 CMakeFiles/
 emsdk

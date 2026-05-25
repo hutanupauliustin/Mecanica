@@ -1,7 +1,14 @@
 #pragma once
 #include "sistem.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#ifndef __EMSCRIPTEN__
+  #include <glad/glad.h>
+#endif
+
+#ifdef __EMSCRIPTEN__
+  #include <GLES3/gl3.h>
+  #include <emscripten.h>
+#endif 
+ #include <GLFW/glfw3.h>
 #include <vector>
 #include <fstream>
 #include <memory>
