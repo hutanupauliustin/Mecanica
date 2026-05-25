@@ -1,6 +1,6 @@
 # Simulator Mecanic 2D (Rigid Body Physics Engine)
 
-<button name="Demo Live" onclick="http://www.google.com">Click me</button>
+<button name="Demo Live" onclick="https://hutanupauliustin.github.io/Mecanica/web_demo/">Demo Live</button>
 
 
 
