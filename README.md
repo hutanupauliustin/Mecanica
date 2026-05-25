@@ -1,5 +1,7 @@
 # Simulator Mecanic 2D (Rigid Body Physics Engine)
 
+<button name="Demo Live" onclick="http://www.google.com">Click me</button>
+
 
 
 Un motor fizic bidimensional scris de la zero în **C++17**, capabil să simuleze sisteme complexe de corpuri rigide și constrângeri cinematice (articulații, încastrări). Proiectul folosește formularea analitică Lagrange de speța întâi cu multiplicatori direcți pentru o simulare stabilă și precisă.
