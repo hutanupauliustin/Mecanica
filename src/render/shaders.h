@@ -8,7 +8,7 @@
 #endif
 
 // --- 1. VERTEX SHADER ---
-static const char *vertexShaderSource = GLSL_VERSION
+/*static const char *vertexShaderSource = GLSL_VERSION
     "layout (location = 0) in vec2 aPos;\n"
     "layout (location = 1) in float aPhi;\n"
     "layout (location = 2) in vec2 aSize;\n"
@@ -38,9 +38,9 @@ static const char *vertexShaderSource = GLSL_VERSION
     "   vs_out.vVel = aVel;\n"
     "   vs_out.vAcc = aAcc;\n"
     "}\0";
-
+/*
 // --- 2. GEOMETRY SHADER ---
-static const char *geometryShaderSource = GLSL_VERSION
+/*static const char *geometryShaderSource = GLSL_VERSION
     "layout (points) in;\n"
     "layout (triangle_strip, max_vertices = 4) out;\n"
 
@@ -93,6 +93,75 @@ static const char *geometryShaderSource = GLSL_VERSION
     "        EmitVertex();\n"
     "    }\n"
     "    EndPrimitive();\n"
+    "}\0";
+*/
+
+// --- 1. VERTEX SHADER UNIFICAT (Pentru Instanced Rendering) ---
+static const char *vertexShaderSource = GLSL_VERSION
+    "layout (location = 0) in vec2 aPos;\n"
+    "layout (location = 1) in float aPhi;\n"
+    "layout (location = 2) in vec2 aSize;\n"
+    "layout (location = 3) in float aType;\n"
+    "layout (location = 4) in vec4 aColor;\n"
+    "layout (location = 5) in float aFiltru;\n"
+    "layout (location = 6) in vec3 aVel;\n"
+    "layout (location = 7) in vec3 aAcc;\n"
+
+    "out vec3 TexCoord;\n"
+    "out float ShapeType;\n"
+    "out vec4 fColor;\n"
+    "out float filtru;\n"
+    "out float fSens;\n"
+    "out vec3 fVel;\n"
+    "out vec3 fAcc;\n"
+    "out vec2 fLocalPos;\n"
+    "out vec2 fGlobalPos;\n"
+
+    "uniform float scale;\n"
+    "uniform vec2 cameraOffset;\n"
+    "uniform float aspect_ratio;\n"
+
+    "void main() {\n"
+    "    if(aType < 0.5) {\n"
+    "        gl_Position = vec4(0.0);\n"
+    "        return;\n"
+    "    }\n"
+
+    "    // Generam automat cele 4 colturi ale patratului de baza pe placa video\n"
+    "    vec2 baseOffsets[4] = vec2[](vec2(-1.0, -1.0), vec2(1.0, -1.0), vec2(-1.0, 1.0), vec2(1.0, 1.0));\n"
+    "    vec2 quadBase = baseOffsets[gl_VertexID % 4];\n"
+
+    "    float rot_phi = (aType > 6.5 && aType < 7.5) ? 0.0 : aPhi;\n"
+    "    mat2 rot = mat2(cos(rot_phi), sin(rot_phi), -sin(rot_phi), cos(rot_phi));\n"
+    "    vec2 center = aPos - cameraOffset;\n"
+
+    "    ShapeType = aType;\n"
+    "    fColor = aColor;\n"
+    "    filtru = aFiltru;\n"
+    "    fSens = aPhi;\n"
+    "    fVel = aVel;\n"
+    "    fAcc = aAcc;\n"
+
+    "    float expand = (filtru > 0.5 && ShapeType < 3.5) ? 1.15 : 1.0;\n"
+    "    vec2 halfSize;\n"
+
+    "    if (ShapeType > 3.5 && ShapeType < 4.5) {\n"
+    "        halfSize = vec2(aSize.x / 2.0, 0.15);\n"
+    "    } else if (ShapeType > 6.5 && ShapeType < 7.5) {\n"
+    "        halfSize = vec2(aSize.x + aSize.y);\n"
+    "    } else {\n"
+    "        halfSize = (aSize / 2.0) * expand;\n"
+    "    }\n"
+
+    "    vec2 localOffset = quadBase * halfSize;\n"
+    "    vec2 uv = quadBase * expand;\n"
+
+    "    fLocalPos = localOffset / expand;\n"
+    "    vec2 pos = center + rot * localOffset;\n"
+    "    fGlobalPos = aPos + rot * localOffset;\n"
+
+    "    gl_Position = vec4((pos.x * scale)/aspect_ratio, pos.y * scale, 0.0, 1.0);\n"
+    "    TexCoord = vec3(uv, aSize.y);\n"
     "}\0";
 
 // --- 3. FRAGMENT SHADER ---

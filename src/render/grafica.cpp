@@ -367,7 +367,7 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram, unsigned int &gridProgram)
     }
 
     // Compilare Geometry Shader
-    unsigned int geometryShader;
+    /*unsigned int geometryShader;
     geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
     glShaderSource(geometryShader, 1, &geometryShaderSource, NULL);
     glCompileShader(geometryShader);
@@ -375,7 +375,7 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram, unsigned int &gridProgram)
     if(!success) {
         glGetShaderInfoLog(geometryShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::GEOMETRY::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
+    }*/
 
     unsigned int fragmentShader;
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);               
@@ -391,7 +391,7 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram, unsigned int &gridProgram)
     shaderProgram = glCreateProgram();
 
     glAttachShader(shaderProgram, vertexShader);    
-    glAttachShader(shaderProgram, geometryShader);
+    //glAttachShader(shaderProgram, geometryShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);                                     
 
@@ -402,7 +402,7 @@ GLFWwindow* openGLWindow(unsigned int &shaderProgram, unsigned int &gridProgram)
     }
 
     glDeleteShader(vertexShader);
-    glDeleteShader(geometryShader);
+    //glDeleteShader(geometryShader);
     glDeleteShader(fragmentShader); 
 
     glEnable(GL_BLEND);                 
@@ -484,6 +484,10 @@ void initBuffers(unsigned int &VAO, unsigned int &VBO, unsigned int &gridVAO, un
     glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, stride, (void*)(14 * sizeof(float)));
     glEnableVertexAttribArray(7);
 
+    for (unsigned int i = 0; i <= 7; i++) {
+        glVertexAttribDivisor(i, 1);
+    }
+
     float quadVertices[] = {
         // x, y 
         -1.0f,  1.0f, 
@@ -545,6 +549,7 @@ void drawSystem(sistem &S, editor &E, unsigned int VAO, unsigned int VBO, unsign
     int viewModeLoc = glGetUniformLocation(shaderProgram, "ViewMode");
     glUniform1i(viewModeLoc,E.flag.mod_vizualizare);
 
-    glDrawArrays(GL_POINTS, 0, totalPoints);
+    //glDrawArrays(GL_POINTS, 0, totalPoints);
+    glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, totalPoints);
     glBindVertexArray(0);
 }
