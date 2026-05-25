@@ -1,6 +1,7 @@
 # Simulator Mecanic 2D (Rigid Body Physics Engine)
 
 [![Demo Live](https://img.shields.io/badge/_Demo-Live-238636?style=for-the-badge)](https://hutanupauliustin.github.io/Mecanica/web_demo/)
+[![Documentatie](https://img.shields.io/badge/📄_Documentatie-Teorie-blue?style=for-the-badge)](https://hutanupauliustin.github.io/Mecanica/doc/teorie.pdf)
 
 
 Un motor fizic bidimensional scris de la zero în **C++17**, capabil să simuleze sisteme complexe de corpuri rigide și constrângeri cinematice (articulații, încastrări). Proiectul folosește formularea analitică Lagrange  cu multiplicatori  pentru simulare.
