@@ -3,7 +3,7 @@
 [![Demo Live](https://img.shields.io/badge/_Demo-Live-238636?style=for-the-badge)](https://hutanupauliustin.github.io/Mecanica/web_demo/)
 
 
-Un motor fizic bidimensional scris de la zero în **C++17**, capabil să simuleze sisteme complexe de corpuri rigide și constrângeri cinematice (articulații, încastrări). Proiectul folosește formularea analitică Lagrange de speța întâi cu multiplicatori direcți pentru o simulare stabilă și precisă.
+Un motor fizic bidimensional scris de la zero în **C++17**, capabil să simuleze sisteme complexe de corpuri rigide și constrângeri cinematice (articulații, încastrări). Proiectul folosește formularea analitică Lagrange  cu multiplicatori  pentru simulare.
 
 
 
